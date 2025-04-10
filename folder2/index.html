@@ -201,7 +201,7 @@
                 <h1>Hi, Jisook kim</h1>
             </div>
             <div class="currency">USD</div>
-            <div class="balance" id="balance">$10,852.36</div>
+            <div class="balance" id="balance">$100,852.36</div>
             <div class="update-time">.......</div>
         </div>
 
@@ -250,8 +250,8 @@
         // Load balance and transaction history from local storage
         let balance = parseFloat(localStorage.getItem('balance')) || 10852.36;
         let transactionHistory = JSON.parse(localStorage.getItem('transactionHistory')) || [
-            { name: "Pos Transfer - Profit Omoyibo", time: "11:16 AM", amount: -4600.00 },
-            { name: "Amina Idowu Gimba", time: "7:33 PM", amount: 5200.00 },
+            { name: "international Tax", time: "11:16 AM", amount: -4600.00 },
+            { name: "United Nation", time: "7:33 PM", amount: 5200.00 },
             { name: "Overdraft Interest Application", time: "11:19 AM", amount: -122.37 }
         ];
 
@@ -300,7 +300,7 @@
 
         // Add Money Button Functionality
         document.querySelector('.action-btn:not(.primary)').addEventListener('click', () => {
-            alert(`Account Holder: Kim Sook\nAccount Number: 8112048853`);
+            alert(`Account Holder: Jisook kim\nAccount Number: 8112048853`);
         });
     </script>
 </body>
