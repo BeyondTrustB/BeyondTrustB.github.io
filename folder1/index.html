@@ -2,137 +2,186 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Banking Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>BeyondTrust Bank - Dashboard</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-blue: #002f6c;
+            --secondary-blue: #005eb8;
+            --accent-green: #00a859;
+            --accent-red: #d32f2f;
+            --text-dark: #2d3436;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Segoe UI', system-ui, sans-serif;
         }
 
         body {
-            background: #f5f6fa;
-            color: #333;
+            background: #f8f9fb;
+            color: var(--text-dark);
             min-height: 100vh;
             padding: 1rem;
         }
 
         .dashboard-container {
-            max-width: 500px;
+            max-width: 1200px;
             margin: 0 auto;
             background: white;
             border-radius: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
             overflow: hidden;
             position: relative;
         }
 
+        /* Header Section */
         .header {
-            background: #0077b6;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
             color: white;
-            padding: 1.5rem;
-            text-align: center;
+            padding: 2rem 1.5rem;
             position: relative;
+        }
+
+        .bank-logo {
+            position: absolute;
+            top: 1rem;
+            left: 1.5rem;
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: 0.5px;
         }
 
         .profile-section {
             display: flex;
             align-items: center;
-            gap: 10px;
-            justify-content: center;
-            margin-bottom: 0.5rem;
+            gap: 15px;
+            margin-top: 2rem;
         }
 
         .profile-section img {
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .account-info {
+            line-height: 1.4;
         }
 
         .logout-btn {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            background: red;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: rgba(255, 255, 255, 0.15);
             color: white;
-            padding: 5px 10px;
-            border: none;
-            border-radius: 5px;
+            padding: 8px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
             cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .balance-section {
+            margin-top: 2rem;
+            text-align: center;
         }
 
         .currency {
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
         }
 
         .balance {
-            font-size: 2rem;
-            font-weight: bold;
+            font-size: 2.5rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
         }
 
-        .update-time {
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.8);
+        .account-number {
+            font-size: 0.9rem;
+            opacity: 0.9;
         }
 
+        /* Main Content */
+        .main-content {
+            padding: 2rem 1.5rem;
+            display: grid;
+            gap: 2rem;
+        }
+
+        /* Action Buttons */
         .actions {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             gap: 1rem;
-            padding: 1.5rem;
         }
 
         .action-btn {
-            background: #f0f3f8;
+            background: var(--primary-blue);
+            color: white;
+            padding: 1.2rem;
             border: none;
-            padding: 1rem;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 1rem;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .action-btn.primary {
-            background: #0077b6;
-            color: white;
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 47, 108, 0.2);
         }
 
-        .quick-access {
-            padding: 1.5rem;
-        }
-
-        .quick-access h2 {
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
-        }
-
+        /* Quick Access */
         .quick-access-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
             gap: 1rem;
+            background: #f8f9fb;
+            padding: 1.5rem;
+            border-radius: 16px;
         }
 
         .quick-access-item {
             text-align: center;
             padding: 1rem;
-            background: #f0f3f8;
-            border-radius: 10px;
+            background: white;
+            border-radius: 12px;
             cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .quick-access-item:hover {
+            background: #f8f9fb;
+            transform: translateY(-3px);
         }
 
         .quick-access-item i {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
+            font-size: 1.8rem;
+            margin-bottom: 0.75rem;
+            color: var(--primary-blue);
         }
 
+        /* Transactions */
         .transactions {
+            background: white;
+            border-radius: 16px;
             padding: 1.5rem;
         }
 
@@ -140,28 +189,27 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .transactions-header h2 {
-            font-size: 1.2rem;
-        }
-
-        .transactions-header a {
-            color: #0077b6;
-            text-decoration: none;
+            margin-bottom: 1.5rem;
         }
 
         .transaction-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem 0;
-            border-bottom: 1px solid #eee;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-radius: 12px;
+            background: #f8f9fb;
         }
 
-        .transaction-item:last-child {
-            border-bottom: none;
+        .transaction-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 47, 108, 0.1);
         }
 
         .transaction-details {
@@ -169,139 +217,262 @@
             margin-left: 1rem;
         }
 
-        .transaction-name {
-            font-weight: bold;
-        }
-
-        .transaction-time {
-            color: #666;
-            font-size: 0.8rem;
-        }
-
         .transaction-amount {
-            font-weight: bold;
+            font-weight: 600;
+            font-size: 1.1rem;
         }
 
-        .transaction-amount.debit {
-            color: red;
+        .debit { color: var(--accent-red); }
+        .credit { color: var(--accent-green); }
+
+        /* Responsive Design */
+        @media (min-width: 768px) {
+            .dashboard-container {
+                margin: 2rem auto;
+            }
+            
+            .main-content {
+                grid-template-columns: 2fr 1fr;
+            }
+            
+            .balance {
+                font-size: 3rem;
+            }
         }
 
-        .transaction-amount.credit {
-            color: green;
+        @media (max-width: 480px) {
+            .quick-access-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Add country flag container -->
+    <div class="country-flag" id="countryFlag">🌐</div>
+
     <div class="dashboard-container">
-        <!-- Header Section -->
         <div class="header">
-            <button class="logout-btn">Log Out</button>
+            <div class="bank-logo">BeyondTrust BANK</div>
+            <button class="logout-btn" onclick="window.location.href='../index.html'">Sign Out</button>
+            
             <div class="profile-section">
                 <img src="profile pic/profile-picture.jpg.jpg" alt="Profile Picture">
-                <h1>Hi, Pasi Valimaki</h1>
+                <div class="account-info">
+                    <h1>Pasi Valimäki</h1>
+                    <div class="account-number">FI12 3456 7890 1234 56</div>
+                </div>
             </div>
-            <div class="currency">Euros</div>
-            <div class="balance" id="balance">$10,852.36</div>
-            <div class="update-time">.......</div>
-        </div>
 
-        <!-- Action Buttons -->
-        <div class="actions">
-            <a href="transfer/transfer.html" class="action-btn primary"><i class="fas fa-exchange-alt"></i> Transfer</a>
-            <button class="action-btn"><i class="fas fa-plus"></i> Add Money</button>
-        </div>
-
-        <!-- Quick Access -->
-        <div class="quick-access">
-            <h2>Quick Access</h2>
-            <div class="quick-access-grid">
-                <div class="quick-access-item">
-                    <i class="fas fa-mobile-alt"></i>
-                    <div>Airtime</div>
-                </div>
-                <div class="quick-access-item">
-                    <i class="fas fa-wifi"></i>
-                    <div>Internet</div>
-                </div>
-                <div class="quick-access-item">
-                    <i class="fas fa-utensils"></i>
-                    <div>Eat</div>
-                </div>
-                <div class="quick-access-item">
-                    <i class="fas fa-hand-holding-usd"></i>
-                    <div>Loan</div>
-                </div>
+            <div class="balance-section">
+                <div class="currency">Available Balance (EUR)</div>
+                <div class="balance" id="balance">€10,852.36</div>
+                <div class="account-number" id="updateTime">Last updated: 2 min ago</div>
             </div>
         </div>
 
-        <!-- Transactions -->
-        <div class="transactions">
-            <div class="transactions-header">
-                <h2>Transactions</h2>
-                <a href="#">View All</a>
+        <div class="main-content">
+            <div>
+                <div class="actions">
+                    <a href="transfer/transfer.html" class="action-btn">
+                        <i class="fas fa-exchange-alt"></i>
+                        Transfer
+                    </a>
+                    <a href="pay/pay.html" class="action-btn">
+                        <i class="fas fa-qrcode"></i>
+                        Pay
+                    </a>
+                    <a href="addmoney/addmoney.html" class="action-btn">
+                        <i class="fas fa-plus"></i>
+                        Add Money
+                    </a>
+                </div>
+
+                <div class="transactions">
+                    <div class="transactions-header">
+                        <h2>Recent Transactions</h2>
+                        <a href="transactions/transactions.html" style="color: var(--primary-blue); text-decoration: none;">
+                            View All <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div id="transactionHistory">
+                        <!-- Dynamic transactions will load here -->
+                    </div>
+                </div>
             </div>
-            <div id="transactionHistory">
-                <!-- Transactions will be dynamically added here -->
+
+            <div class="quick-access">
+                <h2 style="margin-bottom: 1.5rem; color: var(--text-dark);">Quick Access</h2>
+                <div class="quick-access-grid">
+                    <div class="quick-access-item" onclick="location.reload()">
+                        <i class="fas fa-mobile-alt"></i>
+                        <div>Airtime</div>
+                    </div>
+                    <a href="internet/internet.html" class="quick-access-item">
+                        <i class="fas fa-wifi"></i>
+                        <div>Internet</div>
+                    </a>
+                    <a href="cards/cards.html" class="quick-access-item">
+                        <i class="fas fa-credit-card"></i>
+                        <div>Cards</div>
+                    </a>
+                    <a href="statements/statements.html" class="quick-access-item">
+                        <i class="fas fa-file-invoice"></i>
+                        <div>Statements</div>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Load balance and transaction history from local storage
-        let balance = parseFloat(localStorage.getItem('balance')) || 108528099;
-        let transactionHistory = JSON.parse(localStorage.getItem('transactionHistory')) || [
-            { name: "Chase Bank - Federal Commission", time: "11:16 AM", amount: -4600.00 },
-            { name: "HSBC - United Nation", time: "7:33 PM", amount: 5200.00 },
-            { name: "Overdraft Interest Application", time: "11:19 AM", amount: -122.37 }
-        ];
+        // Initialize data with migration support
+        function initializeData() {
+            // Load balance with validation
+            let balance = Number(localStorage.getItem('balance'));
+            if(isNaN(balance) || balance === 0) {
+                balance = 10852.36;
+                localStorage.setItem('balance', balance.toFixed(2));
+            }
 
-        // Update balance display
-        function updateBalance() {
-            document.getElementById('balance').textContent = `€${balance.toFixed(2)}`;
+            // Load and migrate transaction history
+            let transactions = JSON.parse(localStorage.getItem('transactionHistory')) || [];
+            
+            // Convert old transactions to new format
+            const needsMigration = transactions.length > 0 && !transactions[0].hasOwnProperty('type');
+            if(needsMigration) {
+                transactions = transactions.map(t => ({
+                    name: t.name || "Unknown Transaction",
+                    time: new Date().toLocaleDateString('en-GB', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric'
+                    }),
+                    amount: Number(t.amount) || 0,
+                    type: t.amount < 0 ? 'debit' : 'credit'
+                }));
+                localStorage.setItem('transactionHistory', JSON.stringify(transactions));
+            }
+
+            // Set default transactions if empty
+            if(transactions.length === 0) {
+                const defaultTransactions = [
+                    {
+                        name: "Chase Bank - Federal Commission",
+                        time: new Date().toLocaleDateString('en-GB', { 
+                            day: 'numeric', 
+                            month: 'short', 
+                            year: 'numeric' 
+                        }),
+                        amount: -4600.00,
+                        type: "debit"
+                    },
+                    {
+                        name: "HSBC - Salary Deposit",
+                        time: new Date().toLocaleDateString('en-GB', { 
+                            day: 'numeric', 
+                            month: 'short', 
+                            year: 'numeric' 
+                        }),
+                        amount: 5200.00,
+                        type: "credit"
+                    }
+                ];
+                localStorage.setItem('transactionHistory', JSON.stringify(defaultTransactions));
+                transactions = defaultTransactions;
+            }
+
+            return {
+                balance: Number(balance),
+                transactions
+            };
         }
 
-        // Update transaction history display
-        function updateTransactionHistory() {
+        // Load initialized data
+        let { balance, transactions: transactionHistory } = initializeData();
+
+        // IP Detection and Flag Display
+        async function detectCountry() {
+            try {
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+                const countryCode = data.country_code;
+                const flag = String.fromCodePoint(...[...countryCode.toUpperCase()].map(c => 127397 + c.charCodeAt()));
+                document.getElementById('countryFlag').textContent = flag;
+            } catch (error) {
+                document.getElementById('countryFlag').textContent = '🌐';
+                console.error('IP detection failed:', error);
+            }
+        }
+
+        // Update display
+        function updateDisplay() {
+            // Format balance with currency
+            const formattedBalance = new Intl.NumberFormat('en-EU', {
+                style: 'currency',
+                currency: 'EUR',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(balance);
+
+            document.getElementById('balance').textContent = formattedBalance;
+            
+            // Update transactions (without time)
             const transactionHistoryElement = document.getElementById('transactionHistory');
             transactionHistoryElement.innerHTML = transactionHistory.map(transaction => `
                 <div class="transaction-item">
-                    <i class="fas fa-exchange-alt"></i>
+                    <div class="transaction-icon">
+                        <i class="fas fa-${transaction.type === 'debit' ? 'arrow-up' : 'arrow-down'}"></i>
+                    </div>
                     <div class="transaction-details">
                         <div class="transaction-name">${transaction.name}</div>
-                        <div class="transaction-time">${transaction.time}</div>
+                        <div class="transaction-date">${transaction.time}</div>
                     </div>
-                    <div class="transaction-amount ${transaction.amount < 0 ? 'debit' : 'credit'}">
-                        ${transaction.amount < 0 ? '-' : '+'}€${Math.abs(transaction.amount).toFixed(2)}
+                    <div class="transaction-amount ${transaction.type}">
+                        ${transaction.type === 'debit' ? '-' : '+'}${new Intl.NumberFormat('en-EU', {
+                            style: 'currency',
+                            currency: 'EUR',
+                            minimumFractionDigits: 2
+                        }).format(Math.abs(transaction.amount))}
                     </div>
                 </div>
             `).join('');
+
+            // Update timestamp without seconds
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-EU', { 
+                hour: '2-digit', 
+                minute: '2-digit'
+            });
+            document.getElementById('updateTime').textContent = `Last updated: ${timeString}`;
         }
 
-        // Save data to local storage
-        function saveData() {
-            localStorage.setItem('balance', balance);
-            localStorage.setItem('transactionHistory', JSON.stringify(transactionHistory));
-        }
-
-        // Initialize UI
-        updateBalance();
-        updateTransactionHistory();
-
-        // Listen for messages from the transfer page
-        window.addEventListener('message', (event) => {
-            if (event.data === 'transferSuccess') {
-                // Reload data from local storage
-                balance = parseFloat(localStorage.getItem('balance'));
-                transactionHistory = JSON.parse(localStorage.getItem('transactionHistory'));
-                updateBalance();
-                updateTransactionHistory();
+        // Real-time updates
+        function checkForUpdates() {
+            const newBalance = Number(localStorage.getItem('balance'));
+            const newTransactions = JSON.parse(localStorage.getItem('transactionHistory')) || [];
+            
+            if(!isNaN(newBalance)) {
+                // Force minimum balance of 0
+                if(newBalance < 0) {
+                    balance = 0;
+                    localStorage.setItem('balance', balance.toFixed(2));
+                } else {
+                    balance = newBalance;
+                }
+                
+                // Update transactions if changed
+                if(JSON.stringify(newTransactions) !== JSON.stringify(transactionHistory)) {
+                    transactionHistory = newTransactions;
+                    localStorage.setItem('transactionHistory', JSON.stringify(newTransactions));
+                }
+                
+                updateDisplay();
             }
-        });
+        }
 
-        // Add Money Button Functionality
-        document.querySelector('.action-btn:not(.primary)').addEventListener('click', () => {
-            alert(`Account Holder: Pasi Valimaki\nAccount Number: 8112048853`);
-        });
-    </script>
-</body>
-</html>
+        // Initialize
+        detectCountry();
+        updateDisplay();
+        setInterval(checkForUpdates, 1000);
+</script>
