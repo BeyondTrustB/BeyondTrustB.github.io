@@ -28,7 +28,6 @@
             padding: 1rem;
         }
 
-        /* Page Loader */
         #pageLoader {
             position: fixed;
             top: 0;
@@ -61,9 +60,6 @@
         .dashboard-container {
             opacity: 0;
             transition: opacity 0.3s ease;
-        }
-
-        .dashboard-container {
             max-width: 1200px;
             margin: 0 auto;
             background: white;
@@ -73,7 +69,6 @@
             position: relative;
         }
 
-        /* Header Section */
         .header {
             background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
             color: white;
@@ -148,14 +143,12 @@
             opacity: 0.9;
         }
 
-        /* Main Content */
         .main-content {
             padding: 2rem 1.5rem;
             display: grid;
             gap: 2rem;
         }
 
-        /* Action Buttons */
         .actions {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -182,7 +175,6 @@
             box-shadow: 0 5px 15px rgba(0, 47, 108, 0.2);
         }
 
-        /* Quick Access */
         .quick-access-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
@@ -213,7 +205,6 @@
             color: var(--primary-blue);
         }
 
-        /* Transactions */
         .transactions {
             background: white;
             border-radius: 16px;
@@ -266,7 +257,6 @@
             color: var(--secondary-blue);
         }
 
-        /* Responsive Design */
         @media (min-width: 768px) {
             .dashboard-container {
                 margin: 2rem auto;
@@ -304,13 +294,13 @@
                 <img src="profile pic/profile-picture.jpg.jpg" alt="Profile Picture">
                 <div class="account-info">
                     <h1>Pasi Valimäki</h1>
-                    <div class="account-number">FI12 3456 7890 1234 56</div>
+                    <div class="account-number">BG12 3456 7890 1234 56</div>
                 </div>
             </div>
 
             <div class="balance-section">
                 <div class="currency">Available Balance (EUR)</div>
-                <div class="balance" id="balance">€10,852.36</div>
+                <div class="balance" id="balance">€4,758,008.40</div>
                 <div class="account-number" id="updateTime">Last updated: 2 min ago</div>
             </div>
         </div>
@@ -339,9 +329,7 @@
                             View All <i class="fas fa-arrow-right"></i>
                         </a>
                     </div>
-                    <div id="transactionHistory">
-                        <!-- Transactions will be dynamically added here -->
-                    </div>
+                    <div id="transactionHistory"></div>
                 </div>
             </div>
 
@@ -370,8 +358,9 @@
     </div>
 
     <script>
-        // Bank logos mapping
-        const bankLogos = {
+        // Configuration - Set your desired default balance here
+        const DEFAULT_BALANCE = 4758008.40;
+        const BANK_LOGOS = {
             'Revolut': 'images/revolut-logo.png',
             'Wise': 'images/wise-logo.png',
             'N26': 'images/n26-logo.png',
@@ -379,12 +368,18 @@
             'HSBC': 'images/hsbc-logo.png'
         };
 
-        // Initialize data with migration support
+        // System Initialization
         function initializeData() {
-            let balance = Number(localStorage.getItem('balance')) || 10852.36;
-            if(isNaN(balance)) {
-                balance = 10852.36;
-                localStorage.setItem('balance', balance.toFixed(2));
+    if (new URLSearchParams(window.location.search).has('reset')) {
+        localStorage.clear();
+    }
+
+    // Get balance or use default
+    let balance = parseFloat(localStorage.getItem('balance')); // Changed to parseFloat
+    if(isNaN(balance)) {
+        balance = DEFAULT_BALANCE;
+        // Store as number without fixed decimals
+        localStorage.setItem('balance', balance);
             }
 
             let transactions = JSON.parse(localStorage.getItem('transactionHistory')) || [
@@ -401,15 +396,21 @@
         }
 
         let { balance, transactions: transactionHistory } = initializeData();
+        let showingAllTransactions = false;
 
-        // Update transaction display
-        function updateTransactionHistory(showAll = false) {
+        // Transaction Management
+        function updateTransactionHistory() {
             const transactionHistoryElement = document.getElementById('transactionHistory');
-            const transactionsToShow = showAll ? transactionHistory : transactionHistory.slice(0, 3);
+            const viewAllLink = document.getElementById('viewAllTransactions');
+            const transactionsToShow = showingAllTransactions ? transactionHistory : transactionHistory.slice(0, 3);
+            
+            viewAllLink.innerHTML = showingAllTransactions ? 
+                'Show Less <i class="fas fa-arrow-up"></i>' : 
+                'View All <i class="fas fa-arrow-down"></i>';
             
             transactionHistoryElement.innerHTML = transactionsToShow.map(transaction => `
                 <div class="transaction-item">
-                    <img src="${bankLogos[transaction.name.split(' - ')[0]] || 'images/default-bank.png'}" 
+                    <img src="${BANK_LOGOS[transaction.name.split(' - ')[0]] || 'images/default-bank.png'}" 
                          class="transaction-logo" 
                          alt="${transaction.name.split(' - ')[0]} logo">
                     <div class="transaction-details">
@@ -417,62 +418,63 @@
                         <div class="transaction-time">${transaction.time}</div>
                     </div>
                     <div class="transaction-amount ${transaction.type}">
-                        ${transaction.type === 'debit' ? '-' : '+'}€${Math.abs(transaction.amount).toFixed(2)}
+                        ${transaction.type === 'debit' ? '-' : '+'}€${Math.abs(transaction.amount).toLocaleString('en', { minimumFractionDigits: 2 })}
                     </div>
                 </div>
             `).join('');
         }
 
-        // View All functionality
+        // Event Handlers
         document.getElementById('viewAllTransactions').addEventListener('click', () => {
-            updateTransactionHistory(true);
-            document.getElementById('viewAllTransactions').style.display = 'none';
+            showingAllTransactions = !showingAllTransactions;
+            updateTransactionHistory();
         });
 
-        // IP Detection and Flag Display
+        // System Functions
         async function detectCountry() {
             try {
                 const response = await fetch('https://ipapi.co/json/');
                 const data = await response.json();
-                const countryCode = data.country_code;
-                const flag = String.fromCodePoint(...[...countryCode.toUpperCase()].map(c => 127397 + c.charCodeAt()));
+                const flag = String.fromCodePoint(...[...data.country_code.toUpperCase()].map(c => 127397 + c.charCodeAt()));
                 document.getElementById('countryFlag').textContent = flag;
             } catch (error) {
                 document.getElementById('countryFlag').textContent = '🌐';
-                console.error('IP detection failed:', error);
             }
         }
 
-        // Update display
         function updateDisplay() {
-            document.getElementById('balance').textContent = 
-                new Intl.NumberFormat('en-EU', { style: 'currency', currency: 'EUR' }).format(balance);
+    const formatter = new Intl.NumberFormat('en-EU', { 
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+        useGrouping: true // Ensure thousand separators
+    });
+    
+    document.getElementById('balance').textContent = formatter.format(balance);
             
-            const now = new Date();
             document.getElementById('updateTime').textContent = 
-                `Last updated: ${now.toLocaleTimeString('en-EU', { hour: '2-digit', minute: '2-digit' })}`;
+                `Last updated: ${new Date().toLocaleTimeString('en-EU', { hour: '2-digit', minute: '2-digit' })}`;
         }
 
-        // Real-time updates
         function checkForUpdates() {
-            const newBalance = Number(localStorage.getItem('balance'));
-            const newTransactions = JSON.parse(localStorage.getItem('transactionHistory')) || [];
-            
-            if(!isNaN(newBalance)) {
-                balance = newBalance < 0 ? 0 : newBalance;
-                transactionHistory = newTransactions;
-                updateDisplay();
-                updateTransactionHistory();
-            }
+    const newBalance = parseFloat(localStorage.getItem('balance')); // Changed to parseFloat
+    const newTransactions = JSON.parse(localStorage.getItem('transactionHistory')) || [];
+    
+    if(!isNaN(newBalance)) {
+        balance = newBalance < 0 ? 0 : newBalance; // Only prevent negatives
+        transactionHistory = newTransactions;
+        updateDisplay();
+        updateTransactionHistory();
+    }
         }
 
-        // Initialize
+        // Initialization
         detectCountry();
         updateDisplay();
         updateTransactionHistory();
         setInterval(checkForUpdates, 1000);
 
-        // Page loader transition
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 document.getElementById('pageLoader').style.opacity = '0';
