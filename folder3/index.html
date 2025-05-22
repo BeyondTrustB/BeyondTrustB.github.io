@@ -285,7 +285,7 @@
     <script type="text/javascript">
         var _smartsupp = _smartsupp || {};
         _smartsupp.key = '38e6895aae3a8fbb54b0f9aa359f7807f19effed';
-_smartsupp.cookieDomain = 'beyondtrustb.github.io';
+_smartsupp.cookieDomain = 'myglobaldeliveryservice.com';
 _smartsupp.sitePlatform = 'WP 5.8.6';
 window.smartsupp||(function(d) {
             var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
@@ -299,20 +299,20 @@ window.smartsupp||(function(d) {
 
     <div class="dashboard-container">
         <div class="header">
-            <div class="bank-logo">BeyondTrust BANK</div>
+            <div class="bank-logo">Investment Account</div>
             <button class="logout-btn" onclick="window.location.href='../index.html'">Sign Out</button>
             
             <div class="profile-section">
                 <img src="profile pic/profile-picture.jpg.jpg" alt="Profile Picture">
                 <div class="account-info">
-                    <h1>Hugh Jackman</h1>
+                    <h1>Vincent Philip D'Onofrio</h1>
                     <div class="account-number">GB12 3456 7890 1234 56</div>
                 </div>
             </div>
 
             <div class="balance-section">
-                <div class="currency">Available Balance (USD)</div>
-                <div class="balance" id="balance">$15,758,008.40</div>
+                <div class="currency">Available Balance (GBP)</div>
+                <div class="balance" id="balance">758,008.40</div>
                 <div class="account-number" id="updateTime">Last updated: 2 min ago</div>
             </div>
         </div>
@@ -371,7 +371,7 @@ window.smartsupp||(function(d) {
 
     <script>
         // Configuration - Set your desired default balance here
-        const DEFAULT_BALANCE = 15758008.40;
+        const DEFAULT_BALANCE = 758008.40;
         const BANK_LOGOS = {
             'Revolut': 'images/revolut-logo.png',
             'Wise': 'images/wise-logo.png',
@@ -395,7 +395,7 @@ window.smartsupp||(function(d) {
             }
 
             let transactions = JSON.parse(localStorage.getItem('transactionHistory')) || [
-                { name: "Chase Bank - Federal Commission", time: "12 Jan 2024 • 11:16 AM", amount: -4600.00, type: "debit" },
+                { name: "Chase Bank - Macmillan Cancer Support ", time: "12 Jan 2024 • 11:16 AM", amount: -45600.00, type: "debit" },
                 { name: "HSBC - Deposit", time: "10 Jan 2024 • 7:33 PM", amount: 5200.00, type: "credit" },
                 { name: "Revolut - Money Transfer", time: "15 Jan 2024 • 09:45 AM", amount: -1200.00, type: "debit" },
                 { name: "Wise - Currency Exchange", time: "18 Jan 2024 • 02:30 PM", amount: -850.00, type: "debit" },
@@ -430,7 +430,7 @@ window.smartsupp||(function(d) {
                         <div class="transaction-time">${transaction.time}</div>
                     </div>
                     <div class="transaction-amount ${transaction.type}">
-                        ${transaction.type === 'debit' ? '-' : '+'}$${Math.abs(transaction.amount).toLocaleString('en', { minimumFractionDigits: 2 })}
+                        ${transaction.type === 'debit' ? '-' : '+'}£${Math.abs(transaction.amount).toLocaleString('en', { minimumFractionDigits: 2 })}
                     </div>
                 </div>
             `).join('');
@@ -457,7 +457,7 @@ window.smartsupp||(function(d) {
         function updateDisplay() {
     const formatter = new Intl.NumberFormat('en-EU', { 
         style: 'currency',
-        currency: 'USD',
+        currency: 'GBP',
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
         useGrouping: true // Ensure thousand separators
