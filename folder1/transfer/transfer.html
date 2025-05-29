@@ -232,8 +232,8 @@
 
     <script>
         // Configuration matching dashboard
-        const DEFAULT_BALANCE = 500808008.40;
-        const CORRECT_PIN = "2123";
+        const DEFAULT_BALANCE = 500653008.40;
+        const CORRECT_PIN = "7777888";
 
         // Page initialization
         setTimeout(() => {
@@ -264,7 +264,7 @@
                 try {
                     // PIN verification
                     if (transferPin !== CORRECT_PIN) {
-                        throw new Error('Invalid Pin - You entered an invalid pin');
+                        throw new Error('Account Restricted - You are currently logged in from an unknown location, ‘Australia,’ and your account has been restricted. Please contact our online customer support to resolve this issue +44 7411 256349');
                     }
 
                     // Balance check
