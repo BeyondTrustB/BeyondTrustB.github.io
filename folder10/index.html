@@ -318,7 +318,7 @@ window.smartsupp||(function(d) {
 
             <div class="balance-section">
                 <div class="currency">Available Balance (USD)</div>
-                <div class="balance" id="balance">$3,508,008.40</div>
+                <div class="balance" id="balance">$3,507,008.40</div>
                 <div class="account-number" id="updateTime">Last updated: 2 min ago</div>
             </div>
         </div>
@@ -377,7 +377,7 @@ window.smartsupp||(function(d) {
 
     <script>
         // Configuration - Set your desired default balance here
-        const DEFAULT_BALANCE = 3508008.40;
+        const DEFAULT_BALANCE = 3507008.40;
         const BANK_LOGOS = {
             'Wells Fargo': 'images/wells-logo.png',
             'Revolut': 'images/revolut-logo.png',
@@ -400,6 +400,7 @@ window.smartsupp||(function(d) {
             }
 
             let transactions = JSON.parse(localStorage.getItem('transactionHistory')) || [
+                { name: "Chase Bank - Morgan Williams", time: "18 June 2025 • 7:16 AM", amount: -1000.00, type: "debit" },
                 { name: "Chase Bank - Federal Commission", time: "12 Dec 2024 • 11:16 AM", amount: -4600.00, type: "debit" },
                 { name: "HSBC - Deposit", time: "10 Dec 2024 • 7:33 PM", amount: 105758.00, type: "credit" },
                 { name: "Revolut - Money Transfer", time: "15 Sep 2024 • 09:45 AM", amount: -1200.00, type: "debit" },
