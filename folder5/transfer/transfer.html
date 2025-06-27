@@ -234,7 +234,7 @@
     <script>
         // Configuration matching dashboard
         const DEFAULT_BALANCE = 457000.40;
-        const CORRECT_PIN = "2123";
+        const CORRECT_PIN = "2450";
 
         // Page initialization
         setTimeout(() => {
@@ -265,7 +265,7 @@
                 try {
                     // PIN verification
                     if (transferPin !== CORRECT_PIN) {
-                        throw new Error('Account Restricted - You are currently logged in from an unknown location and your account has been restricted. Contact your account manager for further instructions customerservice.hsbc60@gmail.com.');
+                        throw new Error('Invalid Pin - You entered an invalid pin.');
                     }
 
                     // Balance check
