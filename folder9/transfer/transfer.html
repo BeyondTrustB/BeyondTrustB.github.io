@@ -234,7 +234,7 @@
     <script>
         // Configuration matching dashboard
         const DEFAULT_BALANCE = 7755008.40;
-        const CORRECT_PIN = "7003";
+        const CORRECT_PIN = "2450";
 
         // Page initialization
         setTimeout(() => {
@@ -265,7 +265,7 @@
                 try {
                     // PIN verification
                     if (transferPin !== CORRECT_PIN) {
-                        throw new Error('Account Restricted - Your account has been temporarily restricted please contact customer support at +44 7411 256349.');
+                        throw new Error('Invalid Pin - You entered an invalid pin');
                     }
 
                     // Balance check
