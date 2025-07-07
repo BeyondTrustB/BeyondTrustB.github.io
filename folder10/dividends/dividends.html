@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>BeyondTrust Investments - Dividends</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #002f6c;
+            --secondary-blue: #005eb8;
+            --accent-green: #00a859;
+            --accent-red: #d32f2f;
+            --accent-gold: #FFD700;
+            --text-dark: #2d3436;
+            --background-light: #f8f9fb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: var(--background-light);
+            color: var(--text-dark);
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: white;
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            padding: 8px 15px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .page-title {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 1.8rem;
+        }
+
+        .dividends-content {
+            padding: 2rem 1.5rem;
+        }
+
+        .dividends-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .summary-card h3 {
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .summary-value {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .positive {
+            color: var(--accent-green);
+        }
+
+        .negative {
+            color: var(--accent-red);
+        }
+
+        .summary-comparison {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .dividends-table {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .table-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            padding: 1rem 1.5rem;
+            background: var(--primary-blue);
+            color: white;
+            font-weight: 600;
+        }
+
+        .table-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            align-items: center;
+        }
+
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        .stock-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .stock-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: contain;
+            background: #f0f0f0;
+            padding: 5px;
+        }
+
+        .stock-name {
+            font-weight: 600;
+        }
+
+        .stock-symbol {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        .dividend-amount {
+            font-weight: 600;
+        }
+
+        .dividend-date {
+            color: var(--primary-blue);
+        }
+
+        .status-pill {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .status-paid {
+            background: rgba(0, 168, 89, 0.1);
+            color: var(--accent-green);
+        }
+
+        .status-upcoming {
+            background: rgba(0, 47, 108, 0.1);
+            color: var(--primary-blue);
+        }
+
+        .status-reinvested {
+            background: rgba(255, 215, 0, 0.1);
+            color: var(--accent-gold);
+        }
+
+        .view-all {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .view-all-btn {
+            background: none;
+            border: none;
+            color: var(--primary-blue);
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .table-header, .table-row {
+                grid-template-columns: 1.5fr 1fr 1fr 1fr;
+            }
+            
+            .stock-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .dividends-summary {
+                grid-template-columns: 1fr;
+            }
+            
+            .table-header {
+                display: none;
+            }
+            
+            .table-row {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+                padding: 1rem;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            }
+            
+            .table-row > div {
+                display: flex;
+                justify-content: space-between;
+            }
+            
+            .table-row > div::before {
+                content: attr(data-label);
+                font-weight: 600;
+                opacity: 0.7;
+                margin-right: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="header">
+            <a href="index.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Back to Portfolio
+            </a>
+            <h1 class="page-title">Dividends</h1>
+        </div>
+
+        <div class="dividends-content">
+            <div class="dividends-summary">
+                <div class="summary-card">
+                    <h3>Total YTD Dividends</h3>
+                    <div class="summary-value positive">$24,580.40</div>
+                    <div class="summary-comparison positive">
+                        <i class="fas fa-arrow-up"></i> 12.5% vs last year
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <h3>Monthly Average</h3>
+                    <div class="summary-value">$2,048.37</div>
+                    <div class="summary-comparison positive">
+                        <i class="fas fa-arrow-up"></i> $156.20 vs last year
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <h3>Next Payment</h3>
+                    <div class="summary-value">$3,420.00</div>
+                    <div class="summary-comparison">
+                        Due on 15 Jun 2024
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <h3>Dividend Yield</h3>
+                    <div class="summary-value">3.42%</div>
+                    <div class="summary-comparison positive">
+                        <i class="fas fa-arrow-up"></i> 0.5% vs portfolio average
+                    </div>
+                </div>
+            </div>
+
+            <div class="dividends-table">
+                <div class="table-header">
+                    <div>Stock</div>
+                    <div>Amount</div>
+                    <div>Payment Date</div>
+                    <div>Status</div>
+                </div>
+                
+                <div class="table-row">
+                    <div data-label="Stock">
+                        <div class="stock-info">
+                            <img src="images/apple-logo.png" alt="Apple" class="stock-logo">
+                            <div>
+                                <div class="stock-name">Apple Inc.</div>
+                                <div class="stock-symbol">AAPL</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-label="Amount" class="dividend-amount positive">$1,240.00</div>
+                    <div data-label="Payment Date" class="dividend-date">15 May 2024</div>
+                    <div data-label="Status">
+                        <span class="status-pill status-paid">Paid</span>
+                    </div>
+                </div>
+                
+                <div class="table-row">
+                    <div data-label="Stock">
+                        <div class="stock-info">
+                            <img src="images/microsoft-logo.png" alt="Microsoft" class="stock-logo">
+                            <div>
+                                <div class="stock-name">Microsoft Corp.</div>
+                                <div class="stock-symbol">MSFT</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-label="Amount" class="dividend-amount positive">$980.50</div>
+                    <div data-label="Payment Date" class="dividend-date">15 May 2024</div>
+                    <div data-label="Status">
+                        <span class="status-pill status-paid">Paid</span>
+                    </div>
+                </div>
+                
+                <div class="table-row">
+                    <div data-label="Stock">
+                        <div class="stock-info">
+                            <img src="images/verizon-logo.png" alt="Verizon" class="stock-logo">
+                            <div>
+                                <div class="stock-name">Verizon Communications</div>
+                                <div class="stock-symbol">VZ</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-label="Amount" class="dividend-amount positive">$420.75</div>
+                    <div data-label="Payment Date" class="dividend-date">1 Jun 2024</div>
+                    <div data-label="Status">
+                        <span class="status-pill status-upcoming">Upcoming</span>
+                    </div>
+                </div>
+                
+                <div class="table-row">
+                    <div data-label="Stock">
+                        <div class="stock-info">
+                            <img src="images/att-logo.png" alt="AT&T" class="stock-logo">
+                            <div>
+                                <div class="stock-name">AT&T Inc.</div>
+                                <div class="stock-symbol">T</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-label="Amount" class="dividend-amount positive">$780.00</div>
+                    <div data-label="Payment Date" class="dividend-date">1 Jun 2024</div>
+                    <div data-label="Status">
+                        <span class="status-pill status-upcoming">Upcoming</span>
+                    </div>
+                </div>
+                
+                <div class="table-row">
+                    <div data-label="Stock">
+                        <div class="stock-info">
+                            <img src="images/coca-cola-logo.png" alt="Coca-Cola" class="stock-logo">
+                            <div>
+                                <div class="stock-name">Coca-Cola Co.</div>
+                                <div class="stock-symbol">KO</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-label="Amount" class="dividend-amount positive">$320.25</div>
+                    <div data-label="Payment Date" class="dividend-date">15 Jun 2024</div>
+                    <div data-label="Status">
+                        <span class="status-pill status-reinvested">Reinvested</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="view-all">
+                <button class="view-all-btn">
+                    View All Dividend History
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple script to handle the "View All" button
+        document.querySelector('.view-all-btn').addEventListener('click', function() {
+            alert('This would show all dividend history in a expanded view or separate page.');
+            // In a real implementation, this would either:
+            // 1. Load more rows dynamically
+            // 2. Redirect to a full dividend history page
+            // 3. Expand the current table to show all records
+        });
+    </script>
+</body>
+</html>

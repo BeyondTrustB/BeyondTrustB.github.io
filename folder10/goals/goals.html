@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeyondTrust Investments - Goals</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #002f6c;
+            --secondary-blue: #005eb8;
+            --accent-green: #00a859;
+            --accent-red: #d32f2f;
+            --accent-gold: #FFD700;
+            --text-dark: #2d3436;
+            --background-light: #f8f9fb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: var(--background-light);
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: white;
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            padding: 8px 15px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .page-title {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 1.8rem;
+        }
+
+        .goals-content {
+            padding: 2rem 1.5rem;
+        }
+
+        .goals-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .add-goal-btn {
+            background: var(--accent-green);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .add-goal-btn:hover {
+            background: #008a4a;
+        }
+
+        .goals-categories {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            scrollbar-width: none;
+        }
+
+        .goals-categories::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .category-btn:hover, .category-btn.active {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+
+        .goals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .goal-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .goal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .goal-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+
+        .goal-amount {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .goal-progress {
+            margin: 1.5rem 0;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 5px;
+            background: var(--accent-green);
+            transition: width 0.5s ease;
+        }
+
+        .progress-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .goal-details {
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .detail-label {
+            color: #666;
+        }
+
+        .detail-value {
+            font-weight: 600;
+        }
+
+        .goal-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .goal-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .goal-btn.primary {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .goal-btn.primary:hover {
+            background: var(--secondary-blue);
+        }
+
+        .goal-btn.secondary {
+            background: white;
+            color: var(--primary-blue);
+            border: 1px solid var(--primary-blue);
+        }
+
+        .goal-btn.secondary:hover {
+            background: var(--background-light);
+        }
+
+        .goal-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .icon-retirement { background: #6a11cb; }
+        .icon-house { background: #fc4a1a; }
+        .icon-education { background: #00a859; }
+        .icon-travel { background: #fbb03b; color: var(--text-dark); }
+        .icon-emergency { background: #d32f2f; }
+        .icon-other { background: #005eb8; }
+
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .goal-modal {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .goal-modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            color: var(--primary-blue);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-dark);
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .close-modal:hover {
+            opacity: 1;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            min-height: 80px;
+        }
+
+        .icon-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .icon-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .icon-option.selected {
+            border: 3px solid var(--primary-blue);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .goals-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .goals-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 1rem;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .goal-card {
+                padding: 1rem;
+            }
+            
+            .goal-actions {
+                flex-direction: column;
+            }
+            
+            .goal-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="header">
+            <a href="dashboard.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Back to Portfolio
+            </a>
+            <h1 class="page-title">Financial Goals</h1>
+        </div>
+
+        <div class="goals-content">
+            <div class="goals-header">
+                <h2>Your Financial Goals</h2>
+                <button class="add-goal-btn" id="addGoalBtn">
+                    <i class="fas fa-plus"></i>
+                    Add New Goal
+                </button>
+            </div>
+
+            <div class="goals-categories">
+                <button class="category-btn active">All Goals</button>
+                <button class="category-btn">Retirement</button>
+                <button class="category-btn">Home Purchase</button>
+                <button class="category-btn">Education</button>
+                <button class="category-btn">Travel</button>
+                <button class="category-btn">Emergency Fund</button>
+            </div>
+
+            <div class="goals-grid">
+                <div class="goal-card">
+                    <div class="goal-header">
+                        <div style="display: flex; align-items: center;">
+                            <div class="goal-icon icon-retirement">
+                                <i class="fas fa-umbrella-beach"></i>
+                            </div>
+                            <div>
+                                <h3 class="goal-title">Retirement</h3>
+                                <div class="goal-amount">$1,200,000</div>
+                            </div>
+                        </div>
+                        <div style="color: #666; font-size: 0.9rem;">Target: 2045</div>
+                    </div>
+                    <div class="goal-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 42%;"></div>
+                        </div>
+                        <div class="progress-details">
+                            <span>$504,000 saved</span>
+                            <span>42% complete</span>
+                        </div>
+                    </div>
+                    <div class="goal-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Monthly Contribution:</span>
+                            <span class="detail-value">$2,500</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Projected Completion:</span>
+                            <span class="detail-value">June 2043</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Risk Level:</span>
+                            <span class="detail-value">Moderate</span>
+                        </div>
+                    </div>
+                    <div class="goal-actions">
+                        <button class="goal-btn primary">
+                            <i class="fas fa-pencil-alt"></i>
+                            Edit
+                        </button>
+                        <button class="goal-btn secondary">
+                            <i class="fas fa-chart-line"></i>
+                            Track
+                        </button>
+                    </div>
+                </div>
+
+                <div class="goal-card">
+                    <div class="goal-header">
+                        <div style="display: flex; align-items: center;">
+                            <div class="goal-icon icon-house">
+                                <i class="fas fa-home"></i>
+                            </div>
+                            <div>
+                                <h3 class="goal-title">Home Purchase</h3>
+                                <div class="goal-amount">$350,000</div>
+                            </div>
+                        </div>
+                        <div style="color: #666; font-size: 0.9rem;">Target: 2027</div>
+                    </div>
+                    <div class="goal-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 28%;"></div>
+                        </div>
+                        <div class="progress-details">
+                            <span>$98,000 saved</span>
+                            <span>28% complete</span>
+                        </div>
+                    </div>
+                    <div class="goal-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Monthly Contribution:</span>
+                            <span class="detail-value">$3,000</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Projected Completion:</span>
+                            <span class="detail-value">March 2027</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Risk Level:</span>
+                            <span class="detail-value">Conservative</span>
+                        </div>
+                    </div>
+                    <div class="goal-actions">
+                        <button class="goal-btn primary">
+                            <i class="fas fa-pencil-alt"></i>
+                            Edit
+                        </button>
+                        <button class="goal-btn secondary">
+                            <i class="fas fa-chart-line"></i>
+                            Track
+                        </button>
+                    </div>
+                </div>
+
+                <div class="goal-card">
+                    <div class="goal-header">
+                        <div style="display: flex; align-items: center;">
+                            <div class="goal-icon icon-education">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <div>
+                                <h3 class="goal-title">College Fund</h3>
+                                <div class="goal-amount">$120,000</div>
+                            </div>
+                        </div>
+                        <div style="color: #666; font-size: 0.9rem;">Target: 2035</div>
+                    </div>
+                    <div class="goal-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 15%;"></div>
+                        </div>
+                        <div class="progress-details">
+                            <span>$18,000 saved</span>
+                            <span>15% complete</span>
+                        </div>
+                    </div>
+                    <div class="goal-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Monthly Contribution:</span>
+                            <span class="detail-value">$500</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Projected Completion:</span>
+                            <span class="detail-value">August 2034</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Risk Level:</span>
+                            <span class="detail-value">Aggressive</span>
+                        </div>
+                    </div>
+                    <div class="goal-actions">
+                        <button class="goal-btn primary">
+                            <i class="fas fa-pencil-alt"></i>
+                            Edit
+                        </button>
+                        <button class="goal-btn secondary">
+                            <i class="fas fa-chart-line"></i>
+                            Track
+                        </button>
+                    </div>
+                </div>
+
+                <div class="goal-card">
+                    <div class="goal-header">
+                        <div style="display: flex; align-items: center;">
+                            <div class="goal-icon icon-travel">
+                                <i class="fas fa-plane"></i>
+                            </div>
+                            <div>
+                                <h3 class="goal-title">World Travel</h3>
+                                <div class="goal-amount">$50,000</div>
+                            </div>
+                        </div>
+                        <div style="color: #666; font-size: 0.9rem;">Target: 2026</div>
+                    </div>
+                    <div class="goal-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 65%;"></div>
+                        </div>
+                        <div class="progress-details">
+                            <span>$32,500 saved</span>
+                            <span>65% complete</span>
+                        </div>
+                    </div>
+                    <div class="goal-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Monthly Contribution:</span>
+                            <span class="detail-value">$1,000</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Projected Completion:</span>
+                            <span class="detail-value">October 2025</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Risk Level:</span>
+                            <span class="detail-value">Moderate</span>
+                        </div>
+                    </div>
+                    <div class="goal-actions">
+                        <button class="goal-btn primary">
+                            <i class="fas fa-pencil-alt"></i>
+                            Edit
+                        </button>
+                        <button class="goal-btn secondary">
+                            <i class="fas fa-chart-line"></i>
+                            Track
+                        </button>
+                    </div>
+                </div>
+
+                <div class="goal-card">
+                    <div class="goal-header">
+                        <div style="display: flex; align-items: center;">
+                            <div class="goal-icon icon-emergency">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div>
+                                <h3 class="goal-title">Emergency Fund</h3>
+                                <div class="goal-amount">$30,000</div>
+                            </div>
+                        </div>
+                        <div style="color: #666; font-size: 0.9rem;">Target: 2024</div>
+                    </div>
+                    <div class="goal-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 90%;"></div>
+                        </div>
+                        <div class="progress-details">
+                            <span>$27,000 saved</span>
+                            <span>90% complete</span>
+                        </div>
+                    </div>
+                    <div class="goal-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Monthly Contribution:</span>
+                            <span class="detail-value">$1,500</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Projected Completion:</span>
+                            <span class="detail-value">November 2024</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Risk Level:</span>
+                            <span class="detail-value">Very Conservative</span>
+                        </div>
+                    </div>
+                    <div class="goal-actions">
+                        <button class="goal-btn primary">
+                            <i class="fas fa-pencil-alt"></i>
+                            Edit
+                        </button>
+                        <button class="goal-btn secondary">
+                            <i class="fas fa-chart-line"></i>
+                            Track
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Goal Modal -->
+    <div class="modal-overlay" id="goalModal">
+        <div class="goal-modal">
+            <div class="modal-header">
+                <h2>Add New Financial Goal</h2>
+                <button class="close-modal" id="closeGoalModal">&times;</button>
+            </div>
+            <div class="form-group">
+                <label for="goal-name">Goal Name</label>
+                <input type="text" id="goal-name" class="form-control" placeholder="e.g., Retirement, Home Purchase">
+            </div>
+            <div class="form-group">
+                <label>Goal Icon</label>
+                <div class="icon-options">
+                    <div class="icon-option icon-retirement selected" data-icon="retirement">
+                        <i class="fas fa-umbrella-beach"></i>
+                    </div>
+                    <div class="icon-option icon-house" data-icon="house">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <div class="icon-option icon-education" data-icon="education">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="icon-option icon-travel" data-icon="travel">
+                        <i class="fas fa-plane"></i>
+                    </div>
+                    <div class="icon-option icon-emergency" data-icon="emergency">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="icon-option icon-other" data-icon="other">
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="goal-amount">Target Amount ($)</label>
+                <input type="number" id="goal-amount" class="form-control" placeholder="10000">
+            </div>
+            <div class="form-group">
+                <label for="goal-date">Target Date</label>
+                <input type="date" id="goal-date" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="goal-contribution">Monthly Contribution ($)</label>
+                <input type="number" id="goal-contribution" class="form-control" placeholder="500">
+            </div>
+            <div class="form-group">
+                <label for="goal-risk">Risk Level</label>
+                <select id="goal-risk" class="form-control">
+                    <option value="very-conservative">Very Conservative</option>
+                    <option value="conservative">Conservative</option>
+                    <option value="moderate" selected>Moderate</option>
+                    <option value="aggressive">Aggressive</option>
+                    <option value="very-aggressive">Very Aggressive</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="goal-notes">Notes (Optional)</label>
+                <textarea id="goal-notes" class="form-control" placeholder="Any additional details about your goal"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="goal-btn secondary" id="cancelGoal">Cancel</button>
+                <button class="goal-btn primary" id="saveGoal">Save Goal</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Goal Modal
+            const goalModal = document.getElementById('goalModal');
+            const addGoalBtn = document.getElementById('addGoalBtn');
+            const closeGoalModal = document.getElementById('closeGoalModal');
+            const cancelGoal = document.getElementById('cancelGoal');
+            
+            // Open Goal Modal
+            addGoalBtn.addEventListener('click', () => {
+                goalModal.classList.add('active');
+            });
+            
+            // Close Goal Modal
+            closeGoalModal.addEventListener('click', () => {
+                goalModal.classList.remove('active');
+            });
+            
+            cancelGoal.addEventListener('click', () => {
+                goalModal.classList.remove('active');
+            });
+            
+            // Close modal when clicking outside
+            goalModal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    goalModal.classList.remove('active');
+                }
+            });
+            
+            // Icon selection
+            const iconOptions = document.querySelectorAll('.icon-option');
+            iconOptions.forEach(icon => {
+                icon.addEventListener('click', function() {
+                    iconOptions.forEach(i => i.classList.remove('selected'));
+                    this.classList.add('selected');
+                });
+            });
+            
+            // Save Goal
+            document.getElementById('saveGoal').addEventListener('click', function() {
+                const name = document.getElementById('goal-name').value;
+                const amount = document.getElementById('goal-amount').value;
+                const date = document.getElementById('goal-date').value;
+                const contribution = document.getElementById('goal-contribution').value;
+                
+                if (!name || !amount || !date || !contribution) {
+                    alert('Please fill in all required fields');
+                    return;
+                }
+                
+                goalModal.classList.remove('active');
+                alert('Your new financial goal has been created and added to your dashboard.');
+                
+                // In a real implementation, this would add the goal to the UI
+                // and save it to the database/backend
+            });
+            
+            // Category filtering
+            const categoryBtns = document.querySelectorAll('.category-btn');
+            categoryBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    categoryBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // In a real implementation, this would filter the goals
+                    console.log(`Filtering goals by: ${this.textContent}`);
+                });
+            });
+            
+            // Edit buttons
+            document.querySelectorAll('.goal-btn.primary').forEach(btn => {
+                if (btn.textContent.includes('Edit')) {
+                    btn.addEventListener('click', function() {
+                        goalModal.classList.add('active');
+                        console.log('Editing existing goal');
+                    });
+                }
+            });
+            
+            // Track buttons
+            document.querySelectorAll('.goal-btn.secondary').forEach(btn => {
+                if (btn.textContent.includes('Track')) {
+                    btn.addEventListener('click', function() {
+                        const goalTitle = this.closest('.goal-card').querySelector('.goal-title').textContent;
+                        alert(`This would show detailed tracking for: ${goalTitle}`);
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

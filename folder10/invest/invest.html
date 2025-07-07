@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeyondTrust Investments - Invest</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #002f6c;
+            --secondary-blue: #005eb8;
+            --accent-green: #00a859;
+            --accent-red: #d32f2f;
+            --accent-gold: #FFD700;
+            --text-dark: #2d3436;
+            --background-light: #f8f9fb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: var(--background-light);
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: white;
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            padding: 8px 15px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .page-title {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 1.8rem;
+        }
+
+        .invest-content {
+            padding: 2rem 1.5rem;
+        }
+
+        .invest-tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            color: var(--primary-blue);
+        }
+
+        .tab.active {
+            color: var(--primary-blue);
+            border-bottom: 3px solid var(--primary-blue);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .invest-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .invest-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .invest-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .invest-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .icon-stocks { background: var(--primary-blue); }
+        .icon-etfs { background: var(--secondary-blue); }
+        .icon-bonds { background: var(--accent-green); }
+        .icon-crypto { background: var(--accent-gold); color: var(--text-dark); }
+        .icon-funds { background: #6a11cb; }
+        .icon-reits { background: #fc4a1a; }
+
+        .invest-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .invest-description {
+            color: #666;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .invest-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .invest-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .invest-btn.primary {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .invest-btn.primary:hover {
+            background: var(--secondary-blue);
+        }
+
+        .invest-form {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .quick-invest {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .quick-amount {
+            padding: 15px;
+            text-align: center;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .quick-amount:hover {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .portfolio-summary {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+
+        .portfolio-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .portfolio-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+
+        .portfolio-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .portfolio-allocation {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .allocation-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            border-radius: 8px;
+            background: #f8f9fb;
+        }
+
+        .allocation-name {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .allocation-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-container {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .modal-body {
+            margin-bottom: 2rem;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .modal-btn.primary {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .modal-btn.primary:hover {
+            background: var(--secondary-blue);
+        }
+
+        .modal-btn.secondary {
+            background: #f0f0f0;
+            color: var(--text-dark);
+        }
+
+        .modal-btn.secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .frequency-options {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .frequency-option {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .frequency-option:hover {
+            border-color: var(--primary-blue);
+        }
+
+        .frequency-option.selected {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+
+        @media (max-width: 768px) {
+            .invest-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .invest-tabs {
+                overflow-x: auto;
+                scrollbar-width: none;
+            }
+            
+            .invest-tabs::-webkit-scrollbar {
+                display: none;
+            }
+            
+            .quick-invest {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .frequency-options {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 1rem;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .tab {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .invest-btn {
+                width: 100%;
+            }
+
+            .modal-container {
+                padding: 1.5rem;
+            }
+
+            .modal-footer {
+                flex-direction: column;
+            }
+
+            .modal-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="header">
+            <a href="dashboard.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Back to Portfolio
+            </a>
+            <h1 class="page-title">Invest</h1>
+        </div>
+
+        <div class="invest-content">
+            <div class="invest-tabs">
+                <div class="tab active" data-tab="market">Market Investments</div>
+                <div class="tab" data-tab="portfolio">Portfolio Builder</div>
+                <div class="tab" data-tab="auto">Auto-Invest</div>
+            </div>
+
+            <div class="tab-content active" id="market-tab">
+                <div class="invest-options">
+                    <div class="invest-card">
+                        <div class="invest-icon icon-stocks">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="invest-title">Individual Stocks</h3>
+                        <p class="invest-description">
+                            Invest in shares of publicly traded companies. Build your own portfolio of stocks across different sectors.
+                        </p>
+                        <div class="invest-stats">
+                            <div class="stat">
+                                <div class="stat-value">7.2%</div>
+                                <div class="stat-label">Avg. Return</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">High</div>
+                                <div class="stat-label">Risk</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">$0</div>
+                                <div class="stat-label">Min. Invest</div>
+                            </div>
+                        </div>
+                        <button class="invest-btn primary invest-now" data-type="stocks">
+                            <i class="fas fa-arrow-right"></i>
+                            Invest Now
+                        </button>
+                    </div>
+
+                    <div class="invest-card">
+                        <div class="invest-icon icon-etfs">
+                            <i class="fas fa-boxes"></i>
+                        </div>
+                        <h3 class="invest-title">ETFs</h3>
+                        <p class="invest-description">
+                            Exchange-Traded Funds that track indexes, commodities, or baskets of assets. Diversify with a single investment.
+                        </p>
+                        <div class="invest-stats">
+                            <div class="stat">
+                                <div class="stat-value">6.5%</div>
+                                <div class="stat-label">Avg. Return</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">Medium</div>
+                                <div class="stat-label">Risk</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">$100</div>
+                                <div class="stat-label">Min. Invest</div>
+                            </div>
+                        </div>
+                        <button class="invest-btn primary invest-now" data-type="etfs">
+                            <i class="fas fa-arrow-right"></i>
+                            Invest Now
+                        </button>
+                    </div>
+
+                    <div class="invest-card">
+                        <div class="invest-icon icon-bonds">
+                            <i class="fas fa-landmark"></i>
+                        </div>
+                        <h3 class="invest-title">Bonds</h3>
+                        <p class="invest-description">
+                            Fixed income securities that pay regular interest. Lower risk investments for stable returns.
+                        </p>
+                        <div class="invest-stats">
+                            <div class="stat">
+                                <div class="stat-value">3.2%</div>
+                                <div class="stat-label">Avg. Return</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">Low</div>
+                                <div class="stat-label">Risk</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">$1,000</div>
+                                <div class="stat-label">Min. Invest</div>
+                            </div>
+                        </div>
+                        <button class="invest-btn primary invest-now" data-type="bonds">
+                            <i class="fas fa-arrow-right"></i>
+                            Invest Now
+                        </button>
+                    </div>
+
+                    <div class="invest-card">
+                        <div class="invest-icon icon-crypto">
+                            <i class="fab fa-bitcoin"></i>
+                        </div>
+                        <h3 class="invest-title">Cryptocurrencies</h3>
+                        <p class="invest-description">
+                            Digital currencies like Bitcoin and Ethereum. High-risk, high-reward investments in blockchain technology.
+                        </p>
+                        <div class="invest-stats">
+                            <div class="stat">
+                                <div class="stat-value">18.4%</div>
+                                <div class="stat-label">Avg. Return</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">Very High</div>
+                                <div class="stat-label">Risk</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">$10</div>
+                                <div class="stat-label">Min. Invest</div>
+                            </div>
+                        </div>
+                        <button class="invest-btn primary invest-now" data-type="crypto">
+                            <i class="fas fa-arrow-right"></i>
+                            Invest Now
+                        </button>
+                    </div>
+
+                    <div class="invest-card">
+                        <div class="invest-icon icon-funds">
+                            <i class="fas fa-piggy-bank"></i>
+                        </div>
+                        <h3 class="invest-title">Mutual Funds</h3>
+                        <p class="invest-description">
+                            Professionally managed investment funds that pool money from many investors to purchase securities.
+                        </p>
+                        <div class="invest-stats">
+                            <div class="stat">
+                                <div class="stat-value">5.8%</div>
+                                <div class="stat-label">Avg. Return</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">Medium</div>
+                                <div class="stat-label">Risk</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">$500</div>
+                                <div class="stat-label">Min. Invest</div>
+                            </div>
+                        </div>
+                        <button class="invest-btn primary invest-now" data-type="funds">
+                            <i class="fas fa-arrow-right"></i>
+                            Invest Now
+                        </button>
+                    </div>
+
+                    <div class="invest-card">
+                        <div class="invest-icon icon-reits">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <h3 class="invest-title">REITs</h3>
+                        <p class="invest-description">
+                            Real Estate Investment Trusts that own and operate income-producing real estate across property sectors.
+                        </p>
+                        <div class="invest-stats">
+                            <div class="stat">
+                                <div class="stat-value">8.1%</div>
+                                <div class="stat-label">Avg. Return</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">Medium</div>
+                                <div class="stat-label">Risk</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">$250</div>
+                                <div class="stat-label">Min. Invest</div>
+                            </div>
+                        </div>
+                        <button class="invest-btn primary invest-now" data-type="reits">
+                            <i class="fas fa-arrow-right"></i>
+                            Invest Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="portfolio-tab">
+                <div class="portfolio-summary">
+                    <div class="portfolio-header">
+                        <h3 class="portfolio-title">Portfolio Builder</h3>
+                        <div class="portfolio-value">$1,808,008.40</div>
+                    </div>
+                    <div class="portfolio-allocation">
+                        <div class="allocation-item">
+                            <div class="allocation-name">
+                                <div class="allocation-icon icon-stocks">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div>Stocks</div>
+                            </div>
+                            <div>68% • $1,229,445.71</div>
+                        </div>
+                        <div class="allocation-item">
+                            <div class="allocation-name">
+                                <div class="allocation-icon icon-bonds">
+                                    <i class="fas fa-landmark"></i>
+                                </div>
+                                <div>Bonds</div>
+                            </div>
+                            <div>15% • $271,201.26</div>
+                        </div>
+                        <div class="allocation-item">
+                            <div class="allocation-name">
+                                <div class="allocation-icon icon-crypto">
+                                    <i class="fab fa-bitcoin"></i>
+                                </div>
+                                <div>Crypto</div>
+                            </div>
+                            <div>10% • $180,800.84</div>
+                        </div>
+                        <div class="allocation-item">
+                            <div class="allocation-name">
+                                <div class="allocation-icon icon-reits">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                                <div>Real Estate</div>
+                            </div>
+                            <div>5% • $90,400.42</div>
+                        </div>
+                        <div class="allocation-item">
+                            <div class="allocation-name">
+                                <div class="allocation-icon" style="background: #00a859;">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </div>
+                                <div>Cash</div>
+                            </div>
+                            <div>2% • $36,160.17</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="invest-form">
+                    <h3 style="margin-bottom: 1.5rem; color: var(--primary-blue);">Rebalance Portfolio</h3>
+                    <div class="form-group">
+                        <label for="target-allocation">Target Allocation</label>
+                        <select id="target-allocation" class="form-control">
+                            <option value="">Custom Allocation</option>
+                            <option value="conservative">Conservative (30% Stocks, 60% Bonds, 10% Cash)</option>
+                            <option value="moderate">Moderate (60% Stocks, 30% Bonds, 10% Other)</option>
+                            <option value="aggressive">Aggressive (80% Stocks, 15% Crypto, 5% REITs)</option>
+                            <option value="retirement">Retirement (50% Stocks, 40% Bonds, 10% REITs)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="investment-amount">Investment Amount ($)</label>
+                        <input type="number" id="investment-amount" class="form-control" placeholder="5000">
+                    </div>
+                    <div class="form-group">
+                        <label for="rebalance-method">Rebalance Method</label>
+                        <select id="rebalance-method" class="form-control">
+                            <option value="buy-only">Buy Only (No Selling)</option>
+                            <option value="full-rebalance">Full Rebalance</option>
+                            <option value="threshold">Threshold Rebalancing</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button class="invest-btn secondary">
+                            <i class="fas fa-chart-pie"></i>
+                            Preview
+                        </button>
+                        <button class="invest-btn primary">
+                            <i class="fas fa-check"></i>
+                            Execute Rebalance
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="auto-tab">
+                <div class="invest-form">
+                    <h3 style="margin-bottom: 1.5rem; color: var(--primary-blue);">Set Up Auto-Invest</h3>
+                    <div class="form-group">
+                        <label for="auto-amount">Investment Amount ($)</label>
+                        <div class="quick-invest">
+                            <div class="quick-amount" data-amount="100">$100</div>
+                            <div class="quick-amount" data-amount="250">$250</div>
+                            <div class="quick-amount" data-amount="500">$500</div>
+                            <div class="quick-amount" data-amount="1000">$1,000</div>
+                        </div>
+                        <input type="number" id="auto-amount" class="form-control" placeholder="Or enter custom amount">
+                    </div>
+                    <div class="form-group">
+                        <label for="auto-frequency">Frequency</label>
+                        <select id="auto-frequency" class="form-control">
+                            <option value="weekly">Weekly</option>
+                            <option value="biweekly">Bi-Weekly</option>
+                            <option value="monthly" selected>Monthly</option>
+                            <option value="quarterly">Quarterly</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="auto-start">Start Date</label>
+                        <input type="date" id="auto-start" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="auto-portfolio">Target Portfolio</label>
+                        <select id="auto-portfolio" class="form-control">
+                            <option value="current">Current Allocation</option>
+                            <option value="conservative">Conservative</option>
+                            <option value="moderate">Moderate</option>
+                            <option value="aggressive">Aggressive</option>
+                            <option value="custom">Custom Portfolio</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button class="invest-btn secondary">
+                            <i class="fas fa-ban"></i>
+                            Cancel Auto-Invest
+                        </button>
+                        <button class="invest-btn primary">
+                            <i class="fas fa-check"></i>
+                            Activate Auto-Invest
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Investment Modal -->
+    <div class="modal-overlay" id="invest-modal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="modal-title">Invest in <span id="modal-investment-type"></span></h3>
+                <button class="modal-close" id="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="invest-amount">Investment Amount ($)</label>
+                    <input type="number" id="invest-amount" class="form-control" placeholder="Enter amount">
+                </div>
+                <div class="form-group">
+                    <label>Investment Frequency</label>
+                    <div class="frequency-options">
+                        <div class="frequency-option" data-frequency="one-time">One-Time</div>
+                        <div class="frequency-option" data-frequency="weekly">Weekly</div>
+                        <div class="frequency-option" data-frequency="monthly">Monthly</div>
+                        <div class="frequency-option" data-frequency="annually">Annually</div>
+                    </div>
+                </div>
+                <div class="form-group" id="recurring-details" style="display: none;">
+                    <label for="payment-method">Payment Method</label>
+                    <select id="payment-method" class="form-control">
+                        <option value="bank-transfer">Bank Transfer</option>
+                        <option value="credit-card">Credit Card</option>
+                        <option value="debit-card">Debit Card</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn secondary" id="cancel-invest">Cancel</button>
+                <button class="modal-btn primary" id="confirm-invest">Confirm Investment</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab functionality
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs and contents
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding content
+                    this.classList.add('active');
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+            
+            // Modal functionality
+            const modal = document.getElementById('invest-modal');
+            const modalClose = document.getElementById('modal-close');
+            const cancelInvest = document.getElementById('cancel-invest');
+            const confirmInvest = document.getElementById('confirm-invest');
+            const frequencyOptions = document.querySelectorAll('.frequency-option');
+            const recurringDetails = document.getElementById('recurring-details');
+            
+            // Invest Now buttons - open modal
+            document.querySelectorAll('.invest-now').forEach(button => {
+                button.addEventListener('click', function() {
+                    const investmentType = this.getAttribute('data-type');
+                    const typeName = getTypeName(investmentType);
+                    
+                    document.getElementById('modal-investment-type').textContent = typeName;
+                    modal.classList.add('active');
+                    
+                    // Reset form
+                    document.getElementById('invest-amount').value = '';
+                    frequencyOptions.forEach(opt => opt.classList.remove('selected'));
+                    frequencyOptions[0].classList.add('selected');
+                    recurringDetails.style.display = 'none';
+                });
+            });
+            
+            // Close modal
+            modalClose.addEventListener('click', closeModal);
+            cancelInvest.addEventListener('click', closeModal);
+            
+            function closeModal() {
+                modal.classList.remove('active');
+            }
+            
+            // Frequency selection
+            frequencyOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    frequencyOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    
+                    // Show payment method if not one-time
+                    if (this.dataset.frequency !== 'one-time') {
+                        recurringDetails.style.display = 'block';
+                    } else {
+                        recurringDetails.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Confirm investment
+            confirmInvest.addEventListener('click', function() {
+                const amount = document.getElementById('invest-amount').value;
+                const selectedFrequency = document.querySelector('.frequency-option.selected').dataset.frequency;
+                
+                if (!amount) {
+                    alert('Please enter an investment amount');
+                    return;
+                }
+                
+                const type = document.getElementById('modal-investment-type').textContent;
+                let message = `You have successfully invested $${amount} in ${type}`;
+                
+                if (selectedFrequency !== 'one-time') {
+                    const paymentMethod = document.getElementById('payment-method').value;
+                    message += ` on a ${selectedFrequency} basis using ${paymentMethod.replace('-', ' ')}.`;
+                } else {
+                    message += ' as a one-time investment.';
+                }
+                
+                alert(message);
+                closeModal();
+            });
+            
+            // Helper function to get display name for investment type
+            function getTypeName(type) {
+                const types = {
+                    'stocks': 'Individual Stocks',
+                    'etfs': 'ETFs',
+                    'bonds': 'Bonds',
+                    'crypto': 'Cryptocurrencies',
+                    'funds': 'Mutual Funds',
+                    'reits': 'REITs'
+                };
+                return types[type] || type;
+            }
+            
+            // Quick invest amount buttons
+            document.querySelectorAll('.quick-amount').forEach(button => {
+                button.addEventListener('click', function() {
+                    const amount = this.getAttribute('data-amount');
+                    document.getElementById('auto-amount').value = amount;
+                    
+                    // Highlight selected amount
+                    document.querySelectorAll('.quick-amount').forEach(btn => {
+                        btn.style.backgroundColor = 'white';
+                        btn.style.color = 'var(--text-dark)';
+                    });
+                    this.style.backgroundColor = 'var(--primary-blue)';
+                    this.style.color = 'white';
+                });
+            });
+            
+            // Form submission handlers
+            document.querySelectorAll('.invest-btn.primary').forEach(button => {
+                if (button.textContent.includes('Execute') || button.textContent.includes('Activate')) {
+                    button.addEventListener('click', function() {
+                        const form = this.closest('.invest-form');
+                        if (form) {
+                            const inputs = form.querySelectorAll('input, select');
+                            let isValid = true;
+                            
+                            inputs.forEach(input => {
+                                if (input.value.trim() === '' && input.id !== 'auto-amount') {
+                                    isValid = false;
+                                    input.style.borderColor = 'var(--accent-red)';
+                                } else {
+                                    input.style.borderColor = '#ddd';
+                                }
+                            });
+                            
+                            if (isValid) {
+                                alert('Your investment request has been submitted successfully!');
+                            } else {
+                                alert('Please fill in all required fields.');
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

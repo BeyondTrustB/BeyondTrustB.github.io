@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>BeyondTrust Investments - Portfolio Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #002f6c;
+            --secondary-blue: #005eb8;
+            --accent-green: #00a859;
+            --accent-red: #d32f2f;
+            --accent-gold: #FFD700;
+            --text-dark: #2d3436;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: #f8f9fb;
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        #pageLoader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-blue);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .pulse-loader {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.8; }
+        }
+
+        .dashboard-container {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: white;
+            padding: 2rem 1.5rem;
+            position: relative;
+        }
+
+        .bank-logo {
+            position: absolute;
+            top: 1rem;
+            left: 1.5rem;
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: 0.5px;
+        }
+
+        .profile-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 2rem;
+        }
+
+        .profile-section img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .account-info {
+            line-height: 1.4;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            padding: 8px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .balance-section {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .currency {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .balance {
+            font-size: 2.5rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .account-number {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .performance-metrics {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .positive {
+            color: var(--accent-green);
+        }
+
+        .negative {
+            color: var(--accent-red);
+        }
+
+        .main-content {
+            padding: 2rem 1.5rem;
+            display: grid;
+            gap: 2rem;
+        }
+
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+        }
+
+        .action-btn {
+            background: var(--primary-blue);
+            color: white;
+            padding: 1.2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .action-btn.invest {
+            background: var(--accent-green);
+        }
+
+        .action-btn.withdraw {
+            background: var(--accent-gold);
+            color: var(--text-dark);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 47, 108, 0.2);
+        }
+
+        .quick-access-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 1rem;
+            background: #f8f9fb;
+            padding: 1.5rem;
+            border-radius: 16px;
+        }
+
+        .quick-access-item {
+            text-align: center;
+            padding: 1rem;
+            background: white;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .quick-access-item:hover {
+            background: #f8f9fb;
+            transform: translateY(-3px);
+        }
+
+        .quick-access-item i {
+            font-size: 1.8rem;
+            margin-bottom: 0.75rem;
+            color: var(--primary-blue);
+        }
+
+        .transactions {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+
+        .transactions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-radius: 12px;
+            background: #f8f9fb;
+        }
+
+        .transaction-logo {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            margin-right: 1rem;
+        }
+
+        .transaction-details {
+            flex: 1;
+            margin-left: 1rem;
+        }
+
+        .transaction-amount {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .debit { 
+            color: var(--accent-red); 
+            font-weight: 700;
+        }    
+        .credit { 
+            color: var(--accent-green); 
+            font-weight: 700;
+        }
+
+        #viewAllTransactions {
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        #viewAllTransactions:hover {
+            color: var(--secondary-blue);
+        }
+
+        .portfolio-summary {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .portfolio-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .asset-allocation {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .asset-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            border-radius: 8px;
+            background: #f8f9fb;
+        }
+
+        .asset-name {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .asset-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .stocks { background: var(--primary-blue); }
+        .bonds { background: var(--accent-green); }
+        .crypto { background: var(--accent-gold); color: var(--text-dark); }
+        .real-estate { background: var(--accent-red); }
+        .cash { background: #00a859; }
+
+        /* Withdrawal Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .withdrawal-modal {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .withdrawal-modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            color: var(--primary-blue);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-dark);
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .close-modal:hover {
+            opacity: 1;
+        }
+
+        .withdrawal-options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .withdrawal-option {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-radius: 12px;
+            background: #f8f9fb;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .withdrawal-option:hover {
+            background: #eef1f7;
+            transform: translateY(-2px);
+        }
+
+        .withdrawal-option i {
+            margin-right: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .withdrawal-option .option-details {
+            flex: 1;
+        }
+
+        .withdrawal-option .option-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .withdrawal-option .option-balance {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        @media (min-width: 768px) {
+            .dashboard-container {
+                margin: 2rem auto;
+            }
+            
+            .main-content {
+                grid-template-columns: 2fr 1fr;
+            }
+            
+            .balance {
+                font-size: 3rem;
+            }
+
+            .withdrawal-options {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .quick-access-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="pageLoader">
+        <div class="pulse-loader"></div>
+    </div>
+
+    <div class="country-flag" id="countryFlag">🌐</div>
+
+    <!-- Withdrawal Modal -->
+    <div class="modal-overlay" id="withdrawalModal">
+        <div class="withdrawal-modal">
+            <div class="modal-header">
+                <h2>Withdraw From</h2>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <div class="withdrawal-options">
+                <div class="withdrawal-option" onclick="redirectToWithdrawal('stocks')">
+                    <div class="asset-icon stocks"><i class="fas fa-chart-line"></i></div>
+                    <div class="option-details">
+                        <div class="option-name">Stocks</div>
+                        <div class="option-balance">$1,229,445.71 available</div>
+                    </div>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="withdrawal-option" onclick="redirectToWithdrawal('bonds')">
+                    <div class="asset-icon bonds"><i class="fas fa-landmark"></i></div>
+                    <div class="option-details">
+                        <div class="option-name">Bonds</div>
+                        <div class="option-balance">$271,201.26 available</div>
+                    </div>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="withdrawal-option" onclick="redirectToWithdrawal('crypto')">
+                    <div class="asset-icon crypto"><i class="fab fa-bitcoin"></i></div>
+                    <div class="option-details">
+                        <div class="option-name">Crypto</div>
+                        <div class="option-balance">$180,800.84 available</div>
+                    </div>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="withdrawal-option" onclick="redirectToWithdrawal('real-estate')">
+                    <div class="asset-icon real-estate"><i class="fas fa-home"></i></div>
+                    <div class="option-details">
+                        <div class="option-name">Real Estate</div>
+                        <div class="option-balance">$90,400.42 available</div>
+                    </div>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="withdrawal-option" onclick="redirectToWithdrawal('cash')">
+                    <div class="asset-icon cash"><i class="fas fa-dollar-sign"></i></div>
+                    <div class="option-details">
+                        <div class="option-name">Cash</div>
+                        <div class="option-balance">$36,160.17 available</div>
+                    </div>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <div class="header">
+            <div class="bank-logo">BeyondTrust Investments</div>
+            <button class="logout-btn" onclick="window.location.href='../index.html'">Sign Out</button>
+            
+            <div class="profile-section">
+                <img src="profile pic/profile-picture.jpg.jpg" alt="Profile Picture">
+                <div class="account-info">
+                    <h1>Raymond Edward</h1>
+                    <div class="account-number">Portfolio #253885910240</div>
+                </div>
+            </div>
+
+            <div class="balance-section">
+                <div class="currency">Portfolio Value (USD)</div>
+                <div class="balance" id="balance">$1,808,008.40</div>
+                <div class="account-number" id="updateTime">Last updated: 2 min ago</div>
+            </div>
+
+            <div class="performance-metrics">
+                <div class="metric">
+                    <div class="metric-value positive" id="dailyChange">+0.85%</div>
+                    <div class="metric-label">Today</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value positive" id="monthlyChange">+5.32%</div>
+                    <div class="metric-label">This Month</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value positive" id="ytdChange">+18.76%</div>
+                    <div class="metric-label">YTD</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value positive" id="annualizedReturn">+24.5%</div>
+                    <div class="metric-label">Annualized</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div>
+                <div class="portfolio-summary">
+                    <div class="portfolio-header">
+                        <h2>Asset Allocation</h2>
+                        <a id="viewPortfolioDetails" style="color: var(--primary-blue); text-decoration: none;">
+                            Details <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="asset-allocation">
+                        <div class="asset-item">
+                            <div class="asset-name">
+                                <div class="asset-icon stocks"><i class="fas fa-chart-line"></i></div>
+                                <div>Stocks</div>
+                            </div>
+                            <div>68% • $1,229,445.71</div>
+                        </div>
+                        <div class="asset-item">
+                            <div class="asset-name">
+                                <div class="asset-icon bonds"><i class="fas fa-landmark"></i></div>
+                                <div>Bonds</div>
+                            </div>
+                            <div>15% • $271,201.26</div>
+                        </div>
+                        <div class="asset-item">
+                            <div class="asset-name">
+                                <div class="asset-icon crypto"><i class="fab fa-bitcoin"></i></div>
+                                <div>Crypto</div>
+                            </div>
+                            <div>10% • $180,800.84</div>
+                        </div>
+                        <div class="asset-item">
+                            <div class="asset-name">
+                                <div class="asset-icon real-estate"><i class="fas fa-home"></i></div>
+                                <div>Real Estate</div>
+                            </div>
+                            <div>5% • $90,400.42</div>
+                        </div>
+                        <div class="asset-item">
+                            <div class="asset-name">
+                                <div class="asset-icon cash"><i class="fas fa-dollar-sign"></i></div>
+                                <div>Cash</div>
+                            </div>
+                            <div>2% • $36,160.17</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <a href="invest/invest.html" class="action-btn invest">
+                        <i class="fas fa-chart-line"></i>
+                        Invest
+                    </a>
+                    <a href="transfer/transfer.html" class="action-btn">
+                        <i class="fas fa-exchange-alt"></i>
+                        Transfer
+                    </a>
+                    <button class="action-btn withdraw" id="withdrawBtn">
+                        <i class="fas fa-money-bill-wave"></i>
+                        Withdraw
+                    </button>
+                </div>
+
+                <div class="transactions">
+                    <div class="transactions-header">
+                        <h2>Earning History</h2>
+                        <a id="viewAllTransactions" style="color: var(--primary-blue); text-decoration: none;">
+                            View All <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div id="transactionHistory"></div>
+                </div>
+            </div>
+
+            <div class="quick-access">
+                <h2 style="margin-bottom: 1.5rem; color: var(--text-dark);">Quick Access</h2>
+                <div class="quick-access-grid">
+                    <div class="quick-access-item" onclick="location.reload()">
+                        <i class="fas fa-chart-pie"></i>
+                        <div>Portfolio</div>
+                    </div>
+                    <a href="dividends/dividends.html" class="quick-access-item">
+                        <i class="fas fa-coins"></i>
+                        <div>Dividends</div>
+                    </a>
+                    <a href="reports/reports.html" class="quick-access-item">
+                        <i class="fas fa-file-alt"></i>
+                        <div>Reports</div>
+                    </a>
+                    <a href="tax/tax.html" class="quick-access-item">
+                        <i class="fas fa-receipt"></i>
+                        <div>Tax Center</div>
+                    </a>
+                    <a href="goals/goals.html" class="quick-access-item">
+                        <i class="fas fa-bullseye"></i>
+                        <div>Goals</div>
+                    </a>
+                    <a href="advisor/advisor.html" class="quick-access-item">
+                        <i class="fas fa-user-tie"></i>
+                        <div>Advisor</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration - Set your desired default balance here
+        const DEFAULT_BALANCE = 1808008.40;
+        const INVESTMENT_LOGOS = {
+            'Apple Inc.': 'images/apple-logo.png',
+            'Tesla Inc.': 'images/tesla-logo.png',
+            'Microsoft Corp.': 'images/microsoft-logo.png',
+            'Amazon Inc.': 'images/amazon-logo.png',
+            'Google LLC': 'images/google-logo.png',
+            'Dividend Payment': 'images/dividend-logo.png',
+            'Interest Payment': 'images/interest-logo.png',
+            'Capital Gains': 'images/gains-logo.png'
+        };
+
+        // System Initialization
+        function initializeData() {
+            if (new URLSearchParams(window.location.search).has('reset')) {
+                localStorage.clear();
+            }
+
+            let balance = parseFloat(localStorage.getItem('balance'));
+            if(isNaN(balance)) {
+                balance = DEFAULT_BALANCE;
+                localStorage.setItem('balance', balance);
+            }
+
+            let transactions = JSON.parse(localStorage.getItem('transactionHistory')) || [
+                { name: "Apple Inc. - Dividend", time: "12 Dec 2024 • 11:16 AM", amount: 4600.00, type: "credit" },
+                { name: "Tesla Inc. - Stock Sale", time: "10 Dec 2024 • 7:33 PM", amount: 105758.00, type: "credit" },
+                { name: "Microsoft Corp. - Dividend", time: "15 Sep 2024 • 09:45 AM", amount: 3200.00, type: "credit" },
+                { name: "Amazon Inc. - Capital Gains", time: "18 Sep 2024 • 02:30 PM", amount: 1850.00, type: "credit" },
+                { name: "Google LLC - Stock Purchase", time: "20 Oct 2024 • 10:15 AM", amount: -45000.00, type: "debit" },
+                { name: "Interest Payment", time: "25 Jan 2024 • 04:20 PM", amount: 3150.00, type: "credit" }
+            ];
+
+            localStorage.setItem('transactionHistory', JSON.stringify(transactions));
+            return { balance, transactions };
+        }
+
+        let { balance, transactions: transactionHistory } = initializeData();
+        let showingAllTransactions = false;
+
+        // Transaction Management
+        function updateTransactionHistory() {
+            const transactionHistoryElement = document.getElementById('transactionHistory');
+            const viewAllLink = document.getElementById('viewAllTransactions');
+            const transactionsToShow = showingAllTransactions ? transactionHistory : transactionHistory.slice(0, 3);
+            
+            viewAllLink.innerHTML = showingAllTransactions ? 
+                'Show Less <i class="fas fa-arrow-up"></i>' : 
+                'View All <i class="fas fa-arrow-down"></i>';
+            
+            transactionHistoryElement.innerHTML = transactionsToShow.map(transaction => `
+                <div class="transaction-item">
+                    <img src="${INVESTMENT_LOGOS[transaction.name.split(' - ')[0]] || 'images/default-investment.png'}" 
+                         class="transaction-logo" 
+                         alt="${transaction.name.split(' - ')[0]} logo">
+                    <div class="transaction-details">
+                        <div class="transaction-name">${transaction.name}</div>
+                        <div class="transaction-time">${transaction.time}</div>
+                    </div>
+                    <div class="transaction-amount ${transaction.type}">
+                        ${transaction.type === 'debit' ? '−' : '+'}$${Math.abs(transaction.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Withdrawal Modal Functions
+        function toggleWithdrawalModal() {
+            const modal = document.getElementById('withdrawalModal');
+            modal.classList.toggle('active');
+        }
+
+        function redirectToWithdrawal(accountType) {
+            // Close the modal first
+            toggleWithdrawalModal();
+            
+            // Redirect to the specific withdrawal page after a slight delay
+            setTimeout(() => {
+                window.location.href = `withdraw/${accountType}.html`;
+            }, 300);
+        }
+
+        // Event Listeners
+        document.getElementById('withdrawBtn').addEventListener('click', toggleWithdrawalModal);
+        document.getElementById('closeModal').addEventListener('click', toggleWithdrawalModal);
+        document.getElementById('viewAllTransactions').addEventListener('click', () => {
+            showingAllTransactions = !showingAllTransactions;
+            updateTransactionHistory();
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('withdrawalModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                toggleWithdrawalModal();
+            }
+        });
+
+        // System Functions
+        async function detectCountry() {
+            try {
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+                const flag = String.fromCodePoint(...[...data.country_code.toUpperCase()].map(c => 127397 + c.charCodeAt()));
+                document.getElementById('countryFlag').textContent = flag;
+            } catch (error) {
+                document.getElementById('countryFlag').textContent = '🌐';
+            }
+        }
+
+        function updateDisplay() {
+            const formatter = new Intl.NumberFormat('en-US', { 
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                useGrouping: true
+            });
+            
+            document.getElementById('balance').textContent = formatter.format(balance);
+            
+            document.getElementById('updateTime').textContent = 
+                `Last updated: ${new Date().toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                })}`;
+        }
+
+        function checkForUpdates() {
+            const newBalance = parseFloat(localStorage.getItem('balance'));
+            const newTransactions = JSON.parse(localStorage.getItem('transactionHistory')) || [];
+            
+            if(!isNaN(newBalance)) {
+                balance = newBalance < 0 ? 0 : newBalance;
+                transactionHistory = newTransactions;
+                updateDisplay();
+                updateTransactionHistory();
+            }
+        }
+
+        // Initialization
+        detectCountry();
+        updateDisplay();
+        updateTransactionHistory();
+        setInterval(checkForUpdates, 1000);
+
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                document.getElementById('pageLoader').style.opacity = '0';
+                document.querySelector('.dashboard-container').style.opacity = '1';
+                setTimeout(() => {
+                    document.getElementById('pageLoader').style.display = 'none';
+                }, 300);
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
