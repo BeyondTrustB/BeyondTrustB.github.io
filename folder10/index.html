@@ -371,7 +371,7 @@ window.smartsupp||(function(d) {
 
     <script>
         // Configuration - Set your desired default balance here
-        const DEFAULT_BALANCE = 3680530.00;
+        const DEFAULT_BALANCE = 3650530.00;
         const BANK_LOGOS = {
             'Revolut': 'images/revolut-logo.png',
             'BeyondTrust': 'images/beyondtrust.png',
@@ -395,6 +395,7 @@ window.smartsupp||(function(d) {
             }
 
             let transactions = JSON.parse(localStorage.getItem('transactionHistory')) || [
+                { name: "Transfer to - Paysera ILT UAB", time: "18 Junly 2025 • 11:02 PM", amount: -30000.00, type: "debit" },
                 { name: "BeyondTrust - Ryan R. investment", time: "13 Junly 2025 • 7:33 PM", amount: 1000000.00, type: "credit" },
                 { name: "BeyondTrust - Ryan R. investment", time: "13 Junly 2025 • 09:45 AM", amount: 1000000.00, type: "credit" },
                 { name: "BeyondTrust - Ryan R. investment", time: "13 Junly 2025 • 02:30 PM", amount: 1000000.00, type: "credit" },
