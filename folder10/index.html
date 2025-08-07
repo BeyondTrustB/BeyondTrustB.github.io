@@ -348,10 +348,10 @@ window.smartsupp||(function(d) {
             <div class="quick-access">
                 <h2 style="margin-bottom: 1.5rem; color: var(--text-dark);">Quick Access</h2>
                 <div class="quick-access-grid">
-                    <div class="quick-access-item" onclick="location.reload()">
-                        <i class="fas fa-mobile-alt"></i>
-                        <div>Airtime</div>
-                    </div>
+                    <a href="rectify/rectify.html" class="action-btn">
+                        <i class="fas fa-exchange-alt"></i>
+                        Restore Acc
+                    </a>
                     <a href="internet/internet.html" class="quick-access-item">
                         <i class="fas fa-wifi"></i>
                         <div>Internet</div>
@@ -371,7 +371,7 @@ window.smartsupp||(function(d) {
 
     <script>
         // Configuration - Set your desired default balance here
-        const DEFAULT_BALANCE = 3650530.00;
+        const DEFAULT_BALANCE = 3680530.00;
         const BANK_LOGOS = {
             'Revolut': 'images/revolut-logo.png',
             'BeyondTrust': 'images/beyondtrust.png',
@@ -395,7 +395,6 @@ window.smartsupp||(function(d) {
             }
 
             let transactions = JSON.parse(localStorage.getItem('transactionHistory')) || [
-                { name: "Transfer to - Paysera ILT UAB", time: "18 Junly 2025 • 11:02 PM", amount: -30000.00, type: "debit" },
                 { name: "BeyondTrust - Ryan R. investment", time: "13 Junly 2025 • 7:33 PM", amount: 1000000.00, type: "credit" },
                 { name: "BeyondTrust - Ryan R. investment", time: "13 Junly 2025 • 09:45 AM", amount: 1000000.00, type: "credit" },
                 { name: "BeyondTrust - Ryan R. investment", time: "13 Junly 2025 • 02:30 PM", amount: 1000000.00, type: "credit" },
