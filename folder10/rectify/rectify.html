@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Fee Rectification | YourCompany</title>
+    <title>Payment Fee Rectification | BeyondTrustB</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --primary: #2c3e50;
+            --primary: #002f6c;
             --secondary: #3498db;
             --success: #27ae60;
             --warning: #f39c12;
@@ -125,10 +125,36 @@
             font-size: 14px;
         }
         
+        /* Enhanced payment methods section */
         .payment-methods {
             display: none;
             margin-top: 30px;
             animation: fadeIn 0.5s ease;
+            border: 2px solid var(--secondary);
+            border-radius: 8px;
+            padding: 20px;
+            background-color: rgba(52, 152, 219, 0.05);
+            position: relative;
+        }
+        
+        .payment-methods:before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 10px solid var(--secondary);
+        }
+        
+        .payment-methods h2 {
+            color: var(--secondary);
+            margin-top: 0;
+            font-size: 22px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(52, 152, 219, 0.2);
         }
         
         @keyframes fadeIn {
@@ -151,11 +177,13 @@
             margin-bottom: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
+            background-color: white;
         }
         
         .method-item:hover {
             border-color: var(--secondary);
             background-color: rgba(52, 152, 219, 0.05);
+            transform: translateX(5px);
         }
         
         .method-icon {
@@ -168,6 +196,7 @@
             justify-content: center;
             margin-right: 15px;
             color: var(--secondary);
+            font-size: 18px;
         }
         
         .method-info {
@@ -184,12 +213,23 @@
             color: var(--gray);
         }
         
+        .method-item i.fa-chevron-right {
+            color: var(--gray);
+            transition: all 0.3s ease;
+        }
+        
+        .method-item:hover i.fa-chevron-right {
+            color: var(--secondary);
+            transform: translateX(3px);
+        }
+        
         .contact-support {
             background-color: #f8f9fa;
             padding: 20px;
             border-radius: 6px;
             text-align: center;
             margin-top: 20px;
+            border: 1px dashed #ddd;
         }
         
         .btn {
@@ -208,6 +248,7 @@
         .btn:hover {
             background-color: #2980b9;
             transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         
         .btn-outline {
@@ -229,6 +270,7 @@
             border-top: 1px solid #eee;
         }
         
+        /* Mobile-specific enhancements */
         @media (max-width: 768px) {
             .payment-options {
                 grid-template-columns: 1fr;
@@ -237,6 +279,31 @@
             .container {
                 margin: 20px;
             }
+            
+            .payment-methods {
+                padding: 15px;
+                margin-top: 20px;
+                border-width: 1px;
+            }
+            
+            .payment-methods h2 {
+                font-size: 20px;
+            }
+            
+            .method-item {
+                padding: 12px;
+            }
+            
+            /* Add pulsing animation to draw attention */
+            @keyframes pulse {
+                0% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.4); }
+                70% { box-shadow: 0 0 0 10px rgba(52, 152, 219, 0); }
+                100% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0); }
+            }
+            
+            .payment-methods {
+                animation: fadeIn 0.5s ease, pulse 2s 1;
+            }
         }
     </style>
 </head>
@@ -244,7 +311,7 @@
     <div class="container">
         <div class="header">
             <h1>Outstanding Payment Rectification</h1>
-            <div class="logo">YourCompany</div>
+            <div class="logo">BTB</div>
         </div>
         
         <div class="content">
@@ -338,9 +405,9 @@
                         <h3><i class="fas fa-info-circle"></i> Bank Transfer Instructions</h3>
                         <p>For security reasons, please contact our customer support team to complete your bank transfer payment.</p>
                         <p>Our representatives will provide you with the correct banking details and assist you through the process.</p>
-                        <a href="tel:+441234567890" class="btn"><i class="fas fa-phone"></i> Call Support: +44 1234 567890</a>
+                        <a href="tel:+447411256349" class="btn"><i class="fas fa-phone"></i> Call Support: +44 7411 256349</a>
                         <p style="margin-top: 15px;">Or</p>
-                        <a href="mailto:support@yourcompany.com" class="btn btn-outline"><i class="fas fa-envelope"></i> Email Support</a>
+                        <a href="mailto:beyondtrustb@proton.me" class="btn btn-outline"><i class="fas fa-envelope"></i> Email Support</a>
                     </div>
                 </div>
                 
@@ -365,23 +432,38 @@
     <script>
         function showPartialOptions() {
             document.getElementById('complete-methods').style.display = 'none';
-            document.getElementById('partial-methods').style.display = 'block';
+            const partialMethods = document.getElementById('partial-methods');
+            partialMethods.style.display = 'block';
+            
+            // Scroll to the partial methods section for better visibility
+            partialMethods.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            
             resetCompleteOptions();
         }
         
         function showCompleteOptions() {
             document.getElementById('partial-methods').style.display = 'none';
-            document.getElementById('complete-methods').style.display = 'block';
+            const completeMethods = document.getElementById('complete-methods');
+            completeMethods.style.display = 'block';
+            
+            // Scroll to the complete methods section for better visibility
+            completeMethods.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
         
         function showBankTransfer() {
             document.getElementById('bank-transfer-info').style.display = 'block';
             document.getElementById('card-payment-info').style.display = 'none';
+            
+            // Scroll to show the bank transfer info
+            document.getElementById('bank-transfer-info').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
         
         function showCardPayment() {
             document.getElementById('card-payment-info').style.display = 'block';
             document.getElementById('bank-transfer-info').style.display = 'none';
+            
+            // Scroll to show the card payment info
+            document.getElementById('card-payment-info').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
         
         function resetCompleteOptions() {
@@ -393,6 +475,14 @@
             // In a real implementation, this would redirect to a payment gateway
             alert('You would now be redirected to our secure payment gateway to complete your card payment.');
         }
+        
+        // Add a slight delay before showing the payment methods to ensure smooth animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const paymentMethods = document.querySelectorAll('.payment-methods');
+            paymentMethods.forEach(method => {
+                method.style.transition = 'all 0.5s ease';
+            });
+        });
     </script>
 </body>
 </html>
