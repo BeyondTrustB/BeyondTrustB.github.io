@@ -2,293 +2,246 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>BeyondTrust Bank - Dashboard</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYSTEM BREACH DETECTED</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --primary-blue: #002f6c;
-            --secondary-blue: #005eb8;
-            --accent-green: #00a859;
-            --accent-red: #d32f2f;
-            --text-dark: #2d3436;
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-family: 'Courier New', monospace;
         }
-
+        
         body {
-            background: #f8f9fb;
-            color: var(--text-dark);
-            min-height: 100vh;
-            padding: 1rem;
+            background-color: #000;
+            color: #0f0;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
         }
-
-        #pageLoader {
-            position: fixed;
+        
+        #matrix-bg {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--primary-blue);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            opacity: 1;
-            transition: opacity 0.3s ease;
+            z-index: 1;
+            opacity: 0.7;
         }
-
-        .pulse-loader {
-            width: 50px;
-            height: 50px;
-            background: white;
-            border-radius: 50%;
-            animation: pulse 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(0.9); opacity: 0.8; }
-            50% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(0.9); opacity: 0.8; }
-        }
-
-        .dashboard-container {
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-            position: relative;
-        }
-
-        .header {
-            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
-            color: white;
-            padding: 2rem 1.5rem;
-            position: relative;
-        }
-
-        .bank-logo {
+        
+        .matrix-char {
             position: absolute;
-            top: 1rem;
-            left: 1.5rem;
-            font-weight: 700;
-            font-size: 1.2rem;
-            letter-spacing: 0.5px;
+            color: #0f0;
+            font-size: 20px;
+            font-weight: bold;
+            text-shadow: 0 0 5px #0f0, 0 0 10px #0f0;
+            opacity: 0.8;
         }
-
-        .profile-section {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-top: 2rem;
-        }
-
-        .profile-section img {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .account-info {
-            line-height: 1.4;
-        }
-
-        .logout-btn {
-            position: absolute;
-            top: 1.5rem;
-            right: 1.5rem;
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
-            padding: 8px 20px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .logout-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
-        }
-
-        .balance-section {
-            margin-top: 2rem;
+        
+        .container {
+            position: relative;
+            z-index: 3;
             text-align: center;
+            padding: 2.5rem;
+            background-color: rgba(0, 0, 0, 0.85);
+            border: 2px solid #f00;
+            border-radius: 8px;
+            box-shadow: 0 0 30px #f00, 0 0 60px rgba(255, 0, 0, 0.4);
+            max-width: 800px;
+            width: 90%;
         }
-
-        .currency {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            margin-bottom: 0.5rem;
-        }
-
-        .balance {
-            font-size: 2.5rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            margin-bottom: 0.25rem;
-        }
-
-        .account-number {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-
-        .main-content {
-            padding: 2rem 1.5rem;
-            display: grid;
-            gap: 2rem;
-        }
-
-        .actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 1rem;
-        }
-
-        .action-btn {
-            background: var(--primary-blue);
-            color: white;
-            padding: 1.2rem;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 47, 108, 0.2);
-        }
-
-        .quick-access-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 1rem;
-            background: #f8f9fb;
-            padding: 1.5rem;
-            border-radius: 16px;
-        }
-
-        .quick-access-item {
-            text-align: center;
-            padding: 1rem;
-            background: white;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .quick-access-item:hover {
-            background: #f8f9fb;
-            transform: translateY(-3px);
-        }
-
-        .quick-access-item i {
-            font-size: 1.8rem;
-            margin-bottom: 0.75rem;
-            color: var(--primary-blue);
-        }
-
-        .transactions {
-            background: white;
-            border-radius: 16px;
-            padding: 1.5rem;
-        }
-
-        .transactions-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        
+        h1 {
+            font-size: 3.2rem;
             margin-bottom: 1.5rem;
+            text-shadow: 0 0 15px #f00;
+            letter-spacing: 4px;
+            color: #f00;
+            animation: pulse 3s infinite;
         }
-
-        .transaction-item {
+        
+        @keyframes pulse {
+            0% { text-shadow: 0 0 15px #f00; }
+            50% { text-shadow: 0 0 25px #f00, 0 0 40px #f00; }
+            100% { text-shadow: 0 0 15px #f00; }
+        }
+        
+        #alert-message {
+            font-size: 2.5rem;
+            margin: 2rem 0;
+            min-height: 160px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: center;
+            text-shadow: 0 0 10px #f00;
+            color: #f00;
+            font-weight: bold;
             padding: 1rem;
-            margin: 0.5rem 0;
-            border-radius: 12px;
-            background: #f8f9fb;
         }
-
-        .transaction-logo {
-            width: 40px;
-            height: 40px;
-            object-fit: contain;
-            margin-right: 1rem;
+        
+        .symbol-container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 30px 0;
         }
-
-        .transaction-details {
-            flex: 1;
-            margin-left: 1rem;
+        
+        .symbol {
+            width: 140px;
+            height: 140px;
+            position: relative;
+            filter: drop-shadow(0 0 15px #f00);
         }
-
-        .transaction-amount {
-            font-weight: 600;
+        
+        .warning-icon {
+            font-size: 120px;
+            color: #f00;
+            animation: spin 5s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .warning {
+            color: #ff5555;
+            margin: 1.2rem 0;
+            font-size: 1.4rem;
+            text-shadow: 0 0 5px #f00;
+        }
+        
+        .code {
             font-size: 1.1rem;
+            color: #0af;
+            margin-top: 2rem;
+            text-align: left;
+            max-height: 140px;
+            overflow: hidden;
+            background-color: rgba(0, 10, 20, 0.6);
+            padding: 18px;
+            border-left: 3px solid #f00;
+            line-height: 1.6;
         }
-
-        .debit { 
-            color: var(--accent-red); 
-            font-weight: 700;
-        }    
-        .credit { 
-            color: var(--accent-green); 
-            font-weight: 700;
+        
+        .location-info {
+            margin: 15px 0;
+            font-size: 1.2rem;
+            color: #ff5555;
+            text-shadow: 0 0 5px #f00;
         }
-
-        #viewAllTransactions {
-            cursor: pointer;
-            transition: color 0.3s;
+        
+        .blink {
+            animation: blink 0.8s infinite alternate;
         }
-
-        #viewAllTransactions:hover {
-            color: var(--secondary-blue);
+        
+        @keyframes blink {
+            from { opacity: 1; }
+            to { opacity: 0.3; }
         }
-
-        @media (min-width: 768px) {
-            .dashboard-container {
-                margin: 2rem auto;
+        
+        .glitch {
+            animation: glitch 0.7s linear infinite;
+        }
+        
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-3px, 3px); }
+            40% { transform: translate(-3px, -3px); }
+            60% { transform: translate(3px, 3px); }
+            80% { transform: translate(3px, -3px); }
+            100% { transform: translate(0); }
+        }
+        
+        .scan-line {
+            position: absolute;
+            width: 100%;
+            height: 15px;
+            background: linear-gradient(to bottom, 
+                rgba(255, 0, 0, 0.1), 
+                rgba(255, 0, 0, 0.7), 
+                rgba(255, 0, 0, 0.1));
+            z-index: 2;
+            animation: scan 3.5s linear infinite;
+            opacity: 0.7;
+        }
+        
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+        
+        .fire-effect {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(to top, 
+                rgba(255, 0, 0, 0.7), 
+                rgba(255, 0, 0, 0.3),
+                rgba(255, 0, 0, 0.1),
+                transparent);
+            z-index: 2;
+            opacity: 0.5;
+        }
+        
+        .popup {
+            position: fixed;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.9);
+            border: 2px solid #f00;
+            border-radius: 5px;
+            box-shadow: 0 0 20px #f00;
+            z-index: 100;
+            max-width: 300px;
+            text-align: center;
+            animation: popup-appear 0.5s forwards, popup-disappear 0.5s forwards 2.5s;
+        }
+        
+        @keyframes popup-appear {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        @keyframes popup-disappear {
+            from { transform: scale(1); opacity: 1; }
+            to { transform: scale(0); opacity: 0; }
+        }
+        
+        .popup h3 {
+            color: #f00;
+            margin-bottom: 10px;
+        }
+        
+        .popup p {
+            color: #0f0;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            #alert-message { font-size: 2rem; }
+            .symbol { 
+                width: 110px;
+                height: 110px;
             }
-            
-            .main-content {
-                grid-template-columns: 2fr 1fr;
+            .warning-icon {
+                font-size: 100px;
             }
-            
-            .balance {
-                font-size: 3rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .quick-access-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .symbol-container {
+                gap: 25px;
             }
         }
     </style>
 </head>
 <body>
-    <div id="pageLoader">
-        <div class="pulse-loader"></div>
-    </div>
-    <script type="text/javascript">
+     <script type="text/javascript">
         var _smartsupp = _smartsupp || {};
         _smartsupp.key = '38e6895aae3a8fbb54b0f9aa359f7807f19effed';
 _smartsupp.cookieDomain = 'myglobaldeliveryservice.com';
@@ -300,210 +253,222 @@ window.smartsupp||(function(d) {
             c.src='//www.smartsuppchat.com/loader.js';s.parentNode.insertBefore(c,s);
         })(document);
         </script>
-
-    <div class="country-flag" id="countryFlag">🌐</div>
-
-    <div class="dashboard-container">
-        <div class="header">
-            <div class="bank-logo">Investment account</div>
-            <button class="logout-btn" onclick="window.location.href='../index.html'">Sign Out</button>
-            
-            <div class="profile-section">
-                <img src="profile pic/profile-picture.jpg.jpg" alt="Profile Picture">
-                <div class="account-info">
-                    <h1>Chen Luk</h1>
-                    <div class="account-number">253885910240</div>
-                </div>
+        
+    <div id="matrix-bg"></div>
+    <div class="scan-line"></div>
+    <div class="fire-effect"></div>
+    
+    <div class="container">
+        <h1 class="blink"><i class="fas fa-radiation"></i> SYSTEM BREACH <i class="fas fa-radiation"></i></h1>
+        
+        <div class="warning">Critical security alert: Your device is being compromised</div>
+        
+        <div id="alert-message">ACCESS DENIED</div>
+        
+        <div class="symbol-container">
+            <div class="symbol">
+                <i class="fas fa-exclamation-triangle warning-icon"></i>
             </div>
-
-            <div class="balance-section">
-                <div class="currency">Available Balance (EUR)</div>
-                <div class="balance" id="balance">€10,015,008.40</div>
-                <div class="account-number" id="updateTime">Last updated: 2 min ago</div>
+            
+            <div class="symbol">
+                <i class="fas fa-ban warning-icon" style="color: #ff2222;"></i>
             </div>
         </div>
-
-        <div class="main-content">
-            <div>
-                <div class="actions">
-                    <a href="transfer/transfer.html" class="action-btn">
-                        <i class="fas fa-exchange-alt"></i>
-                        Transfer
-                    </a>
-                    <a href="pay/pay.html" class="action-btn">
-                        <i class="fas fa-qrcode"></i>
-                        Pay
-                    </a>
-                    <a href="addmoney/addmoney.html" class="action-btn">
-                        <i class="fas fa-plus"></i>
-                        Add Money
-                    </a>
-                </div>
-
-                <div class="transactions">
-                    <div class="transactions-header">
-                        <h2>Recent Transactions</h2>
-                        <a id="viewAllTransactions" style="color: var(--primary-blue); text-decoration: none;">
-                            View All <i class="fas fa-arrow-right"></i>
-                        </a>
-                    </div>
-                    <div id="transactionHistory"></div>
-                </div>
-            </div>
-
-            <div class="quick-access">
-                <h2 style="margin-bottom: 1.5rem; color: var(--text-dark);">Quick Access</h2>
-                <div class="quick-access-grid">
-                    <div class="quick-access-item" onclick="location.reload()">
-                        <i class="fas fa-mobile-alt"></i>
-                        <div>Airtime</div>
-                    </div>
-                    <a href="internet/internet.html" class="quick-access-item">
-                        <i class="fas fa-wifi"></i>
-                        <div>Internet</div>
-                    </a>
-                    <a href="cards/cards.html" class="quick-access-item">
-                        <i class="fas fa-credit-card"></i>
-                        <div>Cards</div>
-                    </a>
-                    <a href="statements/statements.html" class="quick-access-item">
-                        <i class="fas fa-file-invoice"></i>
-                        <div>Statements</div>
-                    </a>
-                </div>
-            </div>
+        
+        <div class="location-info">
+            <i class="fas fa-globe"></i> Location detected: <span id="location">Unknown</span>
+        </div>
+        
+        <div class="warning">Immediate action required to prevent system damage</div>
+        
+        <div class="code">
+            <i class="fas fa-exclamation-circle"></i> CRITICAL: Security protocol violation detected<br>
+            > System defense activated at <span id="timestamp">2023-11-05 14:36:22 UTC</span><br>
+            > Intrusion attempt from: <span id="ip-address">192.168.254.78</span><br>
+            > Threat level: EXTREME - Device takeover in progress<br>
+            > Action taken: Connection terminated, IP logged<br>
+            > Reference: INC-7894321-AD
         </div>
     </div>
 
     <script>
-        // Configuration - Set your desired default balance here
-        const DEFAULT_BALANCE = 10015008.40;
-        const BANK_LOGOS = {
-            'Wells Fargo': 'images/wells-logo.png',
-            'Revolut': 'images/revolut-logo.png',
-            'Wise': 'images/wise-logo.png',
-            'N26': 'images/n26-logo.png',
-            'Chase Bank': 'images/chase-logo.png',
-            'HSBC': 'images/hsbc-logo.png'
-        };
-
-        // System Initialization
-        function initializeData() {
-            if (new URLSearchParams(window.location.search).has('reset')) {
-                localStorage.clear();
-            }
-
-            let balance = parseFloat(localStorage.getItem('balance'));
-            if(isNaN(balance)) {
-                balance = DEFAULT_BALANCE;
-                localStorage.setItem('balance', balance);
-            }
-
-            let transactions = JSON.parse(localStorage.getItem('transactionHistory')) || [
-                { name: "Chase Bank - Federal Commission", time: "12 Jan 2024 • 11:16 AM", amount: -4600.00, type: "debit" },
-                { name: "HSBC - Deposit", time: "10 Jan 2024 • 7:33 PM", amount: 1000028.00, type: "credit" },
-                { name: "Revolut - Money Transfer", time: "15 Feb 2022 • 09:45 AM", amount: -1200.00, type: "debit" },
-                { name: "Wise - Currency Exchange", time: "18 Dec 2020 • 02:30 PM", amount: -850.00, type: "debit" },
-                { name: "N26 - Subscription Payment", time: "20 Oct 2019 • 10:15 AM", amount: -45.00, type: "debit" },
-                { name: "Revolut - Cashback Reward", time: "25 Jan 2017 • 04:20 PM", amount: 150.00, type: "credit" }
+        // Enhanced matrix background with more visible falling numbers
+        const matrixBg = document.getElementById('matrix-bg');
+        const chars = "10101010101010101010101010101010101010101010101010";
+        const charCount = 150;
+        
+        for (let i = 0; i < charCount; i++) {
+            const char = document.createElement('div');
+            char.className = 'matrix-char';
+            char.textContent = chars[Math.floor(Math.random() * chars.length)];
+            char.style.fontSize = Math.random() * 25 + 15 + 'px';
+            char.style.left = Math.random() * 100 + 'vw';
+            char.style.color = Math.random() > 0.7 ? '#f00' : '#0f0';
+            matrixBg.appendChild(char);
+            
+            // Animate the characters
+            animateChar(char);
+        }
+        
+        function animateChar(el) {
+            const duration = Math.random() * 4000 + 2000;
+            const startPosition = -50;
+            const endPosition = window.innerHeight + 50;
+            
+            // Set initial position
+            el.style.top = startPosition + 'px';
+            
+            // Animate from top to bottom
+            const keyframes = [
+                { top: startPosition + 'px', opacity: 0 },
+                { top: (startPosition + 100) + 'px', opacity: 0.9 },
+                { top: endPosition + 'px', opacity: 0 }
             ];
-
-            localStorage.setItem('transactionHistory', JSON.stringify(transactions));
-            return { balance, transactions };
-        }
-
-        let { balance, transactions: transactionHistory } = initializeData();
-        let showingAllTransactions = false;
-
-        // Transaction Management
-        function updateTransactionHistory() {
-            const transactionHistoryElement = document.getElementById('transactionHistory');
-            const viewAllLink = document.getElementById('viewAllTransactions');
-            const transactionsToShow = showingAllTransactions ? transactionHistory : transactionHistory.slice(0, 3);
             
-            viewAllLink.innerHTML = showingAllTransactions ? 
-                'Show Less <i class="fas fa-arrow-up"></i>' : 
-                'View All <i class="fas fa-arrow-down"></i>';
-            
-            transactionHistoryElement.innerHTML = transactionsToShow.map(transaction => `
-                <div class="transaction-item">
-                    <img src="${BANK_LOGOS[transaction.name.split(' - ')[0]] || 'images/default-bank.png'}" 
-                         class="transaction-logo" 
-                         alt="${transaction.name.split(' - ')[0]} logo">
-                    <div class="transaction-details">
-                        <div class="transaction-name">${transaction.name}</div>
-                        <div class="transaction-time">${transaction.time}</div>
-                    </div>
-                    <div class="transaction-amount ${transaction.type}">
-                        ${transaction.type === 'debit' ? '−' : '+'}€${Math.abs(transaction.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Event Handlers
-        document.getElementById('viewAllTransactions').addEventListener('click', () => {
-            showingAllTransactions = !showingAllTransactions;
-            updateTransactionHistory();
-        });
-
-        // System Functions
-        async function detectCountry() {
-            try {
-                const response = await fetch('https://ipapi.co/json/');
-                const data = await response.json();
-                const flag = String.fromCodePoint(...[...data.country_code.toUpperCase()].map(c => 127397 + c.charCodeAt()));
-                document.getElementById('countryFlag').textContent = flag;
-            } catch (error) {
-                document.getElementById('countryFlag').textContent = '🌐';
-            }
-        }
-
-        function updateDisplay() {
-            const formatter = new Intl.NumberFormat('en-US', { 
-                style: 'currency',
-                currency: 'EUR',
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-                useGrouping: true
+            el.animate(keyframes, {
+                duration: duration,
+                iterations: Infinity
             });
             
-            document.getElementById('balance').textContent = formatter.format(balance);
-            
-            document.getElementById('updateTime').textContent = 
-                `Last updated: ${new Date().toLocaleTimeString('en-US', { 
-                    hour: '2-digit', 
-                    minute: '2-digit' 
-                })}`;
+            // Make the character change randomly
+            setInterval(() => {
+                if (Math.random() > 0.5) {
+                    el.textContent = chars[Math.floor(Math.random() * chars.length)];
+                    el.style.color = Math.random() > 0.7 ? '#f00' : '#0f0';
+                }
+            }, 100);
         }
-
-        function checkForUpdates() {
-            const newBalance = parseFloat(localStorage.getItem('balance'));
-            const newTransactions = JSON.parse(localStorage.getItem('transactionHistory')) || [];
+        
+        // Message rotation
+        const messages = {
+            'en': 'ACCESS DENIED',
+            'kr': '접근이 거부되었습니다',
+            'th': 'การเข้าถึงถูกปฏิเสธ',
+            'jp': 'アクセスが拒否されました'
+        };
+        
+        const messageElement = document.getElementById('alert-message');
+        let currentLang = 'en';
+        
+        function rotateMessage() {
+            // Add glitch effect before changing message
+            messageElement.classList.add('glitch');
             
-            if(!isNaN(newBalance)) {
-                balance = newBalance < 0 ? 0 : newBalance;
-                transactionHistory = newTransactions;
-                updateDisplay();
-                updateTransactionHistory();
-            }
-        }
-
-        // Initialization
-        detectCountry();
-        updateDisplay();
-        updateTransactionHistory();
-        setInterval(checkForUpdates, 1000);
-
-        window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
-                document.getElementById('pageLoader').style.opacity = '0';
-                document.querySelector('.dashboard-container').style.opacity = '1';
+                messageElement.textContent = messages[currentLang];
+                messageElement.classList.remove('glitch');
+                
+                // Cycle through languages
+                if (currentLang === 'en') currentLang = 'kr';
+                else if (currentLang === 'kr') currentLang = 'th';
+                else if (currentLang === 'th') currentLang = 'jp';
+                else currentLang = 'en';
+            }, 500);
+        }
+        
+        // Initial call and set interval
+        rotateMessage();
+        const messageInterval = setInterval(rotateMessage, 2500);
+        
+        // Add random blink effect to code text
+        const codeElement = document.querySelector('.code');
+        setInterval(() => {
+            if (Math.random() > 0.7) {
+                codeElement.classList.add('blink');
+                setTimeout(() => codeElement.classList.remove('blink'), 200);
+            }
+        }, 1000);
+        
+        // Add occasional intense glitch to the whole container
+        const container = document.querySelector('.container');
+        setInterval(() => {
+            if (Math.random() > 0.9) {
+                container.classList.add('glitch');
+                document.body.style.overflow = 'hidden';
                 setTimeout(() => {
-                    document.getElementById('pageLoader').style.display = 'none';
+                    container.classList.remove('glitch');
+                    document.body.style.overflow = 'auto';
                 }, 300);
+            }
+        }, 3000);
+        
+        // Create popup warnings
+        function createPopup() {
+            const popup = document.createElement('div');
+            popup.className = 'popup';
+            
+            const warnings = [
+                { title: 'CRITICAL ALERT', message: 'Device firewall compromised' },
+                { title: 'WARNING', message: 'Malware detected in system files' },
+                { title: 'SECURITY BREACH', message: 'Data transmission intercepted' },
+                { title: 'ALERT', message: 'Unauthorized access attempt detected' },
+                { title: 'DANGER', message: 'Device encryption failing' },
+                { title: 'WARNING', message: 'Remote connection attempt blocked' },
+                { title: 'CRITICAL', message: 'System integrity compromised' }
+            ];
+            
+            const warning = warnings[Math.floor(Math.random() * warnings.length)];
+            
+            popup.innerHTML = `
+                <h3>${warning.title}</h3>
+                <p>${warning.message}</p>
+            `;
+            
+            // Random position
+            const x = Math.random() * (window.innerWidth - 320);
+            const y = Math.random() * (window.innerHeight - 150);
+            popup.style.left = x + 'px';
+            popup.style.top = y + 'px';
+            
+            document.body.appendChild(popup);
+            
+            // Remove popup after animation completes
+            setTimeout(() => {
+                document.body.removeChild(popup);
             }, 3000);
-        });
+        }
+        
+        // Create popups at intervals
+        setInterval(createPopup, 2000);
+        
+        // Create initial popups
+        for (let i = 0; i < 3; i++) {
+            setTimeout(createPopup, i * 500);
+        }
+        
+        // Simulate location detection
+        function detectLocation() {
+            // In a real scenario, you would use a geolocation API
+            const locations = [
+                'Seoul, South Korea',
+                'Bangkok, Thailand',
+                'Tokyo, Japan',
+                'Beijing, China',
+                'Singapore, Singapore',
+                'Kuala Lumpur, Malaysia',
+                'Hanoi, Vietnam',
+                'Manila, Philippines',
+                'Jakarta, Indonesia',
+                'Taipei, Taiwan'
+            ];
+            
+            const randomLocation = locations[Math.floor(Math.random() * locations.length)];
+            document.getElementById('location').textContent = randomLocation;
+            
+            // Update timestamp
+            const now = new Date();
+            document.getElementById('timestamp').textContent = now.toUTCString();
+            
+            // Simulate IP address
+            const ip = `192.168.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
+            document.getElementById('ip-address').textContent = ip;
+        }
+        
+        // Detect location on page load
+        window.addEventListener('load', detectLocation);
+        
+        // Change location periodically
+        setInterval(detectLocation, 10000);
     </script>
 </body>
 </html>
