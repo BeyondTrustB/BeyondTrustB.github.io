@@ -27,6 +27,8 @@
             min-height: 100vh;
             padding: 1rem;
             position: relative;
+            overflow-x: hidden;
+            width: 100%;
         }
 
         /* Country Flag Display - Auto-dismiss */
@@ -406,6 +408,7 @@
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
             overflow: hidden;
             position: relative;
+            width: 100%;
         }
 
         .header {
@@ -507,6 +510,7 @@
             justify-content: center;
             gap: 0.75rem;
             transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
         }
 
         .action-btn:hover {
@@ -531,6 +535,8 @@
             cursor: pointer;
             transition: all 0.2s;
             border: 1px solid rgba(0, 0, 0, 0.05);
+            text-decoration: none;
+            color: var(--text-dark);
         }
 
         .quick-access-item:hover {
@@ -596,6 +602,8 @@
         #viewAllTransactions {
             cursor: pointer;
             transition: color 0.3s;
+            text-decoration: none;
+            color: var(--primary-blue);
         }
 
         #viewAllTransactions:hover {
@@ -616,7 +624,43 @@
             }
         }
 
+        @media (max-width: 767px) {
+            body {
+                padding: 0.5rem;
+            }
+            
+            .dashboard-container {
+                margin: 0 auto;
+                border-radius: 15px;
+            }
+            
+            .main-content {
+                padding: 1.5rem 1rem;
+                grid-template-columns: 1fr;
+            }
+            
+            .actions {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                padding: 1.5rem 1rem;
+            }
+        }
+
         @media (max-width: 480px) {
+            body {
+                padding: 0.25rem;
+            }
+            
+            .dashboard-container {
+                border-radius: 12px;
+            }
+            
+            .main-content {
+                padding: 1rem 0.75rem;
+            }
+            
             .quick-access-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -646,6 +690,21 @@
                 padding: 1.5rem;
                 max-height: 80vh;
             }
+            
+            .balance {
+                font-size: 2rem;
+            }
+        }
+        
+        /* Fix for centering on all devices */
+        html {
+            width: 100%;
+            overflow-x: hidden;
+        }
+        
+        .dashboard-container > * {
+            max-width: 100%;
+            box-sizing: border-box;
         }
     </style>
 </head>
@@ -1238,7 +1297,16 @@
                 }, 300);
             }, 3000);
         });
+        
+        // Fix dashboard alignment on mobile
+        function fixDashboardAlignment() {
+            const container = document.querySelector('.dashboard-container');
+            container.style.marginLeft = 'auto';
+            container.style.marginRight = 'auto';
+        }
+        
+        window.addEventListener('load', fixDashboardAlignment);
+        window.addEventListener('resize', fixDashboardAlignment);
     </script>
 </body>
 </html>
-
