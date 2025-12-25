@@ -25,15 +25,21 @@
             background: #f8f9fb;
             color: var(--text-dark);
             min-height: 100vh;
-            padding: 1rem;
+            padding: 0;
             position: relative;
+            overflow-x: hidden;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         /* Country Flag Display - Auto-dismiss */
         .country-detector {
             position: fixed;
             top: 20px;
-            left: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             z-index: 1000;
             background: white;
             border-radius: 15px;
@@ -45,20 +51,20 @@
             border: 1px solid rgba(0, 47, 108, 0.1);
             animation: slideIn 0.5s ease-out forwards;
             opacity: 0;
-            transform: translateX(-100px);
+            transform: translateX(-50%) translateY(-100px);
             transition: all 0.5s ease;
         }
 
         .country-detector.visible {
             animation: slideIn 0.5s ease-out forwards;
             opacity: 1;
-            transform: translateX(0);
+            transform: translateX(-50%) translateY(0);
         }
 
         .country-detector.hiding {
             animation: slideOut 0.5s ease-out forwards;
             opacity: 0;
-            transform: translateX(-100px);
+            transform: translateX(-50%) translateY(-100px);
         }
 
         .country-detector.hidden {
@@ -151,24 +157,193 @@
             transform: scale(1.1);
         }
 
+        /* Transaction Modal Styles - FIXED */
+        .transaction-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+        }
+
+        .transaction-modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s ease-out;
+            position: relative;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .transaction-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 1;
+        }
+
+        .transaction-modal-title {
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+            margin: 0;
+        }
+
+        .close-transaction-modal {
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: var(--primary-blue);
+            background: none;
+            border: none;
+            line-height: 1;
+            padding: 0.5rem;
+            margin: -0.5rem;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+
+        .close-transaction-modal:hover {
+            background-color: #f0f0f0;
+        }
+
+        .transaction-detail-item {
+            margin-bottom: 1.2rem;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .transaction-detail-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 0.3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-value {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        .detail-value.credit {
+            color: var(--accent-green);
+        }
+
+        .detail-value.debit {
+            color: var(--accent-red);
+        }
+
+        .transaction-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-completed {
+            background: #e8f5e8;
+            color: var(--accent-green);
+        }
+
+        .status-pending {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .transaction-reference {
+            background: #f8f9fb;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            text-align: center;
+            margin: 1rem 0;
+            word-break: break-all;
+        }
+
+        /* Modal Close Button */
+        .modal-close-btn {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background-color 0.3s;
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        .modal-close-btn:hover {
+            background: var(--secondary-blue);
+        }
+
+        /* Make transaction items clickable */
+        .transaction-item {
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .transaction-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
         @keyframes slideIn {
             from {
-                transform: translateX(-100px);
+                transform: translateX(-50%) translateY(-100px);
                 opacity: 0;
             }
             to {
-                transform: translateX(0);
+                transform: translateX(-50%) translateY(0);
                 opacity: 1;
             }
         }
 
         @keyframes slideOut {
             from {
-                transform: translateX(0);
+                transform: translateX(-50%) translateY(0);
                 opacity: 1;
             }
             to {
-                transform: translateX(-100px);
+                transform: translateX(-50%) translateY(-100px);
                 opacity: 0;
             }
         }
@@ -189,7 +364,7 @@
         }
 
         .country-detector:hover {
-            transform: translateY(-2px);
+            transform: translateX(-50%) translateY(-2px);
             box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
         }
@@ -231,7 +406,8 @@
             opacity: 0;
             transition: opacity 0.3s ease;
             max-width: 1200px;
-            margin: 0 auto;
+            width: 100%;
+            margin: 0;
             background: white;
             border-radius: 20px;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
@@ -244,6 +420,7 @@
             color: white;
             padding: 2rem 1.5rem;
             position: relative;
+            width: 100%;
         }
 
         .bank-logo {
@@ -293,6 +470,7 @@
         .balance-section {
             margin-top: 2rem;
             text-align: center;
+            width: 100%;
         }
 
         .currency {
@@ -317,12 +495,14 @@
             padding: 2rem 1.5rem;
             display: grid;
             gap: 2rem;
+            width: 100%;
         }
 
         .actions {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             gap: 1rem;
+            width: 100%;
         }
 
         .action-btn {
@@ -338,6 +518,8 @@
             justify-content: center;
             gap: 0.75rem;
             transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            width: 100%;
         }
 
         .action-btn:hover {
@@ -352,6 +534,7 @@
             background: #f8f9fb;
             padding: 1.5rem;
             border-radius: 16px;
+            width: 100%;
         }
 
         .quick-access-item {
@@ -362,6 +545,8 @@
             cursor: pointer;
             transition: all 0.2s;
             border: 1px solid rgba(0, 0, 0, 0.05);
+            text-decoration: none;
+            color: var(--text-dark);
         }
 
         .quick-access-item:hover {
@@ -379,6 +564,7 @@
             background: white;
             border-radius: 16px;
             padding: 1.5rem;
+            width: 100%;
         }
 
         .transactions-header {
@@ -386,6 +572,7 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
+            width: 100%;
         }
 
         .transaction-item {
@@ -396,6 +583,7 @@
             margin: 0.5rem 0;
             border-radius: 12px;
             background: #f8f9fb;
+            width: 100%;
         }
 
         .transaction-logo {
@@ -427,27 +615,22 @@
         #viewAllTransactions {
             cursor: pointer;
             transition: color 0.3s;
+            text-decoration: none;
+            color: var(--primary-blue);
         }
 
         #viewAllTransactions:hover {
             color: var(--secondary-blue);
         }
 
-        .no-transactions {
-            text-align: center;
-            padding: 3rem 1rem;
-            color: #666;
-        }
-
-        .no-transactions i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: #ccc;
-        }
-
         @media (min-width: 768px) {
+            body {
+                padding: 2rem;
+            }
+            
             .dashboard-container {
-                margin: 2rem auto;
+                margin: 0 auto;
+                max-width: 1200px;
             }
             
             .main-content {
@@ -459,14 +642,75 @@
             }
         }
 
+        @media (max-width: 767px) {
+            body {
+                padding: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .dashboard-container {
+                margin: 0;
+                width: 100%;
+                max-width: 100%;
+                border-radius: 0;
+                min-height: 100vh;
+            }
+            
+            .main-content {
+                padding: 1.5rem 1rem;
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .actions {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            
+            .header {
+                padding: 1.5rem 1rem;
+            }
+            
+            .balance {
+                font-size: 2.2rem;
+            }
+            
+            .action-btn {
+                padding: 1rem;
+            }
+            
+            .country-detector {
+                left: 50%;
+                transform: translateX(-50%);
+                width: 90%;
+                max-width: 350px;
+            }
+        }
+
         @media (max-width: 480px) {
+            body {
+                padding: 0;
+            }
+            
+            .dashboard-container {
+                border-radius: 0;
+            }
+            
+            .main-content {
+                padding: 1rem;
+                gap: 1rem;
+            }
+            
             .quick-access-grid {
                 grid-template-columns: repeat(2, 1fr);
+                padding: 1rem;
+                gap: 0.75rem;
             }
             
             .country-detector {
                 top: 10px;
-                left: 10px;
                 padding: 10px 15px;
                 font-size: 0.9rem;
             }
@@ -484,6 +728,51 @@
                 height: 40px;
                 font-size: 1.2rem;
             }
+            
+            .transaction-modal-content {
+                padding: 1.5rem;
+                max-height: 80vh;
+            }
+            
+            .balance {
+                font-size: 1.8rem;
+            }
+            
+            .transactions {
+                padding: 1rem;
+            }
+            
+            .transaction-item {
+                padding: 0.75rem;
+            }
+        }
+        
+        /* Fix for centering on all devices */
+        html {
+            width: 100%;
+            overflow-x: hidden;
+        }
+        
+        .dashboard-container > * {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+        
+        /* Mobile-specific centering fix */
+        @media (max-width: 767px) {
+            .dashboard-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .header,
+            .main-content,
+            .transactions,
+            .actions,
+            .quick-access {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -491,18 +780,18 @@
     <div id="pageLoader">
         <div class="pulse-loader"></div>
     </div>
-     <script type="text/javascript">
+    <script type="text/javascript">
         var _smartsupp = _smartsupp || {};
-        _smartsupp.key = '29c4084a71b95a604fd6d9d5c256be6537c461cb';
-_smartsupp.cookieDomain = 'myglobaldeliveryservice.com';
-_smartsupp.sitePlatform = 'WP 5.8.6';
-window.smartsupp||(function(d) {
+        _smartsupp.key = '38e6895aae3a8fbb54b0f9aa359f7807f19effed';
+        _smartsupp.cookieDomain = 'myglobaldeliveryservice.com';
+        _smartsupp.sitePlatform = 'WP 5.8.6';
+        window.smartsupp||(function(d) {
             var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
             s=d.getElementsByTagName('script')[0];c=d.createElement('script');
             c.type='text/javascript';c.charset='utf-8';c.async=true;
             c.src='//www.smartsuppchat.com/loader.js';s.parentNode.insertBefore(c,s);
         })(document);
-        </script>
+    </script>
 
     <!-- Show Country Button (hidden initially) -->
     <button class="show-country-btn" id="showCountryBtn" title="Show Location">
@@ -537,8 +826,8 @@ window.smartsupp||(function(d) {
 
             <div class="balance-section">
                 <div class="currency">Available Balance (USD)</div>
-                <div class="balance" id="balance">$0.00</div>
-                <div class="account-number" id="updateTime">Last updated: Just now</div>
+                <div class="balance" id="balance">$6,000,000.00</div>
+                <div class="account-number" id="updateTime">Last updated: 2 min ago</div>
             </div>
         </div>
 
@@ -562,17 +851,11 @@ window.smartsupp||(function(d) {
                 <div class="transactions">
                     <div class="transactions-header">
                         <h2>Recent Transactions</h2>
-                        <span id="viewAllTransactions" style="color: var(--primary-blue); cursor: pointer;">
-                            No transactions yet
-                        </span>
+                        <a id="viewAllTransactions" style="color: var(--primary-blue); text-decoration: none;">
+                            View All <i class="fas fa-arrow-right"></i>
+                        </a>
                     </div>
-                    <div id="transactionHistory">
-                        <div class="no-transactions">
-                            <i class="fas fa-exchange-alt"></i>
-                            <h3>No transactions yet</h3>
-                            <p>Your transaction history will appear here</p>
-                        </div>
-                    </div>
+                    <div id="transactionHistory"></div>
                 </div>
             </div>
 
@@ -600,20 +883,278 @@ window.smartsupp||(function(d) {
         </div>
     </div>
 
+    <!-- Transaction Details Modal -->
+    <div id="transactionModal" class="transaction-modal">
+        <div class="transaction-modal-content">
+            <div class="transaction-modal-header">
+                <h2 class="transaction-modal-title">Transaction Details</h2>
+                <button class="close-transaction-modal" onclick="closeTransactionModal()">&times;</button>
+            </div>
+            
+            <div id="transactionDetailsContent">
+                <!-- Details will be populated here -->
+            </div>
+            
+            <!-- Close Button at Bottom -->
+            <button class="modal-close-btn" onclick="closeTransactionModal()">
+                <i class="fas fa-times"></i> Close Details
+            </button>
+        </div>
+    </div>
+
     <script>
-        // Configuration - Fixed default balance
-        const DEFAULT_BALANCE = 0.00;
-        
-        // No localStorage or transaction history initialization
-        let balance = DEFAULT_BALANCE;
-        let transactionHistory = [];
-        
+        // Configuration - Set your desired default balance here
+        const DEFAULT_BALANCE = 6000000.00;
+        const BANK_LOGOS = {
+            'COINBASE': 'images/COINBASE.png',
+            'LTT CRYPTO': 'images/COINBASE.png',
+            'N26': 'images/n26-logo.png',
+            'Chase Bank': 'images/chase-logo.png',
+            'HSBC': 'images/hsbc-logo.png'
+        };
+
         // Auto-dismiss timer
         let dismissTimer;
         const DISPLAY_TIME = 7000; // 7 seconds
         let isDismissed = false;
 
-        // System Functions - Enhanced Location Detection
+        // Generate unique transaction reference
+        function generateTransactionRef() {
+            const timestamp = Date.now().toString().slice(-8);
+            const random = Math.random().toString(36).substr(2, 6).toUpperCase();
+            return `TRX-${timestamp}-${random}`;
+        }
+
+        // System Initialization with enhanced transaction data
+        function initializeData() {
+            if (new URLSearchParams(window.location.search).has('reset')) {
+                localStorage.clear();
+            }
+
+            let balance = parseFloat(localStorage.getItem('balance'));
+            if(isNaN(balance)) {
+                balance = DEFAULT_BALANCE;
+                localStorage.setItem('balance', balance);
+            }
+
+            let transactions = JSON.parse(localStorage.getItem('transactionHistory')) || [
+                { 
+                    name: "COINBASE - DISBURSEMENT", 
+                    time: "25 Dec 2025 • 2:30 AM", 
+                    amount: 6000000.00, 
+                    type: "credit",
+                    reference: generateTransactionRef(),
+                    status: "completed",
+                    description: "Investment disbursement from COINBASE",
+                    category: "Investment",
+                    method: "Bank Transfer",
+                    beneficiary: "CHRISTINE DELFELD",
+                    accountNumber: "253885910240",
+                    date: "25 December 2025",
+                    exactTime: "02:30 AM"
+                }
+            ];
+
+            localStorage.setItem('transactionHistory', JSON.stringify(transactions));
+            return { balance, transactions };
+        }
+
+        let { balance, transactions: transactionHistory } = initializeData();
+        let showingAllTransactions = false;
+
+        // Transaction Management with click functionality
+        function updateTransactionHistory() {
+            const transactionHistoryElement = document.getElementById('transactionHistory');
+            const viewAllLink = document.getElementById('viewAllTransactions');
+            const transactionsToShow = showingAllTransactions ? transactionHistory : transactionHistory.slice(0, 3);
+            
+            viewAllLink.innerHTML = showingAllTransactions ? 
+                'Show Less <i class="fas fa-arrow-up"></i>' : 
+                'View All <i class="fas fa-arrow-down"></i>';
+            
+            transactionHistoryElement.innerHTML = transactionsToShow.map((transaction, index) => `
+                <div class="transaction-item" onclick="showTransactionDetails(${index})">
+                    <img src="${BANK_LOGOS[transaction.name.split(' - ')[0]] || 'images/default-bank.png'}" 
+                         class="transaction-logo" 
+                         alt="${transaction.name.split(' - ')[0]} logo">
+                    <div class="transaction-details">
+                        <div class="transaction-name">${transaction.name}</div>
+                        <div class="transaction-time">${transaction.time}</div>
+                    </div>
+                    <div class="transaction-amount ${transaction.type}">
+                        ${transaction.type === 'debit' ? '−' : '+'}$${Math.abs(transaction.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Function to show transaction details
+        function showTransactionDetails(index) {
+            const transaction = transactionHistory[index];
+            if (!transaction) return;
+
+            // Generate missing data if not present (for backward compatibility)
+            if (!transaction.reference) transaction.reference = generateTransactionRef();
+            if (!transaction.status) transaction.status = "completed";
+            if (!transaction.description) transaction.description = transaction.name;
+            if (!transaction.category) transaction.category = transaction.name.includes('CRYPTO') ? 'Investment' : 'Transfer';
+            if (!transaction.method) transaction.method = 'Bank Transfer';
+            if (!transaction.beneficiary) transaction.beneficiary = 'ANNE BLANFORD';
+            if (!transaction.accountNumber) transaction.accountNumber = '253885910240';
+            if (!transaction.date) transaction.date = transaction.time.split('•')[0].trim();
+            if (!transaction.exactTime) transaction.exactTime = transaction.time.split('•')[1].trim();
+
+            // Format amount with currency
+            const amountFormatted = new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2
+            }).format(Math.abs(transaction.amount));
+
+            // Build transaction details HTML
+            const detailsHTML = `
+                <div class="transaction-detail-item">
+                    <div class="detail-label">Transaction Reference</div>
+                    <div class="transaction-reference">${transaction.reference}</div>
+                </div>
+                
+                <div class="transaction-detail-item">
+                    <div class="detail-label">Description</div>
+                    <div class="detail-value">${transaction.description}</div>
+                </div>
+                
+                <div class="transaction-detail-item">
+                    <div class="detail-label">Amount</div>
+                    <div class="detail-value ${transaction.type}">${transaction.type === 'credit' ? '+' : '-'}${amountFormatted}</div>
+                </div>
+                
+                <div class="transaction-detail-item">
+                    <div class="detail-label">Transaction Type</div>
+                    <div class="detail-value">${transaction.type === 'credit' ? 'Credit (Deposit)' : 'Debit (Withdrawal)'}</div>
+                </div>
+                
+                <div class="transaction-detail-item">
+                    <div class="detail-label">Date</div>
+                    <div class="detail-value">${transaction.date}</div>
+                </div>
+                
+                <div class="transaction-detail-item">
+                    <div class="detail-label">Time</div>
+                    <div class="detail-value">${transaction.exactTime}</div>
+                </div>
+                
+                <div class="transaction-detail-item">
+                    <div class="detail-label">Status</div>
+                    <div class="transaction-status status-${transaction.status}">
+                        ${transaction.status === 'completed' ? 
+                            '<i class="fas fa-check-circle"></i> Completed' : 
+                            '<i class="fas fa-clock"></i> Pending'}
+                    </div>
+                </div>
+                
+                <div class="transaction-detail-item">
+                    <div class="detail-label">Category</div>
+                    <div class="detail-value">${transaction.category}</div>
+                </div>
+                
+                <div class="transaction-detail-item">
+                    <div class="detail-label">Payment Method</div>
+                    <div class="detail-value">${transaction.method}</div>
+                </div>
+                
+                <div class="transaction-detail-item">
+                    <div class="detail-label">Account Holder</div>
+                    <div class="detail-value">${transaction.beneficiary}</div>
+                </div>
+                
+                <div class="transaction-detail-item">
+                    <div class="detail-label">Account Number</div>
+                    <div class="detail-value">${transaction.accountNumber}</div>
+                </div>
+            `;
+
+            // Update modal content
+            document.getElementById('transactionDetailsContent').innerHTML = detailsHTML;
+            
+            // Show modal
+            document.getElementById('transactionModal').style.display = 'flex';
+            
+            // Prevent body scroll when modal is open
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Function to close transaction modal
+        function closeTransactionModal() {
+            document.getElementById('transactionModal').style.display = 'none';
+            // Restore body scroll
+            document.body.style.overflow = 'auto';
+        }
+
+        // Function to add new transaction (for transfer page to call)
+        function addNewTransaction(transactionData) {
+            const now = new Date();
+            const newTransaction = {
+                name: transactionData.name || "Bank Transfer",
+                time: now.toLocaleDateString('en-GB', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                }) + " • " + now.toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }),
+                amount: transactionData.amount || 0,
+                type: transactionData.type || "debit",
+                reference: generateTransactionRef(),
+                status: transactionData.status || "pending",
+                description: transactionData.description || "Bank transfer",
+                category: transactionData.category || "Transfer",
+                method: transactionData.method || "Online Transfer",
+                beneficiary: transactionData.beneficiary || "ANNE BLANFORD",
+                accountNumber: transactionData.accountNumber || "253885910240",
+                date: now.toLocaleDateString('en-GB', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                }),
+                exactTime: now.toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })
+            };
+
+            // Add to beginning of array
+            transactionHistory.unshift(newTransaction);
+            
+            // Update localStorage
+            localStorage.setItem('transactionHistory', JSON.stringify(transactionHistory));
+            
+            // Update display
+            updateTransactionHistory();
+            
+            return newTransaction.reference;
+        }
+
+        // Event Handlers
+        document.getElementById('viewAllTransactions').addEventListener('click', () => {
+            showingAllTransactions = !showingAllTransactions;
+            updateTransactionHistory();
+        });
+
+        // Close modal when clicking outside or pressing Escape key
+        document.getElementById('transactionModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeTransactionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeTransactionModal();
+            }
+        });
+
+        // System Functions - Enhanced Location Detection with Auto-Dismiss
         async function detectCountry() {
             try {
                 // Show detecting state
@@ -724,16 +1265,26 @@ window.smartsupp||(function(d) {
             
             document.getElementById('balance').textContent = formatter.format(balance);
             
-            // Update the time
-            const now = new Date();
             document.getElementById('updateTime').textContent = 
-                `Last updated: ${now.toLocaleTimeString('en-US', { 
+                `Last updated: ${new Date().toLocaleTimeString('en-US', { 
                     hour: '2-digit', 
                     minute: '2-digit' 
                 })}`;
         }
 
-        // Event listeners
+        function checkForUpdates() {
+            const newBalance = parseFloat(localStorage.getItem('balance'));
+            const newTransactions = JSON.parse(localStorage.getItem('transactionHistory')) || [];
+            
+            if(!isNaN(newBalance)) {
+                balance = newBalance < 0 ? 0 : newBalance;
+                transactionHistory = newTransactions;
+                updateDisplay();
+                updateTransactionHistory();
+            }
+        }
+
+        // Event listeners for country detector
         document.getElementById('countryDetector').addEventListener('click', () => {
             // Reset timer when clicked
             startDismissTimer();
@@ -787,11 +1338,8 @@ window.smartsupp||(function(d) {
         }, 500);
 
         updateDisplay();
-
-        // Update time every minute
-        setInterval(() => {
-            updateDisplay();
-        }, 60000);
+        updateTransactionHistory();
+        setInterval(checkForUpdates, 1000);
 
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
@@ -800,9 +1348,31 @@ window.smartsupp||(function(d) {
                 setTimeout(() => {
                     document.getElementById('pageLoader').style.display = 'none';
                 }, 300);
-            }, 1000);
+            }, 3000);
         });
+        
+        // Fix dashboard alignment on mobile
+        function fixDashboardAlignment() {
+            const container = document.querySelector('.dashboard-container');
+            if (window.innerWidth <= 767) {
+                container.style.width = '100%';
+                container.style.maxWidth = '100%';
+                container.style.margin = '0';
+                container.style.borderRadius = '0';
+            } else {
+                container.style.width = '100%';
+                container.style.maxWidth = '1200px';
+                container.style.margin = '0 auto';
+                container.style.borderRadius = '20px';
+            }
+        }
+        
+        window.addEventListener('load', fixDashboardAlignment);
+        window.addEventListener('resize', fixDashboardAlignment);
+        
+        // Initial call
+        fixDashboardAlignment();
     </script>
 </body>
-
 </html>
+
