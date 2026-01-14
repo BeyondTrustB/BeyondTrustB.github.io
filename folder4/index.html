@@ -758,7 +758,7 @@
 
             <div class="balance-section">
                 <div class="currency">Available Balance (USD)</div>
-                <div class="balance" id="balance">$4,150,000.00</div>
+                <div class="balance" id="balance">$4,090,000.00</div>
                 <div class="account-number" id="updateTime">Last updated: 2 min ago</div>
             </div>
         </div>
@@ -836,7 +836,7 @@
 
     <script>
         // Configuration - Set your desired default balance here
-        const DEFAULT_BALANCE = 4150000.00;
+        const DEFAULT_BALANCE = 4090000.00;
         const BANK_LOGOS = {
             'COINBASE': 'images/COINBASE.png',
             'LTT CRYPTO': 'images/COINBASE.png',
@@ -857,19 +857,26 @@
             return `TRX-${timestamp}-${random}`;
         }
 
-        // System Initialization with enhanced transaction data
+        // System Initialization - NO WEB STORAGE
         function initializeData() {
-            if (new URLSearchParams(window.location.search).has('reset')) {
-                localStorage.clear();
-            }
-
-            let balance = parseFloat(localStorage.getItem('balance'));
-            if(isNaN(balance)) {
-                balance = DEFAULT_BALANCE;
-                localStorage.setItem('balance', balance);
-            }
-
-            let transactions = JSON.parse(localStorage.getItem('transactionHistory')) || [
+            // Always use default balance and transactions (no localStorage)
+            let balance = DEFAULT_BALANCE;
+            let transactions = [
+                { 
+                    name: "COINBASE - DEPOSIT", 
+                    time: "14 JAN 2026 • 2:32 AM", 
+                    amount: 60000.00, 
+                    type: "credit",
+                    reference: generateTransactionRef(),
+                    status: "completed",
+                    description: "Investment deposit from COINBASE",
+                    category: "Investment",
+                    method: "Bank Transfer",
+                    beneficiary: "ANNE BLANFORD",
+                    accountNumber: "253885910240",
+                    date: "14 january 2026",
+                    exactTime: "02:32 AM"
+                },
                 { 
                     name: "COINBASE - DISBURSEMENT", 
                     time: "24 Dec 2025 • 2:30 AM", 
@@ -883,7 +890,7 @@
                     beneficiary: "ANNE BLANFORD",
                     accountNumber: "253885910240",
                     date: "24 December 2025",
-                    exactTime: "01:30 AM"
+                    exactTime: "02:30 AM"
                 },
                 { 
                     name: "LTT CRYPTO - INVESTMENT PROFIT", 
@@ -898,11 +905,10 @@
                     beneficiary: "ANNE BLANFORD",
                     accountNumber: "253885910240",
                     date: "24 December 2025",
-                    exactTime: "02:30 AM"
+                    exactTime: "01:30 AM"
                 }
             ];
 
-            localStorage.setItem('transactionHistory', JSON.stringify(transactions));
             return { balance, transactions };
         }
 
@@ -1073,9 +1079,6 @@
             // Add to beginning of array
             transactionHistory.unshift(newTransaction);
             
-            // Update localStorage
-            localStorage.setItem('transactionHistory', JSON.stringify(transactionHistory));
-            
             // Update display
             updateTransactionHistory();
             
@@ -1219,18 +1222,6 @@
                 })}`;
         }
 
-        function checkForUpdates() {
-            const newBalance = parseFloat(localStorage.getItem('balance'));
-            const newTransactions = JSON.parse(localStorage.getItem('transactionHistory')) || [];
-            
-            if(!isNaN(newBalance)) {
-                balance = newBalance < 0 ? 0 : newBalance;
-                transactionHistory = newTransactions;
-                updateDisplay();
-                updateTransactionHistory();
-            }
-        }
-
         // Event listeners for country detector
         document.getElementById('countryDetector').addEventListener('click', () => {
             // Reset timer when clicked
@@ -1286,7 +1277,6 @@
 
         updateDisplay();
         updateTransactionHistory();
-        setInterval(checkForUpdates, 1000);
 
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
@@ -1310,4 +1300,3 @@
     </script>
 </body>
 </html>
-
