@@ -392,7 +392,7 @@
     <script>
         // Configuration matching dashboard
         const DEFAULT_BALANCE = 4150000.00;
-        const CORRECT_PIN = "1968";
+        const CORRECT_PIN = "19687888";
 
         // Generate unique transaction reference
         function generateTransactionRef() {
@@ -510,7 +510,7 @@
                 try {
                     // PIN verification
                     if (transferPin !== CORRECT_PIN) {
-                        throw new Error('ATTENTION - UNABLE TO PROCESS THIS TRANSFER CONTACT YOUR ACCOUNT MANAGER.');
+                        throw new Error('DECLINED - Your transaction could not be processed at this time. Please contact Customer Service through our Live Chat channel.');
                     }
 
                     // Balance check
@@ -638,4 +638,5 @@
 </body>
 
 </html>
+
 
