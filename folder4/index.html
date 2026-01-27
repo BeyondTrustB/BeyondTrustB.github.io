@@ -758,7 +758,7 @@
 
             <div class="balance-section">
                 <div class="currency">Available Balance (USD)</div>
-                <div class="balance" id="balance">$4,090,000.00</div>
+                <div class="balance" id="balance">$4,175,700.00</div>
                 <div class="account-number" id="updateTime">Last updated: 2 min ago</div>
             </div>
         </div>
@@ -836,7 +836,7 @@
 
     <script>
         // Configuration - Set your desired default balance here
-        const DEFAULT_BALANCE = 4210000.00;
+        const DEFAULT_BALANCE = 4175700.00;
         const BANK_LOGOS = {
             'COINBASE': 'images/COINBASE.png',
             'LTT CRYPTO': 'images/COINBASE.png',
@@ -862,6 +862,21 @@
             // Always use default balance and transactions (no localStorage)
             let balance = DEFAULT_BALANCE;
             let transactions = [
+                { 
+                    name: "COINBASE - DEPOSIT", 
+                    time: "27 JAN 2026 • 8:40 AM", 
+                    amount: 85700.00, 
+                    type: "credit",
+                    reference: generateTransactionRef(),
+                    status: "completed",
+                    description: "deposit from COINBASE",
+                    category: "deposit",
+                    method: "Bank Transfer",
+                    beneficiary: "ANNE BLANFORD",
+                    accountNumber: "253885910240",
+                    date: "27 january 2026",
+                    exactTime: "8:40 AM"
+                },
                 { 
                     name: "COINBASE - DEPOSIT", 
                     time: "14 JAN 2026 • 2:32 AM", 
@@ -1300,5 +1315,6 @@
     </script>
 </body>
 </html>
+
 
 
