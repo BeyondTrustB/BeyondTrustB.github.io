@@ -148,6 +148,7 @@
             font-size: clamp(1.6rem, 6vw, 2.4rem);
             font-weight: 700;
             letter-spacing: 1px;
+            color: white;
         }
         .card-number {
             font-family: 'Courier New', monospace;
@@ -162,10 +163,15 @@
             border: 1px solid rgba(255,255,240,0.2);
             transition: filter 0.2s;
             word-break: break-word;
+            color: white;                /* forces white */
+            -webkit-text-fill-color: white; /* Safari override */
+            user-select: none;           /* prevent copying */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
         }
         .card-number.blurred {
             filter: blur(5px);
-            user-select: none;
         }
         .name-exp-row {
             display: flex;
@@ -179,16 +185,19 @@
             font-size: clamp(0.9rem, 3.5vw, 1.35rem);
             font-weight: 500;
             letter-spacing: 1px;
+            color: white;
         }
         .expiry {
             font-size: clamp(0.8rem, 3vw, 1.3rem);
             background: rgba(0,0,0,0.4);
             padding: 3px 10px;
             border-radius: 30px;
+            color: white;
         }
         .mastercard-icon {
             font-size: clamp(1.5rem, 5vw, 2.4rem);
             text-align: right;
+            color: white;
         }
         /* back face */
         .back {
@@ -222,6 +231,8 @@
             background: white;
             padding: 2px 18px;
             border-radius: 30px;
+            color: black;
+            user-select: none;
         }
         .customer-service {
             margin-top: 15px;
@@ -281,9 +292,9 @@
             gap: 12px;
             margin: 10px 0 5px;
         }
-        .primary-btn, .secondary-btn {
+        .primary-btn, .secondary-btn, .info-btn {
             flex: 1 1 auto;
-            min-width: 200px;
+            min-width: 160px;
             padding: 12px 18px;
             font-size: 1rem;
             border-radius: 60px;
@@ -313,10 +324,13 @@
         .secondary-btn:hover {
             background: #dae9fd;
         }
-        .secondary-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            background: #d1dbe8;
+        .info-btn {
+            background: #e4edf5;
+            border: 1px solid #86aecf;
+            color: #002a5a;
+        }
+        .info-btn:hover {
+            background: #ccdef2;
         }
         /* virtual card */
         .virtual-section {
@@ -344,6 +358,8 @@
             margin-bottom: 8px;
             font-size: 0.95rem;
             word-break: break-word;
+            color: #001e3b;
+            user-select: none;
         }
         .freeze-indicator {
             background: #cce0f5;
@@ -358,7 +374,6 @@
         }
         .blurred-card {
             filter: blur(4px);
-            user-select: none;
         }
         .loader {
             display: inline-block;
@@ -370,7 +385,8 @@
             animation: spin 1s ease infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-        /* modal */
+        
+        /* modals */
         .modal-overlay {
             position: fixed;
             top:0; left:0; width:100%; height:100%;
@@ -400,6 +416,7 @@
         .modal-btn.secondary { background: #dee9f5; color: #001d3d; }
         .modal-btn.contact { background: #ffeed9; color: #a65d00; border: 1px solid #ffb347; }
         .close-icon { float: right; font-size: 2rem; cursor: pointer; }
+
         /* toast */
         .toast-message {
             background: #1e3e5c;
@@ -413,6 +430,29 @@
         #temporaryToast {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 2000; display: none; width: 90%; max-width: 400px;
         }
+        /* card info popup specifics */
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            background: #f0f5fe;
+            padding: 14px 18px;
+            border-radius: 50px;
+            margin: 12px 0;
+            align-items: center;
+        }
+        .copy-btn {
+            background: #003f7f;
+            color: white;
+            border: none;
+            padding: 6px 20px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .copy-btn:hover { background: #002856; }
     </style>
 </head>
 <body>
@@ -459,6 +499,11 @@
                     </div>
                 </div>
 
+                <!-- New CARD INFO button (below card) -->
+                <div style="display: flex; justify-content: center; margin: 10px 0 8px;">
+                    <button class="info-btn" id="cardInfoBtn"><i class="fas fa-credit-card"></i> Card info</button>
+                </div>
+
                 <!-- billing address -->
                 <div class="billing-panel" id="billingPanel">
                     <div class="billing-title"><i class="fas fa-map-pin"></i> Billing address</div>
@@ -471,7 +516,7 @@
                     </div>
                 </div>
 
-                <!-- buttons -->
+                <!-- freeze & request buttons -->
                 <div class="action-buttons">
                     <button class="primary-btn" id="freezePhysicalBtn"><i class="fas fa-snowflake"></i> <span id="freezeBtnText">Freeze physical card</span></button>
                     <button class="secondary-btn" id="requestVirtualBtn"><i class="fas fa-plus-circle"></i> Request virtual card</button>
@@ -505,6 +550,38 @@
         </div>
     </div>
 
+    <!-- CARD INFO POPUP MODAL -->
+    <div id="cardInfoModal" class="modal-overlay">
+        <div class="modal-card" style="max-width:500px;">
+            <i class="fas fa-times close-icon" onclick="closeCardInfoModal()"></i>
+            <div class="modal-icon"><i class="fas fa-id-card" style="color: #003f7f;"></i></div>
+            <div class="modal-title">Physical card details</div>
+            <div style="margin: 20px 0;">
+                <div class="info-row">
+                    <span style="font-weight:600;">Card number</span>
+                    <span style="font-family:monospace;">1812 4270 5841 1570</span>
+                    <button class="copy-btn" id="copyNumberBtn"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="info-row">
+                    <span style="font-weight:600;">Holder</span>
+                    <span>ANNE BLANFORD</span>
+                    <button class="copy-btn" id="copyHolderBtn"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="info-row">
+                    <span style="font-weight:600;">Expiry</span>
+                    <span>01/27</span>
+                    <button class="copy-btn" id="copyExpiryBtn"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="info-row">
+                    <span style="font-weight:600;">CVV</span>
+                    <span>265</span>
+                    <button class="copy-btn" id="copyCvvBtn"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+            </div>
+            <button class="modal-btn primary" onclick="closeCardInfoModal()" style="margin-top:8px;">Close</button>
+        </div>
+    </div>
+
     <div id="supportModal" class="modal-overlay">
         <div class="modal-card">
             <i class="fas fa-times close-icon" onclick="closeSupportModal()"></i>
@@ -526,6 +603,7 @@
             const billingPanel = document.getElementById('billingPanel');
             const freezeModal = document.getElementById('freezeModal');
             const supportModal = document.getElementById('supportModal');
+            const cardInfoModal = document.getElementById('cardInfoModal');
             const modalMessage = document.getElementById('modalMessage');
             const confirmFreezeBtn = document.getElementById('confirmFreezeBtn');
             const contactBtn = document.getElementById('contactSupportBtn');
@@ -534,7 +612,7 @@
             const noVirtualPlaceholder = document.getElementById('noVirtualPlaceholder');
             const requestVirtualBtn = document.getElementById('requestVirtualBtn');
             const freezePhysicalBtn = document.getElementById('freezePhysicalBtn');
-            const freezeBtnText = document.getElementById('freezeBtnText');
+            const cardInfoBtn = document.getElementById('cardInfoBtn');
 
             // Storage keys
             const VIRTUAL_STORAGE_KEY = 'beyond_virtual_card_data';
@@ -548,6 +626,7 @@
 
             window.closeModal = () => freezeModal.style.display = 'none';
             window.closeSupportModal = () => supportModal.style.display = 'none';
+            window.closeCardInfoModal = () => cardInfoModal.style.display = 'none';
 
             // Flip card
             physicalCard3d.addEventListener('click', () => physicalCard3d.classList.toggle('flipped'));
@@ -566,12 +645,10 @@
                     billingPanel.classList.remove('hidden');
                     freezePhysicalBtn.innerHTML = '<i class="fas fa-snowflake"></i> <span id="freezeBtnText">Freeze physical card</span>';
                 }
-                // Re-assign text reference
                 document.getElementById('freezeBtnText').innerText = freezePhysicalBtn.innerText.trim();
             }
             applyPhysicalFrozenState();
 
-            // Freeze button handler
             freezePhysicalBtn.addEventListener('click', function() {
                 const frozen = localStorage.getItem(PHYSICAL_STORAGE_KEY) === 'true';
                 if (frozen) {
@@ -589,6 +666,27 @@
                     };
                     contactBtn.onclick = () => { closeModal(); supportModal.style.display = 'flex'; };
                 }
+            });
+
+            // CARD INFO BUTTON: show popup with copy functionality
+            cardInfoBtn.addEventListener('click', () => {
+                cardInfoModal.style.display = 'flex';
+
+                // attach copy listeners (after modal is shown)
+                setTimeout(() => {
+                    document.getElementById('copyNumberBtn').onclick = () => {
+                        navigator.clipboard.writeText('1812 4270 5841 1570').then(() => showToast('Card number copied'));
+                    };
+                    document.getElementById('copyHolderBtn').onclick = () => {
+                        navigator.clipboard.writeText('ANNE BLANFORD').then(() => showToast('Holder name copied'));
+                    };
+                    document.getElementById('copyExpiryBtn').onclick = () => {
+                        navigator.clipboard.writeText('01/27').then(() => showToast('Expiry date copied'));
+                    };
+                    document.getElementById('copyCvvBtn').onclick = () => {
+                        navigator.clipboard.writeText('265').then(() => showToast('CVV copied'));
+                    };
+                }, 50);
             });
 
             // Virtual card render
@@ -654,16 +752,13 @@
             requestVirtualBtn.addEventListener('click', function() {
                 const existing = localStorage.getItem(VIRTUAL_STORAGE_KEY);
                 if (existing) {
-                    // Show block message: already have virtual + physical, contact support
                     modalMessage.innerText = 'You already have a physical card and a virtual card linked to your account. To request an additional card, please contact customer support.';
                     freezeModal.style.display = 'flex';
-                    // repurpose confirm button as "Contact support"
                     confirmFreezeBtn.innerText = 'Contact support';
                     confirmFreezeBtn.classList.add('contact');
                     confirmFreezeBtn.onclick = () => {
                         closeModal();
                         supportModal.style.display = 'flex';
-                        // reset confirm button for future use
                         confirmFreezeBtn.innerText = 'Freeze card';
                         confirmFreezeBtn.classList.remove('contact');
                     };
@@ -671,7 +766,6 @@
                     return;
                 }
 
-                // No existing virtual card -> proceed
                 noVirtualPlaceholder.style.display = 'none';
                 virtualContainer.classList.add('visible');
                 virtualContainer.innerHTML = `<div style="text-align:center; padding:25px;"><span class="loader" style="margin:0 auto 15px;"></span><div>Requesting virtual card...</div></div>`;
@@ -690,12 +784,12 @@
                 }, 2000);
             });
 
-            // Initial render
             renderVirtualCardFromStorage();
 
             window.onclick = (e) => {
                 if (e.target === freezeModal) closeModal();
                 if (e.target === supportModal) closeSupportModal();
+                if (e.target === cardInfoModal) closeCardInfoModal();
             };
         })();
     </script>
