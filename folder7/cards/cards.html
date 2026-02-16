@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>BeyondTrust Bank – Card Hub</title>
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -11,85 +11,96 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
         }
         body {
-            background: #e4ecf5;
+            background: #dbe6f0;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 16px;
+            padding: 10px;
         }
         .bank-app {
             max-width: 1300px;
             width: 100%;
             background: white;
-            border-radius: 40px 40px 30px 30px;
-            box-shadow: 0 30px 60px -15px rgba(0,35,70,0.3);
+            border-radius: 32px 32px 24px 24px;
+            box-shadow: 0 20px 40px -10px rgba(0,30,60,0.3);
             overflow: hidden;
         }
         /* header */
         .header {
             background: linear-gradient(148deg, #00203d, #003866);
             color: white;
-            padding: 1.6rem 2.2rem 1.2rem 2.2rem;
+            padding: 1.2rem 1.5rem;
         }
         .back-link {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             color: rgba(255,255,255,0.9);
             text-decoration: none;
             background: rgba(255,255,255,0.12);
-            padding: 8px 20px;
+            padding: 6px 16px;
             border-radius: 40px;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             border: 1px solid rgba(255,255,255,0.2);
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
-        .back-link:hover { background: rgba(255,255,255,0.22); }
-        .header h1 { font-size: 2.2rem; font-weight: 600; }
-        .header p { opacity: 0.85; }
+        .header h1 {
+            font-size: clamp(1.8rem, 5vw, 2.2rem);
+            font-weight: 600;
+        }
+        .header p {
+            opacity: 0.85;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+        }
 
-        /* main layout */
+        /* main layout - flex with wrap for mobile */
         .main-layout {
             display: flex;
             flex-wrap: wrap;
-            gap: 30px;
-            padding: 32px 36px;
+            gap: 20px;
+            padding: 20px 18px;
             background: #f7fafd;
         }
         .left-column {
             flex: 2;
-            min-width: 500px;
+            min-width: 320px;
+            width: 100%;
         }
         .right-column {
             flex: 1.2;
-            min-width: 320px;
+            min-width: 280px;
+            width: 100%;
             background: white;
-            border-radius: 36px;
-            padding: 26px 24px;
-            box-shadow: 0 12px 28px rgba(0,40,70,0.1);
+            border-radius: 28px;
+            padding: 20px 18px;
+            box-shadow: 0 8px 20px rgba(0,40,70,0.08);
             border: 1px solid #d9e6f5;
             align-self: start;
         }
 
-        /* card outer */
+        /* 3D card - responsive sizing */
         .card-3d-perspective {
             perspective: 1600px;
-            margin-bottom: 28px;
-            width: fit-content;
+            margin-bottom: 22px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
         }
         .card-3d {
-            width: 460px;
-            height: 280px;
+            width: min(440px, 95%);
+            max-width: 460px;
+            height: auto;
+            aspect-ratio: 460/280;
             position: relative;
             transform-style: preserve-3d;
             transition: transform 0.5s ease;
-            border-radius: 24px;
+            border-radius: 20px;
             cursor: pointer;
-            box-shadow: 0 30px 45px -15px #001e3c;
+            box-shadow: 0 25px 35px -12px #001e3c;
         }
         .card-3d.flipped {
             transform: rotateY(180deg);
@@ -99,8 +110,8 @@
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
-            border-radius: 24px;
-            padding: 22px 26px;
+            border-radius: 20px;
+            padding: clamp(12px, 3vw, 22px) clamp(14px, 4vw, 26px);
             background: linear-gradient(140deg, #021c30, #0e334e);
             color: white;
             border: 1px solid rgba(255,255,200,0.2);
@@ -118,13 +129,9 @@
             align-items: center;
             justify-content: space-between;
         }
-        .chip-area {
-            display: flex;
-            flex-direction: column;
-        }
         .chip {
-            width: 48px;
-            height: 36px;
+            width: clamp(38px, 8vw, 48px);
+            height: clamp(28px, 6vw, 36px);
             background: linear-gradient(145deg, #e9cf9a, #bfa25e);
             border-radius: 8px 4px 8px 4px;
             box-shadow: 0 3px 6px black;
@@ -133,28 +140,28 @@
         .chip::after {
             content: "";
             position: absolute;
-            inset: 5px;
+            inset: 4px;
             background: repeating-linear-gradient(45deg, #9e813e 0px, #9e813e 2px, #dbb471 2px, #dbb471 4px);
             border-radius: 4px;
         }
         .brand {
-            font-size: 2.4rem;
+            font-size: clamp(1.6rem, 6vw, 2.4rem);
             font-weight: 700;
-            letter-spacing: 2px;
-            text-shadow: 0 2px 5px black;
+            letter-spacing: 1px;
         }
         .card-number {
             font-family: 'Courier New', monospace;
-            font-size: 1.7rem;
-            letter-spacing: 5px;
+            font-size: clamp(1rem, 4vw, 1.7rem);
+            letter-spacing: 2px;
             background: rgba(0,0,0,0.4);
-            padding: 12px 14px;
-            border-radius: 18px;
+            padding: clamp(6px, 2vw, 12px) clamp(8px, 3vw, 14px);
+            border-radius: 14px;
             text-align: center;
-            margin: 12px 0 8px 0;
+            margin: 8px 0 6px;
             backdrop-filter: blur(3px);
             border: 1px solid rgba(255,255,240,0.2);
             transition: filter 0.2s;
+            word-break: break-word;
         }
         .card-number.blurred {
             filter: blur(5px);
@@ -162,87 +169,82 @@
         }
         .name-exp-row {
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
             align-items: flex-end;
-            margin-top: 6px;
+            gap: 8px;
         }
         .holder-name {
             text-transform: uppercase;
-            font-size: 1.35rem;
+            font-size: clamp(0.9rem, 3.5vw, 1.35rem);
             font-weight: 500;
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
         }
         .expiry {
-            font-size: 1.3rem;
+            font-size: clamp(0.8rem, 3vw, 1.3rem);
             background: rgba(0,0,0,0.4);
-            padding: 4px 12px;
+            padding: 3px 10px;
             border-radius: 30px;
         }
         .mastercard-icon {
-            font-size: 2.4rem;
-            color: white;
-            opacity: 0.9;
+            font-size: clamp(1.5rem, 5vw, 2.4rem);
             text-align: right;
         }
-
         /* back face */
         .back {
             transform: rotateY(180deg);
             background: linear-gradient(155deg, #0b2538, #1e3d58);
             justify-content: flex-start;
-            padding: 20px 22px;
+            padding: clamp(12px, 3vw, 22px);
         }
         .mag-strip {
             background: #1f1f28;
-            height: 42px;
+            height: clamp(30px, 5vw, 42px);
             width: 100%;
-            margin-top: 15px;
-            margin-bottom: 20px;
+            margin: 10px 0 15px;
         }
         .cvv-block {
             background: #ecf0f5;
             color: #000;
-            padding: 8px 20px;
+            padding: 6px 14px;
             border-radius: 40px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            width: 90%;
+            width: 95%;
             margin: 0 auto;
             font-weight: 600;
+            flex-wrap: wrap;
         }
         .cvv-value {
             font-family: monospace;
-            font-size: 2rem;
+            font-size: clamp(1.2rem, 5vw, 2rem);
             background: white;
-            padding: 2px 25px;
+            padding: 2px 18px;
             border-radius: 30px;
-            letter-spacing: 2px;
         }
         .customer-service {
-            margin-top: 22px;
-            font-size: 0.8rem;
+            margin-top: 15px;
+            font-size: 0.7rem;
             color: #bfd9ff;
             background: rgba(0,20,40,0.7);
-            padding: 10px;
-            border-radius: 18px;
-            border-left: 3px solid #ffd966;
+            padding: 8px;
+            border-radius: 16px;
         }
         .legal-text {
-            font-size: 0.66rem;
-            line-height: 1.4;
+            font-size: 0.6rem;
+            line-height: 1.3;
             color: #cbdae9;
-            margin-top: 16px;
-            max-height: 100px;
+            margin-top: 12px;
+            max-height: 90px;
             overflow-y: auto;
-            padding-right: 5px;
         }
-        /* billing address block (below card) - can be hidden on freeze */
+        /* billing address */
         .billing-panel {
             background: #e3effa;
-            border-radius: 28px;
-            padding: 20px 24px;
-            margin: 25px 0 18px 0;
+            border-radius: 24px;
+            padding: 18px;
+            margin: 20px 0 15px;
             border: 1px solid #aac5e2;
             transition: opacity 0.2s;
         }
@@ -250,61 +252,55 @@
             opacity: 0.3;
             pointer-events: none;
             filter: blur(4px);
-            user-select: none;
-        }
-        .billing-title {
-            display: flex;
-            gap: 8px;
-            color: #002a5a;
-            font-weight: 600;
-            font-size: 1.2rem;
-            margin-bottom: 12px;
         }
         .billing-details {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px 25px;
+            gap: 12px 20px;
             background: white;
-            padding: 15px 20px;
-            border-radius: 24px;
+            padding: 14px;
+            border-radius: 20px;
         }
         .bill-item {
             display: flex;
             flex-direction: column;
         }
         .bill-label {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: #346792;
         }
         .bill-value {
             font-weight: 600;
             color: #001e3b;
+            font-size: 0.9rem;
         }
-
-        /* freeze & request buttons */
+        /* buttons */
         .action-buttons {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
-            margin-top: 5px;
-            margin-bottom: 20px;
+            gap: 12px;
+            margin: 10px 0 5px;
+        }
+        .primary-btn, .secondary-btn {
+            flex: 1 1 auto;
+            min-width: 200px;
+            padding: 12px 18px;
+            font-size: 1rem;
+            border-radius: 60px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            border: none;
         }
         .primary-btn {
             background: white;
             border: 2px solid #003b70;
-            border-radius: 60px;
-            padding: 12px 28px;
-            font-size: 1.1rem;
-            font-weight: 600;
             color: #003b70;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            transition: 0.2s;
-            box-shadow: 0 5px 12px rgba(0,60,120,0.1);
+            font-weight: 600;
         }
-        .primary-btn i { font-size: 1.3rem; }
         .primary-btn:hover {
             background: #003b70;
             color: white;
@@ -312,26 +308,21 @@
         .secondary-btn {
             background: #ecf5ff;
             border: 1px solid #b0cbea;
-            border-radius: 60px;
-            padding: 12px 28px;
-            font-size: 1.1rem;
-            font-weight: 600;
             color: #002f60;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            border: none;
         }
-        .secondary-btn:hover { background: #dae9fd; }
-
-        /* virtual card section */
+        .secondary-btn:hover {
+            background: #dae9fd;
+        }
+        .secondary-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #d1dbe8;
+        }
+        /* virtual card */
         .virtual-section {
             background: white;
-            border-radius: 28px;
-            padding: 22px;
-            box-shadow: 0 10px 18px rgba(0,50,80,0.1);
-            margin-top: 25px;
+            border-radius: 24px;
+            padding: 18px;
             border: 1px solid #bad2f0;
             display: none;
         }
@@ -340,34 +331,35 @@
         }
         .virtual-card-display {
             background: #e2edfc;
-            border-radius: 20px;
-            padding: 20px;
+            border-radius: 18px;
+            padding: 16px;
         }
         .virtual-row {
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
             background: white;
-            padding: 12px 18px;
-            border-radius: 50px;
-            margin-bottom: 10px;
-            align-items: center;
+            padding: 10px 16px;
+            border-radius: 40px;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            word-break: break-word;
         }
         .freeze-indicator {
             background: #cce0f5;
             border-radius: 40px;
-            padding: 10px 20px;
+            padding: 8px 16px;
             display: flex;
-            gap: 10px;
+            gap: 8px;
             font-weight: 600;
             color: #002856;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
         }
         .blurred-card {
             filter: blur(4px);
             user-select: none;
         }
-
-        /* loading spinner */
         .loader {
             display: inline-block;
             width: 20px;
@@ -378,8 +370,7 @@
             animation: spin 1s ease infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* modal popup */
+        /* modal */
         .modal-overlay {
             position: fixed;
             top:0; left:0; width:100%; height:100%;
@@ -388,38 +379,39 @@
             display: none;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
+            z-index: 2000;
+            padding: 16px;
         }
         .modal-card {
             background: white;
             max-width: 480px;
-            width: 90%;
+            width: 100%;
             border-radius: 48px;
-            padding: 32px;
+            padding: 28px 22px;
             box-shadow: 0 40px 70px black;
             text-align: center;
         }
-        .modal-icon { font-size: 3.5rem; color: #c5283d; margin-bottom: 15px; }
-        .modal-title { font-size: 2rem; color: #001d39; margin-bottom: 16px; }
-        .modal-text { color: #2a4b74; margin-bottom: 28px; line-height: 1.5; }
-        .modal-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-        .modal-btn { padding: 14px 28px; border-radius: 40px; border: none; font-weight: 600; cursor: pointer; }
+        .modal-icon { font-size: 3rem; color: #c5283d; margin-bottom: 12px; }
+        .modal-title { font-size: 1.8rem; color: #001d39; }
+        .modal-text { color: #2a4b74; margin: 18px 0; line-height: 1.5; }
+        .modal-buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .modal-btn { padding: 12px 24px; border-radius: 40px; border: none; font-weight: 600; cursor: pointer; }
         .modal-btn.primary { background: #003f7f; color: white; }
         .modal-btn.secondary { background: #dee9f5; color: #001d3d; }
         .modal-btn.contact { background: #ffeed9; color: #a65d00; border: 1px solid #ffb347; }
         .close-icon { float: right; font-size: 2rem; cursor: pointer; }
-
         /* toast */
         .toast-message {
             background: #1e3e5c;
             color: white;
-            padding: 16px 28px;
+            padding: 14px 24px;
             border-radius: 60px;
             font-weight: 500;
             box-shadow: 0 15px 30px rgba(0,60,100,0.5);
+            font-size: 0.95rem;
         }
         #temporaryToast {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 2000; display: none;
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 2000; display: none; width: 90%; max-width: 400px;
         }
     </style>
 </head>
@@ -432,7 +424,7 @@
         </div>
 
         <div class="main-layout">
-            <!-- LEFT COLUMN (physical card + billing + freeze/request) -->
+            <!-- LEFT COLUMN -->
             <div class="left-column">
                 <!-- 3D flip card -->
                 <div class="card-3d-perspective">
@@ -440,7 +432,7 @@
                         <!-- FRONT -->
                         <div class="card-face front">
                             <div class="card-header-row">
-                                <div class="chip-area"><div class="chip"></div></div>
+                                <div class="chip"></div>
                                 <span class="brand">BEYOND</span>
                             </div>
                             <div class="card-number" id="physicalCardNumber">1812 4270 5841 1570</div>
@@ -450,7 +442,7 @@
                             </div>
                             <div class="mastercard-icon"><i class="fab fa-cc-mastercard"></i></div>
                         </div>
-                        <!-- BACK (cvv + service text) -->
+                        <!-- BACK -->
                         <div class="card-face back">
                             <div class="mag-strip"></div>
                             <div class="cvv-block">
@@ -458,16 +450,16 @@
                                 <span class="cvv-value" id="physicalCvv">265</span>
                             </div>
                             <div class="customer-service">
-                                <i class="fas fa-envelope"></i> For Customer Service: beyondtrustcustomerservice@gmail.com
+                                <i class="fas fa-envelope"></i> beyondtrustcustomerservice@gmail.com
                             </div>
                             <div class="legal-text">
-                                This card is provided to customers for identification and service purposes. Please keep it safe and handle it with care. If the card is lost, stolen, or damaged, contact customer service immediately using the email above. The issuer of this card is not responsible for any loss resulting from misuse or unauthorized use. Use of this card means you agree to the terms and conditions set by the issuing company.
+                                This card is provided to customers for identification and service purposes. Please keep it safe. If lost/stolen, contact support immediately.
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- billing address panel (will be hidden on freeze) -->
+                <!-- billing address -->
                 <div class="billing-panel" id="billingPanel">
                     <div class="billing-title"><i class="fas fa-map-pin"></i> Billing address</div>
                     <div class="billing-details">
@@ -479,35 +471,32 @@
                     </div>
                 </div>
 
-                <!-- buttons below card: freeze physical (dynamic) and request virtual card -->
+                <!-- buttons -->
                 <div class="action-buttons">
                     <button class="primary-btn" id="freezePhysicalBtn"><i class="fas fa-snowflake"></i> <span id="freezeBtnText">Freeze physical card</span></button>
                     <button class="secondary-btn" id="requestVirtualBtn"><i class="fas fa-plus-circle"></i> Request virtual card</button>
                 </div>
             </div>
 
-            <!-- RIGHT COLUMN: virtual card area (persists via localStorage) -->
+            <!-- RIGHT COLUMN -->
             <div class="right-column">
-                <h3 style="margin-bottom: 25px; display: flex; gap:10px;"><i class="fas fa-credit-card" style="color: #003f7f;"></i> Virtual card</h3>
-                <div id="virtualCardContainer" class="virtual-section">
-                    <!-- will be populated by js from storage -->
-                </div>
-                <!-- placeholder when no virtual card in storage -->
-                <div id="noVirtualPlaceholder" style="background: #ecf3fa; border-radius: 28px; padding: 40px 20px; text-align: center; color: #2f5575; border: 1px dashed #9bb5d4;">
-                    <i class="fas fa-credit-card" style="font-size: 3rem; opacity: 0.5; margin-bottom: 15px;"></i>
+                <h3 style="margin-bottom: 16px; display: flex; gap:8px; font-size:1.3rem;"><i class="fas fa-credit-card" style="color: #003f7f;"></i> Virtual card</h3>
+                <div id="virtualCardContainer" class="virtual-section"></div>
+                <div id="noVirtualPlaceholder" style="background: #ecf3fa; border-radius: 24px; padding: 30px 16px; text-align: center; color: #2f5575; border: 1px dashed #9bb5d4;">
+                    <i class="fas fa-credit-card" style="font-size: 2.5rem; opacity: 0.5; margin-bottom: 12px;"></i>
                     <p>No virtual card yet. Click "Request virtual card" to generate one instantly.</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL for freeze warning (attention style) -->
+    <!-- MODALS -->
     <div id="freezeModal" class="modal-overlay">
         <div class="modal-card">
             <i class="fas fa-times close-icon" onclick="closeModal()"></i>
             <div class="modal-icon"><i class="fas fa-exclamation-triangle"></i></div>
             <div class="modal-title">Attention</div>
-            <div class="modal-text" id="modalMessage">Freezing this card will immediately suspend all web payments, recurring transactions, and contactless usage. You can unfreeze anytime from settings.</div>
+            <div class="modal-text" id="modalMessage"></div>
             <div class="modal-buttons">
                 <button class="modal-btn secondary" onclick="closeModal()">Keep active</button>
                 <button class="modal-btn primary" id="confirmFreezeBtn">Freeze card</button>
@@ -516,23 +505,21 @@
         </div>
     </div>
 
-    <!-- SUPPORT MODAL (email popup) -->
     <div id="supportModal" class="modal-overlay">
         <div class="modal-card">
             <i class="fas fa-times close-icon" onclick="closeSupportModal()"></i>
             <div class="modal-icon"><i class="fas fa-envelope-open-text" style="color: #004080;"></i></div>
             <div class="modal-title">Customer support</div>
-            <div class="modal-text" style="font-size:1.3rem;">beyondtrustcustomerservice@gmail.com</div>
+            <div class="modal-text" style="font-size:1.2rem;">beyondtrustcustomerservice@gmail.com</div>
             <button class="modal-btn primary" onclick="closeSupportModal()">Close</button>
         </div>
     </div>
 
-    <!-- toast for messages -->
     <div id="temporaryToast"></div>
 
     <script>
         (function() {
-            // ----- ELEMENTS -----
+            // Elements
             const physicalCard3d = document.getElementById('physicalCard3d');
             const physicalCvv = document.getElementById('physicalCvv');
             const physicalNumber = document.getElementById('physicalCardNumber');
@@ -549,77 +536,62 @@
             const freezePhysicalBtn = document.getElementById('freezePhysicalBtn');
             const freezeBtnText = document.getElementById('freezeBtnText');
 
-            // Web storage keys
+            // Storage keys
             const VIRTUAL_STORAGE_KEY = 'beyond_virtual_card_data';
             const PHYSICAL_STORAGE_KEY = 'beyond_physical_frozen';
 
-            // ----- helper: show toast -----
             function showToast(text, duration = 2500) {
                 toastDiv.style.display = 'block';
                 toastDiv.innerHTML = `<div class="toast-message"><i class="fas fa-check-circle"></i> ${text}</div>`;
                 setTimeout(() => { toastDiv.style.display = 'none'; }, duration);
             }
 
-            // ----- helper: close modals -----
-            window.closeModal = function() { freezeModal.style.display = 'none'; };
-            window.closeSupportModal = function() { supportModal.style.display = 'none'; };
+            window.closeModal = () => freezeModal.style.display = 'none';
+            window.closeSupportModal = () => supportModal.style.display = 'none';
 
-            // ----- flip physical card on click -----
-            physicalCard3d.addEventListener('click', () => {
-                physicalCard3d.classList.toggle('flipped');
-            });
+            // Flip card
+            physicalCard3d.addEventListener('click', () => physicalCard3d.classList.toggle('flipped'));
 
-            // ----- PHYSICAL CARD FROZEN STATE PERSISTENCE & BUTTON UPDATE -----
+            // Physical freeze state
             function applyPhysicalFrozenState() {
                 const frozen = localStorage.getItem(PHYSICAL_STORAGE_KEY) === 'true';
                 if (frozen) {
                     physicalNumber.classList.add('blurred');
                     physicalCvv.style.filter = 'blur(4px)';
                     billingPanel.classList.add('hidden');
-                    freezeBtnText.innerText = 'Unfreeze physical card';
                     freezePhysicalBtn.innerHTML = '<i class="fas fa-sun"></i> <span id="freezeBtnText">Unfreeze physical card</span>';
-                    // re-assign text element reference
-                    document.getElementById('freezeBtnText').innerText = 'Unfreeze physical card';
                 } else {
                     physicalNumber.classList.remove('blurred');
                     physicalCvv.style.filter = 'none';
                     billingPanel.classList.remove('hidden');
-                    freezeBtnText.innerText = 'Freeze physical card';
                     freezePhysicalBtn.innerHTML = '<i class="fas fa-snowflake"></i> <span id="freezeBtnText">Freeze physical card</span>';
-                    document.getElementById('freezeBtnText').innerText = 'Freeze physical card';
                 }
+                // Re-assign text reference
+                document.getElementById('freezeBtnText').innerText = freezePhysicalBtn.innerText.trim();
             }
-
-            // initial apply
             applyPhysicalFrozenState();
 
-            // ----- FREEZE / UNFREEZE PHYSICAL CARD (attention modal for freeze, direct for unfreeze) -----
+            // Freeze button handler
             freezePhysicalBtn.addEventListener('click', function() {
-                const currentlyFrozen = localStorage.getItem(PHYSICAL_STORAGE_KEY) === 'true';
-                
-                if (currentlyFrozen) {
-                    // unfreeze directly (no warning)
+                const frozen = localStorage.getItem(PHYSICAL_STORAGE_KEY) === 'true';
+                if (frozen) {
                     localStorage.setItem(PHYSICAL_STORAGE_KEY, 'false');
                     applyPhysicalFrozenState();
                     showToast('Physical card unfrozen. All functions restored.');
                 } else {
-                    // show attention modal before freezing
                     modalMessage.innerText = 'Freezing your physical BEYOND card will block all POS, contactless, and ATM transactions. Billing address will be hidden. You can unfreeze anytime.';
                     freezeModal.style.display = 'flex';
-                    confirmFreezeBtn.onclick = function() {
+                    confirmFreezeBtn.onclick = () => {
                         localStorage.setItem(PHYSICAL_STORAGE_KEY, 'true');
                         applyPhysicalFrozenState();
                         closeModal();
                         showToast('Physical card frozen. Billing address hidden.');
                     };
-                    contactBtn.onclick = function() {
-                        closeModal();
-                        supportModal.style.display = 'flex';
-                    };
+                    contactBtn.onclick = () => { closeModal(); supportModal.style.display = 'flex'; };
                 }
             });
 
-            // ----- VIRTUAL CARD FUNCTIONS (with localStorage) -----
+            // Virtual card render
             function renderVirtualCardFromStorage() {
                 const stored = localStorage.getItem(VIRTUAL_STORAGE_KEY);
                 if (stored) {
@@ -631,24 +603,18 @@
                         const frozenClass = vc.frozen ? 'blurred-card' : '';
                         const freezeBtnIcon = vc.frozen ? 'fa-sun' : 'fa-snowflake';
                         const freezeBtnText = vc.frozen ? 'Unfreeze virtual card' : 'Freeze virtual card';
-                        let freezeIndicatorHtml = '';
-                        if (vc.frozen) {
-                            freezeIndicatorHtml = '<div class="freeze-indicator"><i class="fas fa-snowflake"></i> Card frozen · web payments suspended</div>';
-                        }
+                        const freezeIndicator = vc.frozen ? '<div class="freeze-indicator"><i class="fas fa-snowflake"></i> Card frozen · web payments suspended</div>' : '';
 
                         virtualContainer.innerHTML = `
                             <div class="virtual-card-display">
-                                ${freezeIndicatorHtml}
-                                <div class="virtual-row ${frozenClass}">
-                                    <span>${vc.pan}</span>
-                                </div>
+                                ${freezeIndicator}
+                                <div class="virtual-row ${frozenClass}">${vc.pan}</div>
                                 <div class="virtual-row ${frozenClass}" style="justify-content: space-between;">
-                                    <span>Exp: ${vc.expiry}</span>
-                                    <span>CVV: ${vc.cvv}</span>
+                                    <span>Exp: ${vc.expiry}</span> <span>CVV: ${vc.cvv}</span>
                                 </div>
                                 <div class="virtual-row ${frozenClass}">${vc.name}</div>
-                                <button class="secondary-btn" id="freezeVirtualBtn" style="width:100%; margin-top:15px; background:#d9e9ff;"><i class="fas ${freezeBtnIcon}"></i> ${freezeBtnText}</button>
-                                <button class="primary-btn" id="virtualContactBtn" style="width:100%; margin-top:10px; background:#eef5fc; color:#003f7f;"><i class="fas fa-envelope"></i> Contact support</button>
+                                <button class="secondary-btn" id="freezeVirtualBtn" style="width:100%; margin-top:12px;"><i class="fas ${freezeBtnIcon}"></i> ${freezeBtnText}</button>
+                                <button class="primary-btn" id="virtualContactBtn" style="width:100%; margin-top:8px; background:#eef5fc; color:#003f7f;"><i class="fas fa-envelope"></i> Contact support</button>
                             </div>
                         `;
 
@@ -662,30 +628,21 @@
                             } else {
                                 modalMessage.innerText = 'Freezing your virtual card will suspend all online transactions, tokenized payments, and digital wallet access. You can unfreeze anytime.';
                                 freezeModal.style.display = 'flex';
-                                confirmFreezeBtn.onclick = function() {
+                                confirmFreezeBtn.onclick = () => {
                                     current.frozen = true;
                                     localStorage.setItem(VIRTUAL_STORAGE_KEY, JSON.stringify(current));
                                     renderVirtualCardFromStorage();
                                     closeModal();
                                     showToast('Virtual card frozen. Web payments suspended.');
                                 };
-                                contactBtn.onclick = function() {
-                                    closeModal();
-                                    supportModal.style.display = 'flex';
-                                };
+                                contactBtn.onclick = () => { closeModal(); supportModal.style.display = 'flex'; };
                             }
                         });
 
-                        document.getElementById('virtualContactBtn').addEventListener('click', function() {
-                            supportModal.style.display = 'flex';
-                        });
+                        document.getElementById('virtualContactBtn').addEventListener('click', () => supportModal.style.display = 'flex');
 
-                    } catch (e) {
-                        resetToNoCard();
-                    }
-                } else {
-                    resetToNoCard();
-                }
+                    } catch (e) { resetToNoCard(); }
+                } else { resetToNoCard(); }
             }
 
             function resetToNoCard() {
@@ -693,16 +650,31 @@
                 noVirtualPlaceholder.style.display = 'block';
             }
 
-            // ----- REQUEST VIRTUAL CARD (stores in localStorage) -----
+            // Request virtual card (with block if already exists)
             requestVirtualBtn.addEventListener('click', function() {
+                const existing = localStorage.getItem(VIRTUAL_STORAGE_KEY);
+                if (existing) {
+                    // Show block message: already have virtual + physical, contact support
+                    modalMessage.innerText = 'You already have a physical card and a virtual card linked to your account. To request an additional card, please contact customer support.';
+                    freezeModal.style.display = 'flex';
+                    // repurpose confirm button as "Contact support"
+                    confirmFreezeBtn.innerText = 'Contact support';
+                    confirmFreezeBtn.classList.add('contact');
+                    confirmFreezeBtn.onclick = () => {
+                        closeModal();
+                        supportModal.style.display = 'flex';
+                        // reset confirm button for future use
+                        confirmFreezeBtn.innerText = 'Freeze card';
+                        confirmFreezeBtn.classList.remove('contact');
+                    };
+                    contactBtn.onclick = () => { closeModal(); supportModal.style.display = 'flex'; };
+                    return;
+                }
+
+                // No existing virtual card -> proceed
                 noVirtualPlaceholder.style.display = 'none';
                 virtualContainer.classList.add('visible');
-                virtualContainer.innerHTML = `
-                    <div style="text-align:center; padding:30px;">
-                        <span class="loader" style="margin:0 auto 20px;"></span>
-                        <div style="color:#002856;">Requesting virtual card, please wait...</div>
-                    </div>
-                `;
+                virtualContainer.innerHTML = `<div style="text-align:center; padding:25px;"><span class="loader" style="margin:0 auto 15px;"></span><div>Requesting virtual card...</div></div>`;
 
                 setTimeout(() => {
                     const virtualCard = {
@@ -718,13 +690,12 @@
                 }, 2000);
             });
 
-            // initial load
+            // Initial render
             renderVirtualCardFromStorage();
 
-            // click outside to close modals
-            window.onclick = function(event) {
-                if (event.target === freezeModal) closeModal();
-                if (event.target === supportModal) closeSupportModal();
+            window.onclick = (e) => {
+                if (e.target === freezeModal) closeModal();
+                if (e.target === supportModal) closeSupportModal();
             };
         })();
     </script>
