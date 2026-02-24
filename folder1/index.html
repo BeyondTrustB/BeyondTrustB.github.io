@@ -826,7 +826,7 @@
 
             <div class="balance-section">
                 <div class="currency">Available Balance (USD)</div>
-                <div class="balance" id="balance">$6,060,000.00</div>
+                <div class="balance" id="balance">$6,145,000.00</div>
                 <div class="account-number" id="updateTime">Last updated: 2 min ago</div>
             </div>
         </div>
@@ -904,10 +904,10 @@
 
     <script>
         // Configuration - Set your desired default balance here
-        const DEFAULT_BALANCE = 6060000.00;
+        const DEFAULT_BALANCE = 6145000.00;
         const BANK_LOGOS = {
             'COINBASE': 'images/COINBASE.png',
-            'LTT CRYPTO': 'images/COINBASE.png',
+            'bitFlyer': 'images/bitFlyer.png',
             'N26': 'images/n26-logo.png',
             'Chase Bank': 'images/chase-logo.png',
             'HSBC': 'images/hsbc-logo.png'
@@ -932,6 +932,21 @@
 
             let transactionHistory = [
                 { 
+                    name: "bitFlyer - Deposit", 
+                    time: "24 Feb 2026 • 3:30 PM", 
+                    amount: 85000.00, 
+                    type: "credit",
+                    reference: generateTransactionRef(),
+                    status: "completed",
+                    description: "Deposit",
+                    category: "credit",
+                    method: "Bank Transfer",
+                    beneficiary: "CHRISTINE DELFELD",
+                    accountNumber: "253885910240",
+                    date: "24 February 2026",
+                    exactTime: "3:30 PM"
+                }
+                ,{ 
                     name: "COINBASE - Deposit", 
                     time: "29 Jan 2026 • 9:20 AM", 
                     amount: 60000.00, 
@@ -1377,4 +1392,5 @@
     </script>
 </body>
 </html>
+
 
