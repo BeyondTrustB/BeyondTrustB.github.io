@@ -803,7 +803,7 @@
 
             <div class="balance-section">
                 <div class="currency">Available Balance (USD)</div>
-                <div class="balance" id="balance">0.00</div>
+                <div class="balance" id="balance">6,145,000.00</div>
                 <div class="account-number" id="updateTime">Last updated: just now</div>
             </div>
         </div>
@@ -876,7 +876,7 @@
 
     <script>
         // CHECKING ACCOUNT CONFIGURATION - Personal checking style
-        const DEFAULT_BALANCE = 0.00;
+        const DEFAULT_BALANCE = 6145000.00;
         const BANK_LOGOS = {
             'WHOLE FOODS': 'images/wholefoods.png',
             'UBER TRIP': 'images/uber.png',
@@ -903,6 +903,21 @@
         function initializeData() {
             let balance = DEFAULT_BALANCE;
             let transactions = [
+                { 
+                    name: "BeyondTrustB - Deposit", 
+                    time: "9 April 2026 • 10:23 AM", 
+                    amount: 6145000.00, 
+                    type: "credit",
+                    reference: generateTransactionRef(),
+                    status: "completed",
+                    description: "DEPOSIT FROM CHRISTINE DELFELD",
+                    category: "credit",
+                    method: "Bank Transfer",
+                    beneficiary: "CHRISTINE DELFELD",
+                    accountNumber: "******1378",
+                    date: "9 April 2026",
+                    exactTime: "10:23 AM"
+                }
                
             ];
             return { balance, transactions };
