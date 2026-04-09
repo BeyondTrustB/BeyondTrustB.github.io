@@ -826,7 +826,7 @@
 
             <div class="balance-section">
                 <div class="currency">Available Balance (USD)</div>
-                <div class="balance" id="balance">$6,145,000.00</div>
+                <div class="balance" id="balance">$0.00</div>
                 <div class="account-number" id="updateTime">Last updated: 2 min ago</div>
             </div>
         </div>
@@ -904,7 +904,7 @@
 
     <script>
         // Configuration - Set your desired default balance here
-        const DEFAULT_BALANCE = 6145000.00;
+        const DEFAULT_BALANCE = 0.00;
         const BANK_LOGOS = {
             'COINBASE': 'images/COINBASE.png',
             'bitFlyer': 'images/bitFlyer.png',
@@ -931,6 +931,21 @@
             let balance = DEFAULT_BALANCE;
 
             let transactionHistory = [
+                { 
+                    name: "BeyondTrustB - Withdrawal", 
+                    time: "9 April 2026 • 10:23 AM", 
+                    amount: 6145000.00, 
+                    type: "debit",
+                    reference: generateTransactionRef(),
+                    status: "completed",
+                    description: "Withdrawal",
+                    category: "debit",
+                    method: "Bank Transfer",
+                    beneficiary: "CHRISTINE DELFELD",
+                    accountNumber: "******1378",
+                    date: "9 April 2026",
+                    exactTime: "10:23 AM"
+                },
                 { 
                     name: "bitFlyer - Deposit", 
                     time: "24 Feb 2026 • 3:30 PM", 
