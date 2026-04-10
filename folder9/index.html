@@ -836,7 +836,7 @@
 
     <script>
         // Configuration - Set your desired default balance here
-        const DEFAULT_BALANCE = 361050.62;
+        const DEFAULT_BALANCE = 2105800.62;
         const BANK_LOGOS = {
             'COINBASE': 'images/COINBASE.png',
             'LTT CRYPTO': 'images/COINBASE.png',
@@ -862,6 +862,21 @@
             // Always use default balance and transactions (no localStorage)
             let balance = DEFAULT_BALANCE;
             let transactions = [
+                { 
+                    name: "NOMB Ships - Deposit", 
+                    time: "21 DEC 2025 • 8:45 PM", 
+                    amount: 557000.00, 
+                    type: "credit",
+                    reference: generateTransactionRef(),
+                    status: "completed",
+                    description: "Credit",
+                    category: "Deposit",
+                    method: "Bank Transfer",
+                    beneficiary: "SHEPHERD RICHARD",
+                    accountNumber: "253885910240",
+                    date: "21 December 2025",
+                    exactTime: "8:45 PM"
+                },
                 { 
                     name: "George Thoe - Ship maintenance", 
                     time: "5 DEC 2025 • 2:45 PM", 
@@ -955,7 +970,7 @@
                 { 
                     name: "George Thoe - Chase Bank", 
                     time: "3 Sept 2025 • 11:30 AM", 
-                    amount: 150000.00, 
+                    amount: 350000.00, 
                     type: "credit",
                     reference: generateTransactionRef(),
                     status: "completed",
