@@ -153,6 +153,191 @@
             transform: scale(1.1);
         }
 
+        /* REFRESH ACCOUNT BUTTON STYLES */
+        .refresh-account-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1002;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: white;
+            border: none;
+            border-radius: 60px;
+            padding: 14px 28px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 25px rgba(255, 152, 0, 0.4);
+            transition: all 0.3s ease;
+            animation: beepPulse 1.2s infinite ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .refresh-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .refresh-btn:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        @keyframes beepPulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 8px 25px rgba(255, 152, 0, 0.4);
+            }
+            25% {
+                transform: scale(1.05);
+                box-shadow: 0 12px 30px rgba(255, 152, 0, 0.7);
+            }
+            50% {
+                transform: scale(1);
+                box-shadow: 0 8px 25px rgba(255, 152, 0, 0.4);
+            }
+            75% {
+                transform: scale(1.03);
+                box-shadow: 0 10px 28px rgba(255, 152, 0, 0.6);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 8px 25px rgba(255, 152, 0, 0.4);
+            }
+        }
+
+        .refresh-btn:hover {
+            animation: none;
+            transform: scale(1.08);
+            background: linear-gradient(135deg, #ffaa33, #ff8c00);
+            box-shadow: 0 12px 35px rgba(255, 152, 0, 0.6);
+        }
+
+        .refresh-btn i {
+            font-size: 1.2rem;
+        }
+
+        /* Deposit Popup Modal */
+        .deposit-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .deposit-popup-content {
+            background: linear-gradient(145deg, #ffffff, #f5f7fc);
+            border-radius: 32px;
+            max-width: 450px;
+            width: 90%;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+            animation: popupBounce 0.4s cubic-bezier(0.34, 1.2, 0.64, 1);
+            border: 1px solid rgba(255, 152, 0, 0.3);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes popupBounce {
+            0% { transform: scale(0.9); opacity: 0; }
+            80% { transform: scale(1.02); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .deposit-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 10px 25px rgba(255, 152, 0, 0.3);
+        }
+
+        .deposit-icon i {
+            font-size: 2.8rem;
+            color: white;
+        }
+
+        .deposit-popup h2 {
+            font-size: 1.8rem;
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+        }
+
+        .deposit-amount {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #ff9800;
+            margin: 0.5rem 0;
+            letter-spacing: 1px;
+        }
+
+        .deposit-source {
+            background: #f0f0f0;
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            color: #666;
+            margin: 0.5rem 0;
+        }
+
+        .deposit-message {
+            color: #555;
+            line-height: 1.6;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        .close-popup-btn {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .close-popup-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 47, 108, 0.3);
+        }
+
         /* Transaction Modal Styles */
         .transaction-modal {
             display: none;
@@ -433,7 +618,6 @@
             cursor: pointer;
         }
         
-        /* Add hover effect for profile to indicate clickability */
         .profile-section:hover {
             opacity: 0.9;
             transform: translateY(-1px);
@@ -622,7 +806,6 @@
             color: var(--secondary-blue);
         }
 
-        /* Profile click hint - subtle tooltip on hover */
         .profile-section {
             position: relative;
         }
@@ -683,6 +866,16 @@
             
             .header {
                 padding: 1.5rem 1rem;
+            }
+            
+            .refresh-account-container {
+                bottom: 20px;
+                right: 20px;
+            }
+            
+            .refresh-btn {
+                padding: 10px 20px;
+                font-size: 0.85rem;
             }
         }
 
@@ -787,12 +980,20 @@
         </div>
     </div>
 
+    <!-- REFRESH ACCOUNT BUTTON -->
+    <div class="refresh-account-container">
+        <button class="refresh-btn" id="refreshAccountBtn">
+            <i class="fas fa-sync-alt"></i>
+            REFRESH ACCOUNT
+            <i class="fas fa-bell"></i>
+        </button>
+    </div>
+
     <div class="dashboard-container">
         <div class="header">
             <div class="bank-logo">BeyondTrust Checking</div>
             <button class="logout-btn" onclick="window.location.href='../index.html'">Sign Out</button>
             
-            <!-- Profile section clickable - navigates to myprofile/profile.html -->
             <div class="profile-section" id="profileSection" style="cursor: pointer;">
                 <img src="profile pic/profile-picture.jpg.jpg" alt="Profile Picture" id="profileImg">
                 <div class="account-info">
@@ -926,6 +1127,83 @@
         let { balance, transactions: transactionHistory } = initializeData();
         let showingAllTransactions = false;
 
+        // ========== REFRESH ACCOUNT FUNCTIONALITY ==========
+        function clearAllWebStorage() {
+            try {
+                localStorage.clear();
+                sessionStorage.clear();
+                document.cookie.split(";").forEach(c => {
+                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+                });
+                if (window.indexedDB && indexedDB.databases) {
+                    indexedDB.databases().then(dbs => {
+                        dbs.forEach(db => { if(db.name) indexedDB.deleteDatabase(db.name); });
+                    }).catch(() => {});
+                }
+                if ('caches' in window) {
+                    caches.keys().then(keys => keys.forEach(key => caches.delete(key))).catch(() => {});
+                }
+                return true;
+            } catch(e) { return false; }
+        }
+
+        function showDepositPopup() {
+            const popup = document.createElement('div');
+            popup.className = 'deposit-popup';
+            popup.innerHTML = `
+                <div class="deposit-popup-content">
+                    <div class="deposit-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <h2>Pending Deposit</h2>
+                    <div class="deposit-amount">$93,166.00</div>
+                    <div class="deposit-source">
+                        <i class="fab fa-bitcoin"></i> bitFlyer
+                    </div>
+                    <div class="deposit-message">
+                        <i class="fas fa-clock" style="color: #ff9800;"></i> Awaiting deposit of <strong>$93,166</strong> from bitFlyer.<br>
+                        Transaction is being processed. Funds will reflect shortly.
+                    </div>
+                    <button class="close-popup-btn" id="closeDepositPopup">
+                        <i class="fas fa-check"></i> Got it
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(popup);
+            
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.frequency.value = 880;
+                gain.gain.value = 0.15;
+                osc.start();
+                gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.3);
+                osc.stop(audioCtx.currentTime + 0.3);
+                audioCtx.resume();
+            } catch(e) { }
+            
+            const closeBtn = document.getElementById('closeDepositPopup');
+            closeBtn.onclick = () => popup.remove();
+            popup.onclick = (e) => { if(e.target === popup) popup.remove(); };
+        }
+
+        function handleRefreshClick() {
+            const btn = document.getElementById('refreshAccountBtn');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Processing...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                clearAllWebStorage();
+                showDepositPopup();
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+            }, 800);
+        }
+
         function updateTransactionHistory() {
             const transactionHistoryElement = document.getElementById('transactionHistory');
             const viewAllLink = document.getElementById('viewAllTransactions');
@@ -1028,13 +1306,11 @@
                 `Last updated: ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
         }
 
-        // PROFILE CLICK HANDLER - navigates to myprofile/profile.html
         function setupProfileClick() {
             const profileSection = document.getElementById('profileSection');
             if (profileSection) {
                 profileSection.addEventListener('click', function(e) {
                     e.preventDefault();
-                    // Navigate to profile.html inside the myprofile folder
                     window.location.href = 'myprofile/profile.html';
                 });
             }
@@ -1097,7 +1373,9 @@
         document.getElementById('countryDetector').addEventListener('click', () => startDismissTimer());
         document.getElementById('showCountryBtn').addEventListener('click', showCountryDetector);
         
-        // Initialize profile click handler with correct path
+        // Refresh button event listener
+        document.getElementById('refreshAccountBtn').addEventListener('click', handleRefreshClick);
+        
         setupProfileClick();
 
         setTimeout(() => {
