@@ -240,6 +240,11 @@
             color: var(--accent-green);
         }
 
+        .status-pending {
+            background: #fff3e0;
+            color: #ff9800;
+        }
+
         .transaction-reference {
             background: #f8f9fb;
             padding: 1rem;
@@ -273,6 +278,30 @@
         .transaction-item:hover {
             transform: translateX(5px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Loading bar for pending transactions */
+        .pending-loading-bar {
+            width: 100%;
+            height: 3px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+
+        .pending-loading-bar .loading-progress {
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(90deg, #ff9800, #ffcc80);
+            border-radius: 3px;
+            animation: loadingPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes loadingPulse {
+            0% { width: 20%; opacity: 0.7; }
+            50% { width: 80%; opacity: 1; }
+            100% { width: 20%; opacity: 0.7; }
         }
 
         @keyframes slideIn {
@@ -480,6 +509,7 @@
             margin: 0.5rem 0;
             border-radius: 12px;
             background: #f8f9fb;
+            position: relative;
         }
 
         .transaction-logo {
@@ -494,6 +524,20 @@
             margin-left: 1rem;
         }
 
+        .transaction-name {
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .transaction-time {
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 0.2rem;
+        }
+
         .transaction-amount {
             font-weight: 600;
             font-size: 1.1rem;
@@ -501,6 +545,24 @@
 
         .debit { color: var(--accent-red); font-weight: 700; }
         .credit { color: var(--accent-green); font-weight: 700; }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+
+        .status-badge.pending {
+            background: #fff3e0;
+            color: #ff9800;
+        }
+
+        .status-badge.completed {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
 
         #viewAllTransactions {
             cursor: pointer;
@@ -626,7 +688,6 @@
         const STORAGE_TRANSACTIONS = 'checking_transactions';
         const DEFAULT_BALANCE = 6238166.00;
 
-        // ========== DEFAULT TRANSACTIONS (PRESERVED) ==========
         const DEFAULT_TRANSACTIONS = [
             { 
                 name: "bitFlyer - Deposit", 
@@ -661,14 +722,6 @@
             'Deposit': 'images/default-bank.png'
         };
 
-        // ========== HELPER FUNCTIONS ==========
-        function generateTransactionRef() {
-            const timestamp = Date.now().toString().slice(-6);
-            const random = Math.random().toString(36).substr(2, 6).toUpperCase();
-            return `CHK-${timestamp}-${random}`;
-        }
-
-        // ========== LOAD DATA (PRESERVING DEFAULTS) ==========
         function loadBalance() {
             let balance = parseFloat(localStorage.getItem(STORAGE_BALANCE));
             if (isNaN(balance)) {
@@ -681,19 +734,16 @@
         function loadTransactions() {
             let transactions = JSON.parse(localStorage.getItem(STORAGE_TRANSACTIONS));
             
-            // If no transactions exist, create with defaults
             if (!transactions || transactions.length === 0) {
                 transactions = [...DEFAULT_TRANSACTIONS];
                 localStorage.setItem(STORAGE_TRANSACTIONS, JSON.stringify(transactions));
                 return transactions;
             }
             
-            // Check if default transactions are missing (e.g., if they were overwritten)
             const hasDefaultBitflyer = transactions.some(t => t.name === "bitFlyer - Deposit");
             const hasDefaultBeyond = transactions.some(t => t.name === "BeyondTrustB - Deposit");
             
             if (!hasDefaultBitflyer || !hasDefaultBeyond) {
-                // Add missing default transactions to the end (older transactions)
                 if (!hasDefaultBitflyer) {
                     transactions.push(DEFAULT_TRANSACTIONS[0]);
                 }
@@ -706,92 +756,6 @@
             return transactions;
         }
 
-        // ========== SAVE NEW TRANSACTION (PRESERVING DEFAULTS) ==========
-        function addNewTransaction(transactionData) {
-            try {
-                // Get existing transactions
-                let transactions = JSON.parse(localStorage.getItem(STORAGE_TRANSACTIONS)) || [];
-                
-                // Ensure defaults exist
-                const hasDefaultBitflyer = transactions.some(t => t.name === "bitFlyer - Deposit");
-                const hasDefaultBeyond = transactions.some(t => t.name === "BeyondTrustB - Deposit");
-                
-                if (!hasDefaultBitflyer) {
-                    transactions.push(DEFAULT_TRANSACTIONS[0]);
-                }
-                if (!hasDefaultBeyond) {
-                    transactions.push(DEFAULT_TRANSACTIONS[1]);
-                }
-                
-                // Add new transaction at the beginning (most recent first)
-                transactions.unshift(transactionData);
-                
-                // Save back to localStorage
-                localStorage.setItem(STORAGE_TRANSACTIONS, JSON.stringify(transactions));
-                
-                console.log('New transaction added. Total transactions:', transactions.length);
-                return true;
-            } catch (error) {
-                console.error('Error adding transaction:', error);
-                return false;
-            }
-        }
-
-        // ========== UPDATE BALANCE ==========
-        function updateBalance(newBalance) {
-            localStorage.setItem(STORAGE_BALANCE, newBalance);
-        }
-
-        // ========== GLOBAL API FOR TRANSFER PAGE ==========
-        window.BeyondTrust = {
-            addTransfer: function(amount, recipient, description) {
-                console.log('=== Adding Transfer ===');
-                console.log('Amount:', amount, 'Recipient:', recipient);
-                
-                const now = new Date();
-                const transferAmount = parseFloat(amount);
-                
-                // Get current balance
-                let currentBalance = loadBalance();
-                
-                // Subtract amount
-                const newBalance = currentBalance - transferAmount;
-                updateBalance(newBalance);
-                
-                // Create transaction record
-                const transaction = {
-                    name: "Transfer to " + (recipient || "External Account"),
-                    time: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) + " • " + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-                    amount: transferAmount,
-                    type: "debit",
-                    reference: generateTransactionRef(),
-                    status: "completed",
-                    description: description || "Online Transfer",
-                    beneficiary: recipient || "External Account",
-                    date: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
-                    exactTime: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
-                };
-                
-                // Add transaction (preserves defaults)
-                addNewTransaction(transaction);
-                
-                console.log('Transfer saved! New balance:', newBalance);
-                
-                // Refresh display
-                refreshDisplay();
-                
-                return transaction.reference;
-            },
-            
-            getBalance: function() {
-                return loadBalance();
-            }
-        };
-
-        // Also keep compatibility with old function name
-        window.addNewTransaction = addNewTransaction;
-
-        // ========== REFRESH DISPLAY ==========
         let showingAllTransactions = false;
 
         function refreshDisplay() {
@@ -826,12 +790,23 @@
                 container.innerHTML = transactionsToShow.map((transaction, idx) => {
                     let logoKey = transaction.name ? transaction.name.split(' ')[0] : 'Transfer';
                     let logoUrl = BANK_LOGOS[logoKey] || 'images/default-bank.png';
+                    const statusClass = transaction.status === 'pending' ? 'pending' : 'completed';
+                    const statusText = transaction.status === 'pending' ? 'Pending' : '';
+                    const showLoadingBar = transaction.status === 'pending';
                     return `
                     <div class="transaction-item" onclick="showTransactionDetails(${transactionHistory.indexOf(transaction)})">
                         <img src="${logoUrl}" class="transaction-logo" alt="${logoKey}" onerror="this.src='images/default-bank.png'">
                         <div class="transaction-details">
-                            <div class="transaction-name">${transaction.name}</div>
+                            <div class="transaction-name">
+                                ${transaction.name}
+                                <span class="status-badge ${statusClass}">${statusText}</span>
+                            </div>
                             <div class="transaction-time">${transaction.time}</div>
+                            ${showLoadingBar ? `
+                            <div class="pending-loading-bar">
+                                <div class="loading-progress"></div>
+                            </div>
+                            ` : ''}
                         </div>
                         <div class="transaction-amount ${transaction.type}">
                             ${transaction.type === 'debit' ? '−' : '+'}$${Math.abs(transaction.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
@@ -851,7 +826,11 @@
                 minimumFractionDigits: 2
             }).format(Math.abs(transaction.amount));
 
-            const detailsHTML = `
+            const statusText = transaction.status === 'pending' ? 'Pending (On Hold)' : 'Completed';
+            const statusClass = transaction.status === 'pending' ? 'status-pending' : 'status-completed';
+            const statusIcon = transaction.status === 'pending' ? '<i class="fas fa-clock"></i>' : '<i class="fas fa-check-circle"></i>';
+
+            let detailsHTML = `
                 <div class="transaction-detail-item">
                     <div class="detail-label">Transaction Reference</div>
                     <div class="transaction-reference">${transaction.reference || 'N/A'}</div>
@@ -874,8 +853,8 @@
                 </div>
                 <div class="transaction-detail-item">
                     <div class="detail-label">Status</div>
-                    <div class="transaction-status status-completed">
-                        <i class="fas fa-check-circle"></i> Completed
+                    <div class="transaction-status ${statusClass}">
+                        ${statusIcon} ${statusText}
                     </div>
                 </div>
                 <div class="transaction-detail-item">
@@ -883,6 +862,28 @@
                     <div class="detail-value">${transaction.beneficiary || 'CHRISTINE DELFELD'}</div>
                 </div>
             `;
+
+            // Add additional details for pending transactions (transfer details)
+            if (transaction.status === 'pending' && transaction.bankName) {
+                detailsHTML += `
+                    <div class="transaction-detail-item">
+                        <div class="detail-label">Bank Name</div>
+                        <div class="detail-value">${transaction.bankName || 'N/A'}</div>
+                    </div>
+                    <div class="transaction-detail-item">
+                        <div class="detail-label">Wire Routing Number</div>
+                        <div class="detail-value">${transaction.wireRouting || 'N/A'}</div>
+                    </div>
+                    <div class="transaction-detail-item">
+                        <div class="detail-label">Reason for Payment</div>
+                        <div class="detail-value">${transaction.reasonForPayment || 'N/A'}</div>
+                    </div>
+                    <div class="transaction-detail-item">
+                        <div class="detail-label">Account Number</div>
+                        <div class="detail-value">${transaction.accountNumber || 'N/A'}</div>
+                    </div>
+                `;
+            }
 
             document.getElementById('transactionDetailsContent').innerHTML = detailsHTML;
             document.getElementById('transactionModal').style.display = 'flex';
@@ -958,14 +959,12 @@
             window.location.href = 'myprofile/profile.html';
         });
 
-        // Listen for storage changes from transfer page
         window.addEventListener('storage', function(e) {
             if (e.key === STORAGE_BALANCE || e.key === STORAGE_TRANSACTIONS) {
                 refreshDisplay();
             }
         });
 
-        // Listen for postMessage from transfer page
         window.addEventListener('message', function(event) {
             if (event.data && event.data.type === 'TRANSFER_COMPLETED') {
                 refreshDisplay();
@@ -995,7 +994,6 @@
         console.log('=== Checking Account Loaded ===');
         console.log('Current Balance:', balance);
         console.log('Transactions Count:', transactionHistory.length);
-        console.log('Default transactions preserved!');
     </script>
 </body>
 </html>
