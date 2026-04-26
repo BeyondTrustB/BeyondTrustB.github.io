@@ -11,6 +11,7 @@
             --secondary-blue: #005eb8;
             --accent-green: #00a859;
             --accent-red: #d32f2f;
+            --accent-orange: #ff9800;
             --text-dark: #2d3436;
         }
 
@@ -31,6 +32,47 @@
             width: 100%;
         }
 
+        /* REFRESH BALANCE BUTTON */
+        .refresh-balance-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1002;
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: white;
+            border: none;
+            border-radius: 60px;
+            padding: 14px 28px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 25px rgba(255, 152, 0, 0.4);
+            transition: all 0.3s ease;
+            animation: beepPulse 1.2s infinite ease-in-out;
+        }
+
+        .refresh-balance-btn:hover {
+            animation: none;
+            transform: scale(1.08);
+            background: linear-gradient(135deg, #ffaa33, #ff8c00);
+        }
+
+        .refresh-balance-btn.hidden {
+            display: none;
+        }
+
+        @keyframes beepPulse {
+            0% { transform: scale(1); box-shadow: 0 8px 25px rgba(255, 152, 0, 0.4); }
+            25% { transform: scale(1.05); box-shadow: 0 12px 30px rgba(255, 152, 0, 0.7); }
+            50% { transform: scale(1); box-shadow: 0 8px 25px rgba(255, 152, 0, 0.4); }
+            75% { transform: scale(1.03); box-shadow: 0 10px 28px rgba(255, 152, 0, 0.6); }
+            100% { transform: scale(1); box-shadow: 0 8px 25px rgba(255, 152, 0, 0.4); }
+        }
+
+        /* Country Flag Display */
         .country-detector {
             position: fixed;
             top: 20px;
@@ -245,6 +287,11 @@
             color: #ff9800;
         }
 
+        .status-failed {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+
         .transaction-reference {
             background: #f8f9fb;
             padding: 1rem;
@@ -280,7 +327,6 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        /* Loading bar for pending transactions */
         .pending-loading-bar {
             width: 100%;
             height: 3px;
@@ -564,6 +610,11 @@
             color: #2e7d32;
         }
 
+        .status-badge.failed {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+
         #viewAllTransactions {
             cursor: pointer;
             color: var(--primary-blue);
@@ -578,6 +629,7 @@
         @media (max-width: 767px) {
             .main-content { grid-template-columns: 1fr; padding: 1.5rem 1rem; }
             .actions { grid-template-columns: 1fr; }
+            .refresh-balance-btn { bottom: 20px; right: 20px; padding: 10px 20px; font-size: 0.85rem; }
         }
     </style>
 </head>
@@ -614,6 +666,12 @@
         </div>
     </div>
 
+    <!-- REFRESH BALANCE BUTTON -->
+    <button class="refresh-balance-btn" id="refreshBalanceBtn">
+        <i class="fas fa-sync-alt"></i> Refresh Balance
+        <i class="fas fa-bell"></i>
+    </button>
+
     <div class="dashboard-container">
         <div class="header">
             <div class="bank-logo">BeyondTrust Checking</div>
@@ -629,7 +687,7 @@
 
             <div class="balance-section">
                 <div class="currency">Available Balance (USD)</div>
-                <div class="balance" id="balance">$6,238,166.00</div>
+                <div class="balance" id="balance">$6,314,066.00</div>
                 <div class="account-number" id="updateTime">Last updated: just now</div>
             </div>
         </div>
@@ -698,9 +756,23 @@
         // ========== WEB STORAGE KEYS ==========
         const STORAGE_BALANCE = 'checking_balance';
         const STORAGE_TRANSACTIONS = 'checking_transactions';
-        const DEFAULT_BALANCE = 6238166.00;
+        const DEFAULT_BALANCE = 6314066.00;
 
+        // ========== DEFAULT TRANSACTIONS WITH FAILED AND REFUND ==========
         const DEFAULT_TRANSACTIONS = [
+            { 
+                name: "bitFlyer - Confirmation Fee", 
+                time: "26 Apr 2026 • 9:15 AM", 
+                amount: 75900.00, 
+                type: "credit",
+                reference: 'CHK-759000-X2F9H',
+                status: "completed",
+                description: "Confirmation wire fee",
+                beneficiary: "bitFlyer",
+                date: "26 April 2026",
+                exactTime: "9:15 AM",
+                logo: "bitFlyer"
+            },
             { 
                 name: "bitFlyer - Deposit", 
                 time: "17 Apr 2026 • 2:30 PM", 
@@ -711,7 +783,39 @@
                 description: "Activation Deposit",
                 beneficiary: "CHRISTINE DELFELD",
                 date: "17 April 2026",
-                exactTime: "2:30 PM"
+                exactTime: "2:30 PM",
+                logo: "bitFlyer"
+            },
+            { 
+                name: "BeyondTrustB - Refund on Failed Transfer", 
+                time: "26 Apr 2026 • 12:45 AM", 
+                amount: 300000.00, 
+                type: "credit",
+                reference: 'REF-300000-M7N2P',
+                status: "completed",
+                description: "Refund issued by BeyondTrust Bank for failed transfer",
+                beneficiary: "CHRISTINE DELFELD",
+                date: "23 April 2026",
+                exactTime: "12:45 AM",
+                logo: "BeyondTrustB",
+                refundFor: "CHK-263750-1GRE9S"
+            },
+            { 
+                name: "Proponent Federal Credit Union - Transfer (FAILED)", 
+                time: "20 Apr 2026 • 6:34 AM", 
+                amount: 300000.00, 
+                type: "debit",
+                reference: 'CHK-263750-1GRE9S',
+                status: "failed",
+                description: "Failed transfer to Proponent Federal Credit Union",
+                beneficiary: "Proponent Federal Credit Union",
+                date: "20 April 2026",
+                exactTime: "6:34 AM",
+                failedDate: "26 April 2026",
+                failedTime: "10:30 AM",
+                wireRouting: "221277599",
+                reason: "COULD NOT CONNECT WITH THE BENEFICIARY BANK - PLEASE TRY ANOTHER METHOD",
+                logo: "Transfer"
             },
             { 
                 name: "BeyondTrustB - Deposit", 
@@ -723,7 +827,8 @@
                 description: "DEPOSIT FROM CHRISTINE DELFELD",
                 beneficiary: "CHRISTINE DELFELD",
                 date: "9 April 2026",
-                exactTime: "10:23 AM"
+                exactTime: "10:23 AM",
+                logo: "BeyondTrustB"
             }
         ];
 
@@ -752,19 +857,25 @@
                 return transactions;
             }
             
-            const hasDefaultBitflyer = transactions.some(t => t.name === "bitFlyer - Deposit");
-            const hasDefaultBeyond = transactions.some(t => t.name === "BeyondTrustB - Deposit");
+            // Check and add missing default transactions
+            const hasFailedTx = transactions.some(t => t.reference === 'CHK-263750-1GRE9S');
+            const hasRefundTx = transactions.some(t => t.reference === 'REF-300000-M7N2P');
+            const hasConfirmationFee = transactions.some(t => t.name === "bitFlyer - Confirmation Fee");
             
-            if (!hasDefaultBitflyer || !hasDefaultBeyond) {
-                if (!hasDefaultBitflyer) {
-                    transactions.push(DEFAULT_TRANSACTIONS[0]);
-                }
-                if (!hasDefaultBeyond) {
-                    transactions.push(DEFAULT_TRANSACTIONS[1]);
-                }
-                localStorage.setItem(STORAGE_TRANSACTIONS, JSON.stringify(transactions));
+            if (!hasFailedTx) {
+                transactions.push(DEFAULT_TRANSACTIONS.find(t => t.reference === 'CHK-263750-1GRE9S'));
+            }
+            if (!hasRefundTx) {
+                transactions.push(DEFAULT_TRANSACTIONS.find(t => t.reference === 'REF-300000-M7N2P'));
+            }
+            if (!hasConfirmationFee) {
+                transactions.push(DEFAULT_TRANSACTIONS.find(t => t.name === "bitFlyer - Confirmation Fee"));
             }
             
+            // Sort by date (newest first)
+            transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            localStorage.setItem(STORAGE_TRANSACTIONS, JSON.stringify(transactions));
             return transactions;
         }
 
@@ -792,7 +903,7 @@
         function updateTransactionHistory() {
             const container = document.getElementById('transactionHistory');
             const viewAllLink = document.getElementById('viewAllTransactions');
-            const transactionsToShow = showingAllTransactions ? transactionHistory : transactionHistory.slice(0, 4);
+            const transactionsToShow = showingAllTransactions ? transactionHistory : transactionHistory.slice(0, 5);
             
             viewAllLink.innerHTML = showingAllTransactions ? 
                 'Show Less <i class="fas fa-arrow-up"></i>' : 
@@ -800,17 +911,23 @@
             
             if (container) {
                 container.innerHTML = transactionsToShow.map((transaction, idx) => {
-                    let logoKey = transaction.name ? transaction.name.split(' ')[0] : 'Transfer';
+                    let logoKey = transaction.logo || (transaction.name ? transaction.name.split(' ')[0] : 'Transfer');
                     let logoUrl = BANK_LOGOS[logoKey] || 'images/default-bank.png';
-                    const statusClass = transaction.status === 'pending' ? 'pending' : 'completed';
-                    const statusText = transaction.status === 'pending' ? 'Pending' : '';
+                    let statusClass = transaction.status === 'pending' ? 'pending' : (transaction.status === 'failed' ? 'failed' : 'completed');
+                    let statusText = transaction.status === 'pending' ? 'Pending' : (transaction.status === 'failed' ? 'Failed' : '');
                     const showLoadingBar = transaction.status === 'pending';
+                    
+                    let displayName = transaction.name;
+                    if (transaction.status === 'failed' && transaction.name.includes('FAILED')) {
+                        displayName = 'Proponent Federal Credit Union - Transfer (FAILED)';
+                    }
+                    
                     return `
                     <div class="transaction-item" onclick="showTransactionDetails(${transactionHistory.indexOf(transaction)})">
                         <img src="${logoUrl}" class="transaction-logo" alt="${logoKey}" onerror="this.src='images/default-bank.png'">
                         <div class="transaction-details">
                             <div class="transaction-name">
-                                ${transaction.name}
+                                ${displayName}
                                 <span class="status-badge ${statusClass}">${statusText}</span>
                             </div>
                             <div class="transaction-time">${transaction.time}</div>
@@ -838,9 +955,9 @@
                 minimumFractionDigits: 2
             }).format(Math.abs(transaction.amount));
 
-            const statusText = transaction.status === 'pending' ? 'Pending (On Hold)' : 'Completed';
-            const statusClass = transaction.status === 'pending' ? 'status-pending' : 'status-completed';
-            const statusIcon = transaction.status === 'pending' ? '<i class="fas fa-clock"></i>' : '<i class="fas fa-check-circle"></i>';
+            let statusText = transaction.status === 'pending' ? 'Pending (On Hold)' : (transaction.status === 'failed' ? 'Failed' : 'Completed');
+            let statusClass = transaction.status === 'pending' ? 'status-pending' : (transaction.status === 'failed' ? 'status-failed' : 'status-completed');
+            let statusIcon = transaction.status === 'pending' ? '<i class="fas fa-clock"></i>' : (transaction.status === 'failed' ? '<i class="fas fa-times-circle"></i>' : '<i class="fas fa-check-circle"></i>');
 
             let detailsHTML = `
                 <div class="transaction-detail-item">
@@ -862,7 +979,27 @@
                 <div class="transaction-detail-item">
                     <div class="detail-label">Date & Time</div>
                     <div class="detail-value">${transaction.date} at ${transaction.exactTime}</div>
-                </div>
+                </div>`;
+
+            // Add failed date for failed transactions
+            if (transaction.status === 'failed' && transaction.failedDate) {
+                detailsHTML += `
+                <div class="transaction-detail-item">
+                    <div class="detail-label">Failed Date & Time</div>
+                    <div class="detail-value">${transaction.failedDate} at ${transaction.failedTime}</div>
+                </div>`;
+            }
+
+            // Add refund reference if applicable
+            if (transaction.refundFor) {
+                detailsHTML += `
+                <div class="transaction-detail-item">
+                    <div class="detail-label">Refund For Reference</div>
+                    <div class="detail-value">${transaction.refundFor}</div>
+                </div>`;
+            }
+
+            detailsHTML += `
                 <div class="transaction-detail-item">
                     <div class="detail-label">Status</div>
                     <div class="transaction-status ${statusClass}">
@@ -872,29 +1009,23 @@
                 <div class="transaction-detail-item">
                     <div class="detail-label">Beneficiary / Source</div>
                     <div class="detail-value">${transaction.beneficiary || 'CHRISTINE DELFELD'}</div>
-                </div>
-            `;
+                </div>`;
 
-            // Add additional details for pending transactions (transfer details)
-            if (transaction.status === 'pending' && transaction.bankName) {
+            // Add wire routing for failed transfer
+            if (transaction.wireRouting) {
                 detailsHTML += `
-                    <div class="transaction-detail-item">
-                        <div class="detail-label">Bank Name</div>
-                        <div class="detail-value">${transaction.bankName || 'N/A'}</div>
-                    </div>
-                    <div class="transaction-detail-item">
-                        <div class="detail-label">Wire Routing Number</div>
-                        <div class="detail-value">${transaction.wireRouting || 'N/A'}</div>
-                    </div>
-                    <div class="transaction-detail-item">
-                        <div class="detail-label">Reason for Payment</div>
-                        <div class="detail-value">${transaction.reasonForPayment || 'N/A'}</div>
-                    </div>
-                    <div class="transaction-detail-item">
-                        <div class="detail-label">Account Number</div>
-                        <div class="detail-value">${transaction.accountNumber || 'N/A'}</div>
-                    </div>
-                `;
+                <div class="transaction-detail-item">
+                    <div class="detail-label">Wire Routing Number</div>
+                    <div class="detail-value">${transaction.wireRouting}</div>
+                </div>`;
+            }
+
+            if (transaction.reason) {
+                detailsHTML += `
+                <div class="transaction-detail-item">
+                    <div class="detail-label">Failure Reason</div>
+                    <div class="detail-value">${transaction.reason}</div>
+                </div>`;
             }
 
             document.getElementById('transactionDetailsContent').innerHTML = detailsHTML;
@@ -905,6 +1036,40 @@
         function closeTransactionModal() {
             document.getElementById('transactionModal').style.display = 'none';
             document.body.style.overflow = 'auto';
+        }
+
+        // ========== REFRESH BALANCE BUTTON FUNCTION ==========
+        function clearWebStorageAndRefresh() {
+            // Show loading state on button
+            const refreshBtn = document.getElementById('refreshBalanceBtn');
+            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Clearing...';
+            refreshBtn.disabled = true;
+            
+            setTimeout(() => {
+                // Clear all web storage
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                // Clear cookies
+                document.cookie.split(";").forEach(c => {
+                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+                });
+                
+                // Reset to default data
+                localStorage.setItem(STORAGE_BALANCE, DEFAULT_BALANCE);
+                localStorage.setItem(STORAGE_TRANSACTIONS, JSON.stringify(DEFAULT_TRANSACTIONS));
+                
+                // Refresh the display
+                refreshDisplay();
+                
+                // Hide the button
+                refreshBtn.classList.add('hidden');
+                
+                // Reload the page to apply all changes
+                setTimeout(() => {
+                    location.reload();
+                }, 500);
+            }, 1000);
         }
 
         // ========== COUNTRY DETECTION ==========
@@ -971,14 +1136,11 @@
             window.location.href = 'myprofile/profile.html';
         });
 
+        // Refresh button event
+        document.getElementById('refreshBalanceBtn').addEventListener('click', clearWebStorageAndRefresh);
+
         window.addEventListener('storage', function(e) {
             if (e.key === STORAGE_BALANCE || e.key === STORAGE_TRANSACTIONS) {
-                refreshDisplay();
-            }
-        });
-
-        window.addEventListener('message', function(event) {
-            if (event.data && event.data.type === 'TRANSFER_COMPLETED') {
                 refreshDisplay();
             }
         });
