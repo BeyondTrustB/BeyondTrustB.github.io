@@ -124,11 +124,6 @@
             margin-bottom: 1rem;
         }
 
-        .crypto-title i {
-            font-size: 2.5rem;
-            color: #f7931a;
-        }
-
         .crypto-title h1 {
             font-size: 2rem;
         }
@@ -185,7 +180,7 @@
             transform: translateY(-2px);
         }
 
-        /* Live Prices Section - Mobile optimized */
+        /* Live Prices Section */
         .prices-section {
             background: #1a1a2e;
             border-radius: 20px;
@@ -276,7 +271,7 @@
         }
 
         .transactions-list {
-            max-height: 300px;
+            max-height: 400px;
             overflow-y: auto;
         }
 
@@ -300,11 +295,14 @@
             display: flex;
             align-items: center;
             gap: 1rem;
+            flex: 1;
+            min-width: 0;
         }
 
         .tx-icon {
             width: 40px;
             height: 40px;
+            min-width: 40px;
             border-radius: 50%;
             background: #6b2fb520;
             display: flex;
@@ -319,22 +317,36 @@
             object-fit: contain;
         }
 
+        .tx-details {
+            flex: 1;
+            min-width: 0;
+        }
+
         .tx-details h4 {
             font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .tx-details p {
             font-size: 0.7rem;
             opacity: 0.6;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .tx-amount {
             text-align: right;
+            flex-shrink: 0;
+            margin-left: 0.75rem;
         }
 
         .tx-amount .amount {
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 0.95rem;
+            white-space: nowrap;
         }
 
         .tx-amount .status {
@@ -347,6 +359,9 @@
 
         .status-completed { background: #00a85920; color: #00a859; }
         .status-pending { background: #ff980020; color: #ff9800; }
+
+        .credit { color: #00a859; }
+        .debit { color: #d32f2f; }
 
         /* Custom Modal Styles */
         .modal {
@@ -378,6 +393,12 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            z-index: 1;
         }
 
         .close-modal {
@@ -438,6 +459,64 @@
             letter-spacing: 5px;
         }
 
+        /* Transaction Detail Styles */
+        .tx-detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .tx-detail-label {
+            font-size: 0.8rem;
+            opacity: 0.6;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tx-detail-value {
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-align: right;
+            word-break: break-all;
+            max-width: 60%;
+        }
+
+        .tx-detail-value.credit { color: #00a859; }
+        .tx-detail-value.debit { color: #d32f2f; }
+
+        .tx-detail-reference {
+            background: #0f0f23;
+            padding: 0.8rem;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            text-align: center;
+            word-break: break-all;
+            margin: 0.5rem 0;
+        }
+
+        .tx-detail-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .tx-detail-status.pending {
+            background: #ff980020;
+            color: #ff9800;
+        }
+
+        .tx-detail-status.completed {
+            background: #00a85920;
+            color: #00a859;
+        }
+
         /* Custom Toast/Popup Notification */
         .custom-toast {
             position: fixed;
@@ -489,7 +568,6 @@
             opacity: 0.8;
         }
 
-        /* Select option styling */
         select option {
             background: #1a1a2e;
             color: white;
@@ -500,6 +578,8 @@
             .prices-grid { grid-template-columns: 1fr; }
             .crypto-title h1 { font-size: 1.5rem; }
             .balance-amount { font-size: 1.8rem; }
+            .tx-details h4 { font-size: 0.8rem; }
+            .tx-amount .amount { font-size: 0.85rem; }
         }
     </style>
 </head>
@@ -580,6 +660,20 @@
                 <i class="fas fa-history"></i> Crypto Transaction History
             </div>
             <div class="transactions-list" id="cryptoTransactions"></div>
+        </div>
+    </div>
+
+    <!-- Transaction Detail Modal -->
+    <div id="txDetailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Transaction Details</h3>
+                <button class="close-modal" onclick="closeModal('txDetailModal')">&times;</button>
+            </div>
+            <div id="txDetailContent"></div>
+            <button class="submit-btn" onclick="closeModal('txDetailModal')" style="margin-top: 1rem;">
+                <i class="fas fa-times"></i> Close
+            </button>
         </div>
     </div>
 
@@ -805,6 +899,73 @@
             displayTransactions();
         }
 
+        // ========== SHOW TRANSACTION DETAILS ==========
+        function showTxDetails(index) {
+            const transactions = loadCryptoTransactions();
+            const tx = transactions[index];
+            if (!tx) return;
+
+            const coinLower = tx.coin.toLowerCase();
+            const isReceive = tx.type === 'receive' || tx.type === 'buy';
+            const statusClass = tx.status === 'pending' ? 'pending' : 'completed';
+            const statusIcon = tx.status === 'pending' ? '<i class="fas fa-clock"></i>' : '<i class="fas fa-check-circle"></i>';
+
+            const detailHTML = `
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <div class="tx-icon" style="width: 60px; height: 60px; margin: 0 auto 0.5rem; background: #6b2fb530;">
+                        <img src="images/${coinLower}.png" alt="${tx.coin}" style="width: 60%; height: 60%;" onerror="this.src='images/default-crypto.png'">
+                    </div>
+                    <h3 style="font-size: 1.2rem;">${isReceive ? 'Received' : 'Sent'} ${tx.coin}</h3>
+                </div>
+
+                <div class="tx-detail-reference">
+                    ${tx.id || 'N/A'}
+                </div>
+
+                <div class="tx-detail-row">
+                    <span class="tx-detail-label">Amount</span>
+                    <span class="tx-detail-value ${isReceive ? 'credit' : 'debit'}">
+                        ${isReceive ? '+' : '-'} ${Math.abs(tx.amount).toLocaleString()} ${tx.coin}
+                    </span>
+                </div>
+
+                <div class="tx-detail-row">
+                    <span class="tx-detail-label">Type</span>
+                    <span class="tx-detail-value">${isReceive ? 'Received' : 'Sent'}</span>
+                </div>
+
+                <div class="tx-detail-row">
+                    <span class="tx-detail-label">Status</span>
+                    <span class="tx-detail-status ${statusClass}">
+                        ${statusIcon} ${tx.status === 'pending' ? 'Pending' : 'Completed'}
+                    </span>
+                </div>
+
+                <div class="tx-detail-row">
+                    <span class="tx-detail-label">Date</span>
+                    <span class="tx-detail-value">${tx.date || 'N/A'}</span>
+                </div>
+
+                <div class="tx-detail-row">
+                    <span class="tx-detail-label">Time</span>
+                    <span class="tx-detail-value">${tx.time || 'N/A'}</span>
+                </div>
+
+                <div class="tx-detail-row">
+                    <span class="tx-detail-label">Network</span>
+                    <span class="tx-detail-value">${tx.network || 'N/A'}</span>
+                </div>
+
+                <div class="tx-detail-row">
+                    <span class="tx-detail-label">Address</span>
+                    <span class="tx-detail-value" style="font-family: monospace; font-size: 0.8rem;">${tx.address || 'N/A'}</span>
+                </div>
+            `;
+
+            document.getElementById('txDetailContent').innerHTML = detailHTML;
+            document.getElementById('txDetailModal').style.display = 'flex';
+        }
+
         function displayTransactions() {
             const container = document.getElementById('cryptoTransactions');
             const transactions = loadCryptoTransactions();
@@ -814,11 +975,11 @@
                 return;
             }
             
-            container.innerHTML = transactions.map(tx => {
+            container.innerHTML = transactions.map((tx, idx) => {
                 const coinLower = tx.coin.toLowerCase();
                 const isReceive = tx.type === 'receive' || tx.type === 'buy';
                 return `
-                <div class="crypto-transaction-item">
+                <div class="crypto-transaction-item" onclick="showTxDetails(${idx})">
                     <div class="tx-info">
                         <div class="tx-icon">
                             <img src="images/${coinLower}.png" alt="${tx.coin}" onerror="this.src='images/default-crypto.png'">
@@ -829,7 +990,7 @@
                         </div>
                     </div>
                     <div class="tx-amount">
-                        <div class="amount" style="color: ${isReceive ? '#00a859' : '#d32f2f'};">
+                        <div class="amount ${isReceive ? 'credit' : 'debit'}">
                             ${isReceive ? '+' : '-'} ${Math.abs(tx.amount).toLocaleString()} ${tx.coin}
                         </div>
                         <div class="status status-${tx.status}">${tx.status}</div>
@@ -934,7 +1095,6 @@
                 return;
             }
             
-            // Check specific coin balance
             const coinBalance = getCoinBalance(crypto);
             const coinName = getCoinDisplayName(crypto);
             
@@ -982,12 +1142,13 @@
                 setCoinBalance(selectedCryptoForTransfer, coinBalance);
                 
                 const now = new Date();
+                const txId = 'TX-' + Date.now();
                 const transaction = {
-                    id: 'CRYPTO-' + Date.now(),
+                    id: txId,
                     type: 'send',
                     coin: selectedCryptoForTransfer.toUpperCase(),
                     amount: transferAmount,
-                    address: transferAddress.substring(0, 10) + '...',
+                    address: transferAddress,
                     network: selectedNetwork,
                     status: 'pending',
                     date: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
@@ -996,7 +1157,7 @@
                 
                 saveCryptoTransaction(transaction);
                 closeLoading();
-                showToast(`${transferAmount.toLocaleString()} ${selectedCryptoForTransfer.toUpperCase()} transfer initiated. Reference: ${transaction.id}`, 'Transfer Initiated', 'success');
+                showToast(`${transferAmount.toLocaleString()} ${selectedCryptoForTransfer.toUpperCase()} transfer initiated. Reference: ${txId}`, 'Transfer Initiated', 'success');
                 
                 closeModal('transferModal');
                 updateDisplay();
@@ -1073,21 +1234,19 @@
             showLoading('Processing Purchase...');
             
             setTimeout(() => {
-                // Debit USD balance
                 let usdBalance = parseFloat(localStorage.getItem(STORAGE_BALANCE)) || 6314066;
                 usdBalance -= window.buyAmountUSD;
                 localStorage.setItem(STORAGE_BALANCE, usdBalance);
                 
-                // Credit USDC balance
                 let usdcBalance = loadUSDCBalance();
                 usdcBalance += window.buyAmountUSD;
                 saveUSDCBalance(usdcBalance);
                 
                 const now = new Date();
+                const buyId = 'BUY-' + Date.now();
                 
-                // Add to crypto transactions (credit)
                 const cryptoTransaction = {
-                    id: 'BUY-' + Date.now(),
+                    id: buyId,
                     type: 'receive',
                     coin: 'USDC',
                     amount: window.buyAmountUSD,
@@ -1099,14 +1258,13 @@
                 };
                 saveCryptoTransaction(cryptoTransaction);
                 
-                // Add debit transaction to main page history
                 let mainTransactions = JSON.parse(localStorage.getItem(STORAGE_TRANSACTIONS)) || [];
                 const mainTransaction = {
                     name: "Crypto Portfolio - USDC Purchase",
                     time: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) + " • " + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
                     amount: window.buyAmountUSD,
                     type: "debit",
-                    reference: 'CRYPTO-BUY-' + Date.now(),
+                    reference: buyId,
                     status: "completed",
                     description: `USDC Purchase via Crypto Portfolio - ${window.buyAmountUSD.toLocaleString()} USDC`,
                     beneficiary: "Crypto Portfolio",
