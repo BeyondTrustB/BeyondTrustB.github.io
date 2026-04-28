@@ -505,7 +505,7 @@
 
     <div class="dashboard-container" id="dashboardContainer">
         <div class="crypto-header">
-            <button class="back-button" onclick="window.location.href='../checking/checking.html'">
+            <button class="back-button" onclick="window.location.href='../index.html'">
                 <i class="fas fa-arrow-left"></i> Back to Dashboard
             </button>
             <div class="crypto-title">
@@ -664,21 +664,11 @@
         const STORAGE_USDC_BALANCE = 'usdc_balance';
         const STORAGE_CRYPTO_TRANSACTIONS = 'crypto_transactions';
         const STORAGE_BALANCE = 'checking_balance';
-        const CORRECT_PIN = "1111";
+        const CORRECT_PIN = "2123";
 
         // Default crypto transactions
         const DEFAULT_CRYPTO_TRANSACTIONS = [
-            {
-                id: 'CRYPTO-001',
-                type: 'receive',
-                coin: 'USDC',
-                amount: 12500,
-                address: '0x8fB9...d3E2a',
-                status: 'completed',
-                date: '27 Apr 2026',
-                time: '11:30 AM',
-                network: 'ERC20'
-            }
+           
         ];
 
         // Custom Toast Notification
@@ -737,7 +727,7 @@
         function loadUSDCBalance() {
             let balance = parseFloat(localStorage.getItem(STORAGE_USDC_BALANCE));
             if (isNaN(balance)) {
-                balance = 12500;
+                balance = 0;
                 localStorage.setItem(STORAGE_USDC_BALANCE, balance);
             }
             return balance;
@@ -1009,46 +999,67 @@
         }
 
         function processCryptoBuy() {
-            const pin = document.getElementById('buyPinInput').value;
-            
-            if (pin !== CORRECT_PIN) {
-                showToast('Invalid PIN. Please try again.', 'Authentication Failed', 'error');
-                document.getElementById('buyPinInput').value = '';
-                return;
-            }
-            
-            showLoading('Processing Purchase...');
-            
-            setTimeout(() => {
-                let usdBalance = parseFloat(localStorage.getItem(STORAGE_BALANCE)) || 6314066;
-                usdBalance -= window.buyAmountUSD;
-                localStorage.setItem(STORAGE_BALANCE, usdBalance);
-                
-                let usdcBalance = loadUSDCBalance();
-                usdcBalance += window.buyAmountUSD;
-                saveUSDCBalance(usdcBalance);
-                
-                const now = new Date();
-                const transaction = {
-                    id: 'BUY-' + Date.now(),
-                    type: 'receive',
-                    coin: 'USDC',
-                    amount: window.buyAmountUSD,
-                    address: 'Exchange Purchase',
-                    network: 'USD → USDC',
-                    status: 'completed',
-                    date: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
-                    time: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
-                };
-                
-                saveCryptoTransaction(transaction);
-                closeLoading();
-                showToast(`Successfully purchased ${window.buyAmountUSD.toLocaleString()} USDC! New balance: ${usdcBalance.toLocaleString()} USDC`, 'Purchase Successful', 'success');
-                
-                closeModal('buyModal');
-                updateDisplay();
-            }, 1500);
-        }
+    const pin = document.getElementById('buyPinInput').value;
+    
+    if (pin !== CORRECT_PIN) {
+        showToast('Invalid PIN. Please try again.', 'Authentication Failed', 'error');
+        document.getElementById('buyPinInput').value = '';
+        return;
+    }
+    
+    showLoading('Processing Purchase...');
+    
+    setTimeout(() => {
+        let usdBalance = parseFloat(localStorage.getItem(STORAGE_BALANCE)) || 6314066;
+        usdBalance -= window.buyAmountUSD;
+        localStorage.setItem(STORAGE_BALANCE, usdBalance);
+        
+        let usdcBalance = loadUSDCBalance();
+        usdcBalance += window.buyAmountUSD;
+        saveUSDCBalance(usdcBalance);
+        
+        const now = new Date();
+        
+        // Add to crypto transactions (credit)
+        const cryptoTransaction = {
+            id: 'BUY-' + Date.now(),
+            type: 'receive',
+            coin: 'USDC',
+            amount: window.buyAmountUSD,
+            address: 'Exchange Purchase',
+            network: 'USD → USDC',
+            status: 'completed',
+            date: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+            time: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+        };
+        saveCryptoTransaction(cryptoTransaction);
+        
+        // ========== ADD THIS PART: Add debit transaction to main page history ==========
+        let mainTransactions = JSON.parse(localStorage.getItem('checking_transactions')) || [];
+        const mainTransaction = {
+            name: "Crypto Portfolio - USDC Purchase",
+            time: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) + " • " + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+            amount: window.buyAmountUSD,
+            type: "debit",
+            reference: 'CRYPTO-BUY-' + Date.now(),
+            status: "completed",
+            description: `USDC Purchase via Crypto Portfolio - ${window.buyAmountUSD.toLocaleString()} USDC`,
+            beneficiary: "Crypto Portfolio",
+            date: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
+            exactTime: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+            logo: "convert"
+        };
+        mainTransactions.unshift(mainTransaction);
+        localStorage.setItem('checking_transactions', JSON.stringify(mainTransactions));
+        // ========== END OF ADDITION ==========
+        
+        closeLoading();
+        showToast(`Successfully purchased ${window.buyAmountUSD.toLocaleString()} USDC! New balance: ${usdcBalance.toLocaleString()} USDC`, 'Purchase Successful', 'success');
+        
+        closeModal('buyModal');
+        updateDisplay();
+    }, 1500);
+}
 
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
