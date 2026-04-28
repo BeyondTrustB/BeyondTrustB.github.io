@@ -489,6 +489,12 @@
             opacity: 0.8;
         }
 
+        /* Select option styling */
+        select option {
+            background: #1a1a2e;
+            color: white;
+        }
+
         @media (max-width: 768px) {
             .actions-row { grid-template-columns: 1fr; }
             .prices-grid { grid-template-columns: 1fr; }
@@ -500,7 +506,7 @@
 <body>
     <div id="pageLoader">
         <div class="crypto-loader"></div>
-        <div class="crypto-loader-text">₿ Loading Crypto Portfolio...</div>
+        <div class="crypto-loader-text">Loading Crypto Portfolio...</div>
     </div>
 
     <div class="dashboard-container" id="dashboardContainer">
@@ -531,7 +537,7 @@
             </button>
         </div>
 
-        <!-- Live Prices Section - Only BTC and ETH for mobile balance -->
+        <!-- Live Prices Section -->
         <div class="prices-section">
             <div class="section-title">
                 <i class="fas fa-chart-line"></i> Live Market Prices
@@ -590,10 +596,10 @@
                     <label>Select Cryptocurrency</label>
                     <select id="cryptoSelect" onchange="updateNetworkOptions()">
                         <option value="">-- Select Coin --</option>
-                        <option value="bitcoin">₿ Bitcoin (BTC)</option>
-                        <option value="ethereum">♦️ Ethereum (ETH)</option>
-                        <option value="usdc">💵 USDC (USD Coin)</option>
-                        <option value="solana">☀️ Solana (SOL)</option>
+                        <option value="bitcoin">Bitcoin (BTC)</option>
+                        <option value="ethereum">Ethereum (ETH)</option>
+                        <option value="usdc">USD Coin (USDC)</option>
+                        <option value="solana">Solana (SOL)</option>
                     </select>
                 </div>
                 <div class="form-group" id="networkGroup" style="display: none;">
@@ -607,7 +613,7 @@
                     <input type="text" id="cryptoAddress" placeholder="Enter wallet address">
                 </div>
                 <div class="form-group">
-                    <label>Amount (USDC)</label>
+                    <label id="amountLabel">Amount</label>
                     <input type="number" id="cryptoAmount" placeholder="Enter amount">
                 </div>
                 <button class="submit-btn" onclick="requestTransferPin()">Continue to PIN</button>
@@ -634,10 +640,10 @@
                 <label>Select Cryptocurrency to Buy</label>
                 <select id="buyCryptoSelect">
                     <option value="">-- Select Coin --</option>
-                    <option value="usdc">💵 USDC (USD Coin)</option>
-                    <option value="bitcoin">₿ Bitcoin (BTC) - Coming Soon</option>
-                    <option value="ethereum">♦️ Ethereum (ETH) - Coming Soon</option>
-                    <option value="solana">☀️ Solana (SOL) - Coming Soon</option>
+                    <option value="usdc">USD Coin (USDC)</option>
+                    <option value="bitcoin">Bitcoin (BTC) - Coming Soon</option>
+                    <option value="ethereum">Ethereum (ETH) - Coming Soon</option>
+                    <option value="solana">Solana (SOL) - Coming Soon</option>
                 </select>
             </div>
             <div class="form-group">
@@ -662,14 +668,51 @@
     <script>
         // ========== STORAGE KEYS ==========
         const STORAGE_USDC_BALANCE = 'usdc_balance';
+        const STORAGE_BTC_BALANCE = 'btc_balance';
+        const STORAGE_ETH_BALANCE = 'eth_balance';
+        const STORAGE_SOL_BALANCE = 'sol_balance';
         const STORAGE_CRYPTO_TRANSACTIONS = 'crypto_transactions';
         const STORAGE_BALANCE = 'checking_balance';
+        const STORAGE_TRANSACTIONS = 'checking_transactions';
         const CORRECT_PIN = "2123";
 
         // Default crypto transactions
-        const DEFAULT_CRYPTO_TRANSACTIONS = [
-           
-        ];
+        const DEFAULT_CRYPTO_TRANSACTIONS = [];
+
+        // ========== BALANCE HELPERS ==========
+        function getCoinBalance(coin) {
+            const keyMap = {
+                'usdc': STORAGE_USDC_BALANCE,
+                'bitcoin': STORAGE_BTC_BALANCE,
+                'ethereum': STORAGE_ETH_BALANCE,
+                'solana': STORAGE_SOL_BALANCE
+            };
+            const key = keyMap[coin];
+            if (!key) return 0;
+            let balance = parseFloat(localStorage.getItem(key));
+            return isNaN(balance) ? 0 : balance;
+        }
+
+        function setCoinBalance(coin, amount) {
+            const keyMap = {
+                'usdc': STORAGE_USDC_BALANCE,
+                'bitcoin': STORAGE_BTC_BALANCE,
+                'ethereum': STORAGE_ETH_BALANCE,
+                'solana': STORAGE_SOL_BALANCE
+            };
+            const key = keyMap[coin];
+            if (key) localStorage.setItem(key, amount);
+        }
+
+        function getCoinDisplayName(coin) {
+            const names = {
+                'usdc': 'USDC',
+                'bitcoin': 'BTC',
+                'ethereum': 'ETH',
+                'solana': 'SOL'
+            };
+            return names[coin] || coin.toUpperCase();
+        }
 
         // Custom Toast Notification
         function showToast(message, title, type = 'success') {
@@ -738,12 +781,17 @@
         }
 
         function loadCryptoTransactions() {
-            let transactions = JSON.parse(localStorage.getItem(STORAGE_CRYPTO_TRANSACTIONS));
-            if (!transactions || transactions.length === 0) {
-                transactions = [...DEFAULT_CRYPTO_TRANSACTIONS];
-                localStorage.setItem(STORAGE_CRYPTO_TRANSACTIONS, JSON.stringify(transactions));
+            try {
+                let transactions = JSON.parse(localStorage.getItem(STORAGE_CRYPTO_TRANSACTIONS));
+                if (!transactions || !Array.isArray(transactions) || transactions.length === 0) {
+                    transactions = [...DEFAULT_CRYPTO_TRANSACTIONS];
+                    localStorage.setItem(STORAGE_CRYPTO_TRANSACTIONS, JSON.stringify(transactions));
+                }
+                return transactions;
+            } catch (e) {
+                console.error('Error loading crypto transactions:', e);
+                return [...DEFAULT_CRYPTO_TRANSACTIONS];
             }
-            return transactions;
         }
 
         function saveCryptoTransaction(transaction) {
@@ -767,25 +815,28 @@
                 return;
             }
             
-            container.innerHTML = transactions.map(tx => `
+            container.innerHTML = transactions.map(tx => {
+                const coinLower = tx.coin.toLowerCase();
+                const isReceive = tx.type === 'receive' || tx.type === 'buy';
+                return `
                 <div class="crypto-transaction-item">
                     <div class="tx-info">
                         <div class="tx-icon">
-                            <img src="images/${tx.coin === 'USDC' ? 'usdc' : tx.coin.toLowerCase()}.png" alt="${tx.coin}" onerror="this.src='images/default-crypto.png'">
+                            <img src="images/${coinLower}.png" alt="${tx.coin}" onerror="this.src='images/default-crypto.png'">
                         </div>
                         <div class="tx-details">
-                            <h4>${tx.type === 'receive' ? 'Received' : 'Sent'} ${tx.coin}</h4>
+                            <h4>${isReceive ? 'Received' : 'Sent'} ${tx.coin}</h4>
                             <p>${tx.date} • ${tx.time} • ${tx.network || 'N/A'}</p>
                         </div>
                     </div>
                     <div class="tx-amount">
-                        <div class="amount ${tx.type === 'receive' ? 'credit' : 'debit'}">
-                            ${tx.type === 'receive' ? '+' : '-'} ${Math.abs(tx.amount).toLocaleString()} ${tx.coin}
+                        <div class="amount" style="color: ${isReceive ? '#00a859' : '#d32f2f'};">
+                            ${isReceive ? '+' : '-'} ${Math.abs(tx.amount).toLocaleString()} ${tx.coin}
                         </div>
                         <div class="status status-${tx.status}">${tx.status}</div>
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         // Live Prices API
@@ -823,6 +874,7 @@
             const crypto = document.getElementById('cryptoSelect').value;
             const networkGroup = document.getElementById('networkGroup');
             const networkSelect = document.getElementById('networkSelect');
+            const amountLabel = document.getElementById('amountLabel');
             
             if (crypto === 'usdc') {
                 networkGroup.style.display = 'block';
@@ -831,17 +883,22 @@
                     <option value="ERC20">Ethereum (ERC20)</option>
                     <option value="TRC20">Tron (TRC20)</option>
                 `;
+                amountLabel.textContent = 'Amount (USDC)';
             } else if (crypto === 'ethereum') {
                 networkGroup.style.display = 'block';
                 networkSelect.innerHTML = `<option value="ERC20">Ethereum (ERC20)</option>`;
+                amountLabel.textContent = 'Amount (ETH)';
             } else if (crypto === 'bitcoin') {
                 networkGroup.style.display = 'block';
                 networkSelect.innerHTML = `<option value="BTC">Bitcoin Network</option>`;
+                amountLabel.textContent = 'Amount (BTC)';
             } else if (crypto === 'solana') {
                 networkGroup.style.display = 'block';
                 networkSelect.innerHTML = `<option value="SOL">Solana Network</option>`;
+                amountLabel.textContent = 'Amount (SOL)';
             } else {
                 networkGroup.style.display = 'none';
+                amountLabel.textContent = 'Amount';
             }
         }
 
@@ -878,9 +935,16 @@
                 return;
             }
             
-            const usdcBalance = loadUSDCBalance();
-            if (amount > usdcBalance) {
-                showToast(`Insufficient USDC balance. Available: ${usdcBalance.toLocaleString()} USDC`, 'Transfer Failed', 'error');
+            // Check specific coin balance
+            const coinBalance = getCoinBalance(crypto);
+            const coinName = getCoinDisplayName(crypto);
+            
+            if (amount > coinBalance) {
+                if (coinBalance === 0) {
+                    showToast(`You have an empty ${coinName} balance. Please buy ${coinName} first or select a different cryptocurrency.`, `Empty ${coinName} Balance`, 'error');
+                } else {
+                    showToast(`Insufficient ${coinName} balance. Available: ${coinBalance.toLocaleString()} ${coinName}`, 'Insufficient Balance', 'error');
+                }
                 return;
             }
             
@@ -914,9 +978,9 @@
             showLoading('Processing Transfer...');
             
             setTimeout(() => {
-                let usdcBalance = loadUSDCBalance();
-                usdcBalance -= transferAmount;
-                saveUSDCBalance(usdcBalance);
+                let coinBalance = getCoinBalance(selectedCryptoForTransfer);
+                coinBalance -= transferAmount;
+                setCoinBalance(selectedCryptoForTransfer, coinBalance);
                 
                 const now = new Date();
                 const transaction = {
@@ -999,67 +1063,68 @@
         }
 
         function processCryptoBuy() {
-    const pin = document.getElementById('buyPinInput').value;
-    
-    if (pin !== CORRECT_PIN) {
-        showToast('Invalid PIN. Please try again.', 'Authentication Failed', 'error');
-        document.getElementById('buyPinInput').value = '';
-        return;
-    }
-    
-    showLoading('Processing Purchase...');
-    
-    setTimeout(() => {
-        let usdBalance = parseFloat(localStorage.getItem(STORAGE_BALANCE)) || 6314066;
-        usdBalance -= window.buyAmountUSD;
-        localStorage.setItem(STORAGE_BALANCE, usdBalance);
-        
-        let usdcBalance = loadUSDCBalance();
-        usdcBalance += window.buyAmountUSD;
-        saveUSDCBalance(usdcBalance);
-        
-        const now = new Date();
-        
-        // Add to crypto transactions (credit)
-        const cryptoTransaction = {
-            id: 'BUY-' + Date.now(),
-            type: 'receive',
-            coin: 'USDC',
-            amount: window.buyAmountUSD,
-            address: 'Exchange Purchase',
-            network: 'USD → USDC',
-            status: 'completed',
-            date: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
-            time: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
-        };
-        saveCryptoTransaction(cryptoTransaction);
-        
-        // ========== ADD THIS PART: Add debit transaction to main page history ==========
-        let mainTransactions = JSON.parse(localStorage.getItem('checking_transactions')) || [];
-        const mainTransaction = {
-            name: "Crypto Portfolio - USDC Purchase",
-            time: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) + " • " + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-            amount: window.buyAmountUSD,
-            type: "debit",
-            reference: 'CRYPTO-BUY-' + Date.now(),
-            status: "completed",
-            description: `USDC Purchase via Crypto Portfolio - ${window.buyAmountUSD.toLocaleString()} USDC`,
-            beneficiary: "Crypto Portfolio",
-            date: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
-            exactTime: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-            logo: "convert"
-        };
-        mainTransactions.unshift(mainTransaction);
-        localStorage.setItem('checking_transactions', JSON.stringify(mainTransactions));
-        // ========== END OF ADDITION ==========
-        
-        closeLoading();
-        showToast(`Successfully purchased ${window.buyAmountUSD.toLocaleString()} USDC! New balance: ${usdcBalance.toLocaleString()} USDC`, 'Purchase Successful', 'success');
-        
-        closeModal('buyModal');
-        updateDisplay();
-    }, 1500);
-}
+            const pin = document.getElementById('buyPinInput').value;
+            
+            if (pin !== CORRECT_PIN) {
+                showToast('Invalid PIN. Please try again.', 'Authentication Failed', 'error');
+                document.getElementById('buyPinInput').value = '';
+                return;
+            }
+            
+            showLoading('Processing Purchase...');
+            
+            setTimeout(() => {
+                // Debit USD balance
+                let usdBalance = parseFloat(localStorage.getItem(STORAGE_BALANCE)) || 6314066;
+                usdBalance -= window.buyAmountUSD;
+                localStorage.setItem(STORAGE_BALANCE, usdBalance);
+                
+                // Credit USDC balance
+                let usdcBalance = loadUSDCBalance();
+                usdcBalance += window.buyAmountUSD;
+                saveUSDCBalance(usdcBalance);
+                
+                const now = new Date();
+                
+                // Add to crypto transactions (credit)
+                const cryptoTransaction = {
+                    id: 'BUY-' + Date.now(),
+                    type: 'receive',
+                    coin: 'USDC',
+                    amount: window.buyAmountUSD,
+                    address: 'Exchange Purchase',
+                    network: 'USD → USDC',
+                    status: 'completed',
+                    date: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+                    time: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+                };
+                saveCryptoTransaction(cryptoTransaction);
+                
+                // Add debit transaction to main page history
+                let mainTransactions = JSON.parse(localStorage.getItem(STORAGE_TRANSACTIONS)) || [];
+                const mainTransaction = {
+                    name: "Crypto Portfolio - USDC Purchase",
+                    time: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) + " • " + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                    amount: window.buyAmountUSD,
+                    type: "debit",
+                    reference: 'CRYPTO-BUY-' + Date.now(),
+                    status: "completed",
+                    description: `USDC Purchase via Crypto Portfolio - ${window.buyAmountUSD.toLocaleString()} USDC`,
+                    beneficiary: "Crypto Portfolio",
+                    date: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
+                    exactTime: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                    logo: "convert"
+                };
+                mainTransactions.unshift(mainTransaction);
+                localStorage.setItem(STORAGE_TRANSACTIONS, JSON.stringify(mainTransactions));
+                
+                closeLoading();
+                showToast(`Successfully purchased ${window.buyAmountUSD.toLocaleString()} USDC! New balance: ${usdcBalance.toLocaleString()} USDC`, 'Purchase Successful', 'success');
+                
+                closeModal('buyModal');
+                updateDisplay();
+            }, 1500);
+        }
 
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
