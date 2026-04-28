@@ -477,7 +477,6 @@
             margin-bottom: 0.25rem;
         }
 
-        /* Crypto Balance Section */
         .crypto-balance-section {
             margin-top: 1rem;
             padding-top: 1rem;
@@ -513,14 +512,41 @@
 
         .main-content {
             padding: 2rem 1.5rem;
-            display: grid;
-            gap: 2rem;
+        }
+
+        /* Desktop layout - 2 columns */
+        @media (min-width: 768px) {
+            .main-content {
+                display: grid;
+                grid-template-columns: 2fr 1fr;
+                gap: 2rem;
+            }
+            .balance { font-size: 3rem; }
+        }
+
+        /* Mobile layout - single column */
+        @media (max-width: 767px) {
+            .main-content {
+                display: flex;
+                flex-direction: column;
+                gap: 2rem;
+                padding: 1.5rem 1rem;
+            }
+            .actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .refresh-balance-btn { bottom: 20px; right: 20px; padding: 10px 20px; font-size: 0.85rem; }
+            .crypto-balance-section { gap: 1rem; }
+            .quick-access-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         .actions {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 1rem;
+            margin-bottom: 2rem;
         }
 
         .action-btn {
@@ -544,7 +570,6 @@
             box-shadow: 0 5px 15px rgba(0, 47, 108, 0.2);
         }
 
-        /* Crypto Button Special Style */
         .crypto-btn {
             background: linear-gradient(135deg, #6b2fb5, #9b59b6);
         }
@@ -555,7 +580,7 @@
 
         .quick-access-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 1rem;
             background: #f8f9fb;
             padding: 1.5rem;
@@ -670,36 +695,12 @@
             color: var(--primary-blue);
             text-decoration: none;
         }
-
-        @media (min-width: 768px) {
-            .main-content { grid-template-columns: 2fr 1fr; }
-            .balance { font-size: 3rem; }
-        }
-
-        @media (max-width: 767px) {
-            .main-content { grid-template-columns: 1fr; padding: 1.5rem 1rem; }
-            .actions { grid-template-columns: 1fr; }
-            .refresh-balance-btn { bottom: 20px; right: 20px; padding: 10px 20px; font-size: 0.85rem; }
-            .crypto-balance-section { gap: 1rem; }
-        }
     </style>
 </head>
 <body>
     <div id="pageLoader">
         <div class="pulse-loader"></div>
     </div>
-    <script type="text/javascript">
-        var _smartsupp = _smartsupp || {};
-        _smartsupp.key = '29c4084a71b95a604fd6d9d5c256be6537c461cb';
-        _smartsupp.cookieDomain = 'BeyondTrustB.github.io';
-        _smartsupp.sitePlatform = 'WP 5.8.6';
-        window.smartsupp||(function(d) {
-            var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
-            s=d.getElementsByTagName('script')[0];c=d.createElement('script');
-            c.type='text/javascript';c.charset='utf-8';c.async=true;
-            c.src='//www.smartsuppchat.com/loader.js';s.parentNode.insertBefore(c,s);
-        })(document);
-    </script>
 
     <button class="show-country-btn" id="showCountryBtn" title="Show Location">
         <i class="fas fa-globe-americas"></i>
@@ -717,7 +718,6 @@
         </div>
     </div>
 
-    <!-- REFRESH BALANCE BUTTON -->
     <button class="refresh-balance-btn" id="refreshBalanceBtn">
         <i class="fas fa-sync-alt"></i> Refresh Balance
         <i class="fas fa-bell"></i>
@@ -740,7 +740,6 @@
                 <div class="currency">Available Balance (USD)</div>
                 <div class="balance" id="balance">$6,314,066.00</div>
                 
-                <!-- Crypto Balance Section - NEW -->
                 <div class="crypto-balance-section">
                     <div class="crypto-item">
                         <div class="crypto-label">
@@ -766,7 +765,6 @@
                     <a href="addmoney/addmoney.html" class="action-btn">
                         <i class="fas fa-plus"></i> Add Money
                     </a>
-                    <!-- NEW CRYPTO BUTTON -->
                     <a href="crypto/crypto.html" class="action-btn crypto-btn">
                         <i class="fab fa-bitcoin"></i> Crypto
                     </a>
@@ -823,25 +821,12 @@
         const STORAGE_BALANCE = 'checking_balance';
         const STORAGE_TRANSACTIONS = 'checking_transactions';
         const STORAGE_USDC_BALANCE = 'usdc_balance';
+        const STORAGE_CRYPTO_TRANSACTIONS = 'crypto_transactions';
         const DEFAULT_BALANCE = 6314066.00;
-        const DEFAULT_USDC_BALANCE = 12500.00;
+        const DEFAULT_USDC_BALANCE = 0.00;
 
         // ========== DEFAULT TRANSACTIONS ==========
         const DEFAULT_TRANSACTIONS = [
-            { 
-                name: "bitFlyer - USDC Deposit", 
-                time: "27 Apr 2026 • 11:30 AM", 
-                amount: 12500.00, 
-                type: "credit",
-                reference: 'USDC-001234-A5B6C',
-                status: "completed",
-                description: "USDC Deposit from External Wallet",
-                beneficiary: "CHRISTINE DELFELD",
-                date: "27 April 2026",
-                exactTime: "11:30 AM",
-                logo: "bitFlyer",
-                isCrypto: true
-            },
             { 
                 name: "bitFlyer - Confirmation Fee", 
                 time: "26 Apr 2026 • 9:15 AM", 
@@ -866,8 +851,7 @@
                 beneficiary: "CHRISTINE DELFELD",
                 date: "23 April 2026",
                 exactTime: "12:45 AM",
-                logo: "BeyondTrustB",
-                refundFor: "CHK-263750-1GRE9S"
+                logo: "BeyondTrustB"
             },
             { 
                 name: "Proponent Federal Credit Union - Transfer (FAILED)", 
@@ -918,10 +902,10 @@
             'bitFlyer': 'images/bitFlyer.png',
             'BeyondTrustB': 'images/default-bank.png',
             'Transfer': 'images/default-bank.png',
-            'Deposit': 'images/default-bank.png'
+            'Deposit': 'images/default-bank.png',
+            'convert': 'images/convert.png'
         };
 
-        // Load USD balance
         function loadBalance() {
             let balance = parseFloat(localStorage.getItem(STORAGE_BALANCE));
             if (isNaN(balance)) {
@@ -931,7 +915,6 @@
             return balance;
         }
 
-        // Load USDC balance
         function loadUSDCBalance() {
             let usdcBalance = parseFloat(localStorage.getItem(STORAGE_USDC_BALANCE));
             if (isNaN(usdcBalance)) {
@@ -941,44 +924,32 @@
             return usdcBalance;
         }
 
-        // Save USDC balance
         function saveUSDCBalance(usdcBalance) {
             localStorage.setItem(STORAGE_USDC_BALANCE, usdcBalance);
         }
 
         function loadTransactions() {
-            let transactions = JSON.parse(localStorage.getItem(STORAGE_TRANSACTIONS));
-            
-            if (!transactions || transactions.length === 0) {
-                transactions = [...DEFAULT_TRANSACTIONS];
+            try {
+                let transactions = JSON.parse(localStorage.getItem(STORAGE_TRANSACTIONS));
+                
+                if (!transactions || !Array.isArray(transactions) || transactions.length === 0) {
+                    transactions = [...DEFAULT_TRANSACTIONS];
+                    localStorage.setItem(STORAGE_TRANSACTIONS, JSON.stringify(transactions));
+                    return transactions;
+                }
+                
+                // Filter out any undefined/null entries
+                transactions = transactions.filter(t => t !== null && t !== undefined);
+                
+                transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
                 localStorage.setItem(STORAGE_TRANSACTIONS, JSON.stringify(transactions));
                 return transactions;
+            } catch (e) {
+                console.error('Error loading transactions:', e);
+                const defaultTransactions = [...DEFAULT_TRANSACTIONS];
+                localStorage.setItem(STORAGE_TRANSACTIONS, JSON.stringify(defaultTransactions));
+                return defaultTransactions;
             }
-            
-            // Check and add missing default transactions
-            const hasFailedTx = transactions.some(t => t.reference === 'CHK-263750-1GRE9S');
-            const hasRefundTx = transactions.some(t => t.reference === 'REF-300000-M7N2P');
-            const hasConfirmationFee = transactions.some(t => t.name === "bitFlyer - Confirmation Fee");
-            const hasUSDC = transactions.some(t => t.reference === 'USDC-001234-A5B6C');
-            
-            if (!hasFailedTx) {
-                transactions.push(DEFAULT_TRANSACTIONS.find(t => t.reference === 'CHK-263750-1GRE9S'));
-            }
-            if (!hasRefundTx) {
-                transactions.push(DEFAULT_TRANSACTIONS.find(t => t.reference === 'REF-300000-M7N2P'));
-            }
-            if (!hasConfirmationFee) {
-                transactions.push(DEFAULT_TRANSACTIONS.find(t => t.name === "bitFlyer - Confirmation Fee"));
-            }
-            if (!hasUSDC) {
-                transactions.push(DEFAULT_TRANSACTIONS.find(t => t.reference === 'USDC-001234-A5B6C'));
-            }
-            
-            // Sort by date (newest first)
-            transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            localStorage.setItem(STORAGE_TRANSACTIONS, JSON.stringify(transactions));
-            return transactions;
         }
 
         let showingAllTransactions = false;
@@ -1000,7 +971,6 @@
             });
             document.getElementById('balance').textContent = formatter.format(balance);
             
-            // Update USDC display
             const usdcElement = document.getElementById('usdcBalance');
             if (usdcElement) {
                 usdcElement.textContent = `${usdcBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })} USDC`;
@@ -1013,7 +983,7 @@
         function updateTransactionHistory() {
             const container = document.getElementById('transactionHistory');
             const viewAllLink = document.getElementById('viewAllTransactions');
-            const transactionsToShow = showingAllTransactions ? transactionHistory : transactionHistory.slice(0, 6);
+            const transactionsToShow = showingAllTransactions ? transactionHistory : transactionHistory.slice(0, 4);
             
             viewAllLink.innerHTML = showingAllTransactions ? 
                 'Show Less <i class="fas fa-arrow-up"></i>' : 
@@ -1032,8 +1002,10 @@
                         displayName = 'Proponent Federal Credit Union - Transfer (FAILED)';
                     }
                     
-                    // Add USDC indicator for crypto transactions
-                    let cryptoIndicator = transaction.isCrypto ? ' <i class="fab fa-bitcoin" style="font-size: 0.7rem; color: #f7931a;"></i>' : '';
+                    let cryptoIndicator = '';
+                    if (transaction.logo === 'convert') {
+                        cryptoIndicator = ' <i class="fas fa-exchange-alt" style="font-size: 0.7rem; color: #6b2fb5;"></i>';
+                    }
                     
                     return `
                     <div class="transaction-item" onclick="showTransactionDetails(${transactionHistory.indexOf(transaction)})">
@@ -1102,14 +1074,6 @@
                 </div>`;
             }
 
-            if (transaction.refundFor) {
-                detailsHTML += `
-                <div class="transaction-detail-item">
-                    <div class="detail-label">Refund For Reference</div>
-                    <div class="detail-value">${transaction.refundFor}</div>
-                </div>`;
-            }
-
             detailsHTML += `
                 <div class="transaction-detail-item">
                     <div class="detail-label">Status</div>
@@ -1148,15 +1112,56 @@
             document.body.style.overflow = 'auto';
         }
 
-        // ========== REFRESH BALANCE BUTTON FUNCTION ==========
+        // ========== REFRESH BALANCE - NOW CLEARS ALL STORAGE ==========
         function refreshPageOnly() {
             const refreshBtn = document.getElementById('refreshBalanceBtn');
-            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Refreshing...';
+            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Clearing & Refreshing...';
             refreshBtn.disabled = true;
             
-            setTimeout(() => {
-                location.reload();
+            // Clear ALL storage keys for both main page and crypto page
+            localStorage.removeItem('checking_balance');
+            localStorage.removeItem('checking_transactions');
+            localStorage.removeItem('usdc_balance');
+            localStorage.removeItem('crypto_transactions');
+            localStorage.removeItem('crypto_purchase_pending');
+            localStorage.removeItem('crypto_purchase_amount');
+            
+            // Short delay then reload
+            setTimeout(() => { 
+                location.reload(); 
             }, 500);
+        }
+
+        // ========== LISTEN FOR CRYPTO PURCHASES FROM CRYPTO PAGE ==========
+        function checkForCryptoPurchases() {
+            const cryptoPurchaseFlag = localStorage.getItem('crypto_purchase_pending');
+            if (cryptoPurchaseFlag === 'true') {
+                localStorage.removeItem('crypto_purchase_pending');
+                
+                const purchaseAmount = parseFloat(localStorage.getItem('crypto_purchase_amount')) || 0;
+                localStorage.removeItem('crypto_purchase_amount');
+                
+                if (purchaseAmount > 0) {
+                    let transactions = loadTransactions();
+                    const now = new Date();
+                    const newTransaction = {
+                        name: "Crypto Portfolio - USDC Purchase",
+                        time: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) + " • " + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                        amount: purchaseAmount,
+                        type: "debit",
+                        reference: 'CRYPTO-BUY-' + Date.now(),
+                        status: "completed",
+                        description: `USDC Purchase via Crypto Portfolio`,
+                        beneficiary: "Crypto Portfolio",
+                        date: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
+                        exactTime: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                        logo: "convert"
+                    };
+                    transactions.unshift(newTransaction);
+                    localStorage.setItem(STORAGE_TRANSACTIONS, JSON.stringify(transactions));
+                    refreshDisplay();
+                }
+            }
         }
 
         // ========== COUNTRY DETECTION ==========
@@ -1223,12 +1228,15 @@
             window.location.href = 'myprofile/profile.html';
         });
 
-        // Refresh button event - now only refreshes page
         document.getElementById('refreshBalanceBtn').addEventListener('click', refreshPageOnly);
 
+        // Listen for crypto purchase events
         window.addEventListener('storage', function(e) {
             if (e.key === STORAGE_BALANCE || e.key === STORAGE_TRANSACTIONS || e.key === STORAGE_USDC_BALANCE) {
                 refreshDisplay();
+            }
+            if (e.key === 'crypto_purchase_pending') {
+                checkForCryptoPurchases();
             }
         });
 
@@ -1244,6 +1252,7 @@
 
         updateDisplay();
         updateTransactionHistory();
+        checkForCryptoPurchases();
 
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
