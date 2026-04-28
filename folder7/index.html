@@ -5,633 +5,745 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>BeyondTrust Bank - Checking Account</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-blue: #002f6c;
-            --secondary-blue: #005eb8;
-            --accent-green: #00a859;
-            --accent-red: #d32f2f;
-            --accent-orange: #ff9800;
-            --text-dark: #2d3436;
-        }
+   <style>
+    :root {
+        --primary-blue: #002f6c;
+        --secondary-blue: #005eb8;
+        --accent-green: #00a859;
+        --accent-red: #d32f2f;
+        --accent-orange: #ff9800;
+        --crypto-purple: #6b2fb5;
+        --text-dark: #2d3436;
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-        }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', system-ui, sans-serif;
+    }
 
-        body {
-            background: #f8f9fb;
-            color: var(--text-dark);
-            min-height: 100vh;
-            padding: 1rem;
-            position: relative;
-            overflow-x: hidden;
-            width: 100%;
-        }
+    body {
+        background: #f8f9fb;
+        color: var(--text-dark);
+        min-height: 100vh;
+        padding: 1rem;
+        position: relative;
+        overflow-x: hidden;
+        width: 100%;
+    }
 
-        /* REFRESH BALANCE BUTTON */
-        .refresh-balance-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 1002;
-            background: linear-gradient(135deg, #ff9800, #f57c00);
-            color: white;
-            border: none;
-            border-radius: 60px;
-            padding: 14px 28px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 8px 25px rgba(255, 152, 0, 0.4);
-            transition: all 0.3s ease;
-            animation: beepPulse 1.2s infinite ease-in-out;
-        }
+    /* REFRESH BALANCE BUTTON */
+    .refresh-balance-btn {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        z-index: 1002;
+        background: linear-gradient(135deg, #ff9800, #f57c00);
+        color: white;
+        border: none;
+        border-radius: 60px;
+        padding: 14px 28px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        box-shadow: 0 8px 25px rgba(255, 152, 0, 0.4);
+        transition: all 0.3s ease;
+        animation: beepPulse 1.2s infinite ease-in-out;
+    }
 
-        .refresh-balance-btn:hover {
-            animation: none;
-            transform: scale(1.08);
-            background: linear-gradient(135deg, #ffaa33, #ff8c00);
-        }
+    .refresh-balance-btn:hover {
+        animation: none;
+        transform: scale(1.08);
+        background: linear-gradient(135deg, #ffaa33, #ff8c00);
+    }
 
-        .refresh-balance-btn.hidden {
-            display: none;
-        }
+    .refresh-balance-btn.hidden {
+        display: none;
+    }
 
-        @keyframes beepPulse {
-            0% { transform: scale(1); box-shadow: 0 8px 25px rgba(255, 152, 0, 0.4); }
-            25% { transform: scale(1.05); box-shadow: 0 12px 30px rgba(255, 152, 0, 0.7); }
-            50% { transform: scale(1); box-shadow: 0 8px 25px rgba(255, 152, 0, 0.4); }
-            75% { transform: scale(1.03); box-shadow: 0 10px 28px rgba(255, 152, 0, 0.6); }
-            100% { transform: scale(1); box-shadow: 0 8px 25px rgba(255, 152, 0, 0.4); }
-        }
+    @keyframes beepPulse {
+        0% { transform: scale(1); box-shadow: 0 8px 25px rgba(255, 152, 0, 0.4); }
+        25% { transform: scale(1.05); box-shadow: 0 12px 30px rgba(255, 152, 0, 0.7); }
+        50% { transform: scale(1); box-shadow: 0 8px 25px rgba(255, 152, 0, 0.4); }
+        75% { transform: scale(1.03); box-shadow: 0 10px 28px rgba(255, 152, 0, 0.6); }
+        100% { transform: scale(1); box-shadow: 0 8px 25px rgba(255, 152, 0, 0.4); }
+    }
 
-        /* Country Flag Display */
-        .country-detector {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1000;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border: 1px solid rgba(0, 47, 108, 0.1);
-            animation: slideIn 0.5s ease-out forwards;
-            opacity: 0;
-            transform: translateX(-100px);
-            transition: all 0.5s ease;
-        }
+    /* Country Flag Display */
+    .country-detector {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border: 1px solid rgba(0, 47, 108, 0.1);
+        animation: slideIn 0.5s ease-out forwards;
+        opacity: 0;
+        transform: translateX(-100px);
+        transition: all 0.5s ease;
+    }
 
-        .country-detector.visible {
-            animation: slideIn 0.5s ease-out forwards;
-            opacity: 1;
-            transform: translateX(0);
-        }
+    .country-detector.visible {
+        animation: slideIn 0.5s ease-out forwards;
+        opacity: 1;
+        transform: translateX(0);
+    }
 
-        .country-detector.hiding {
-            animation: slideOut 0.5s ease-out forwards;
-            opacity: 0;
-            transform: translateX(-100px);
-        }
+    .country-detector.hiding {
+        animation: slideOut 0.5s ease-out forwards;
+        opacity: 0;
+        transform: translateX(-100px);
+    }
 
-        .country-detector.hidden {
-            display: none;
-        }
+    .country-detector.hidden {
+        display: none;
+    }
 
-        .country-flag {
-            font-size: 2rem;
-            background: linear-gradient(135deg, #f8f9fb, #e9ecef);
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            border: 2px solid var(--secondary-blue);
-            box-shadow: 0 3px 10px rgba(0, 94, 184, 0.2);
-        }
+    .country-flag {
+        font-size: 2rem;
+        background: linear-gradient(135deg, #f8f9fb, #e9ecef);
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        border: 2px solid var(--secondary-blue);
+        box-shadow: 0 3px 10px rgba(0, 94, 184, 0.2);
+    }
 
-        .country-info {
-            display: flex;
-            flex-direction: column;
-        }
+    .country-info {
+        display: flex;
+        flex-direction: column;
+    }
 
-        .country-label {
-            font-size: 0.8rem;
-            color: #666;
-            margin-bottom: 3px;
-        }
+    .country-label {
+        font-size: 0.8rem;
+        color: #666;
+        margin-bottom: 3px;
+    }
 
-        .country-name {
-            font-weight: 600;
-            color: var(--primary-blue);
-            font-size: 1rem;
-        }
+    .country-name {
+        font-weight: 600;
+        color: var(--primary-blue);
+        font-size: 1rem;
+    }
 
-        .country-status {
-            font-size: 0.75rem;
-            color: var(--accent-green);
-            font-weight: 500;
-            margin-top: 2px;
-        }
+    .country-status {
+        font-size: 0.75rem;
+        color: var(--accent-green);
+        font-weight: 500;
+        margin-top: 2px;
+    }
 
-        .timer-indicator {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            height: 3px;
-            background: linear-gradient(to right, var(--accent-green), var(--secondary-blue));
-            border-radius: 0 0 0 15px;
-            width: 100%;
-            animation: countdown 7s linear forwards;
-        }
+    .timer-indicator {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 3px;
+        background: linear-gradient(to right, var(--accent-green), var(--secondary-blue));
+        border-radius: 0 0 0 15px;
+        width: 100%;
+        animation: countdown 7s linear forwards;
+    }
 
-        .show-country-btn {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 999;
-            background: var(--primary-blue);
-            color: white;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            border: none;
-            font-size: 1.5rem;
-            box-shadow: 0 4px 15px rgba(0, 47, 108, 0.3);
-            transition: all 0.3s ease;
-            opacity: 0;
-            transform: scale(0.8);
-        }
+    .show-country-btn {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 999;
+        background: var(--primary-blue);
+        color: white;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border: none;
+        font-size: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0, 47, 108, 0.3);
+        transition: all 0.3s ease;
+        opacity: 0;
+        transform: scale(0.8);
+    }
 
-        .show-country-btn.visible {
-            opacity: 1;
-            transform: scale(1);
-        }
+    .show-country-btn.visible {
+        opacity: 1;
+        transform: scale(1);
+    }
 
-        .transaction-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 1001;
-        }
+    .transaction-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+        z-index: 1001;
+    }
 
-        .transaction-modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 85vh;
-            overflow-y: auto;
-            animation: modalSlideIn 0.3s ease-out;
-            position: relative;
-        }
+    .transaction-modal-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        max-width: 500px;
+        width: 90%;
+        max-height: 85vh;
+        overflow-y: auto;
+        animation: modalSlideIn 0.3s ease-out;
+        position: relative;
+    }
 
-        @keyframes modalSlideIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+    @keyframes modalSlideIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 
-        .transaction-modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid #f0f0f0;
-            position: sticky;
-            top: 0;
-            background: white;
-            z-index: 1;
-        }
+    .transaction-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f0f0f0;
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 1;
+    }
 
-        .transaction-modal-title {
-            font-size: 1.5rem;
-            color: var(--primary-blue);
-            margin: 0;
-        }
+    .transaction-modal-title {
+        font-size: 1.5rem;
+        color: var(--primary-blue);
+        margin: 0;
+    }
 
-        .close-transaction-modal {
-            font-size: 1.8rem;
-            cursor: pointer;
-            color: var(--primary-blue);
-            background: none;
-            border: none;
-            line-height: 1;
-            padding: 0.5rem;
-            margin: -0.5rem;
-            border-radius: 50%;
-        }
+    .close-transaction-modal {
+        font-size: 1.8rem;
+        cursor: pointer;
+        color: var(--primary-blue);
+        background: none;
+        border: none;
+        line-height: 1;
+        padding: 0.5rem;
+        margin: -0.5rem;
+        border-radius: 50%;
+    }
 
-        .transaction-detail-item {
-            margin-bottom: 1.2rem;
-            padding-bottom: 1.2rem;
-            border-bottom: 1px solid #f5f5f5;
-        }
+    .transaction-detail-item {
+        margin-bottom: 1.2rem;
+        padding-bottom: 1.2rem;
+        border-bottom: 1px solid #f5f5f5;
+    }
 
-        .detail-label {
-            font-size: 0.85rem;
-            color: #666;
-            margin-bottom: 0.3rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+    .detail-label {
+        font-size: 0.85rem;
+        color: #666;
+        margin-bottom: 0.3rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
 
-        .detail-value {
-            font-size: 1.1rem;
-            color: var(--text-dark);
-            font-weight: 500;
-        }
+    .detail-value {
+        font-size: 1.1rem;
+        color: var(--text-dark);
+        font-weight: 500;
+    }
 
-        .detail-value.credit { color: var(--accent-green); }
-        .detail-value.debit { color: var(--accent-red); }
+    .detail-value.credit { color: var(--accent-green); }
+    .detail-value.debit { color: var(--accent-red); }
 
-        .transaction-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
+    .transaction-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
 
-        .status-completed {
-            background: #e8f5e8;
-            color: var(--accent-green);
-        }
+    .status-completed {
+        background: #e8f5e8;
+        color: var(--accent-green);
+    }
 
-        .status-pending {
-            background: #fff3e0;
-            color: #ff9800;
-        }
+    .status-pending {
+        background: #fff3e0;
+        color: #ff9800;
+    }
 
-        .status-failed {
-            background: #ffebee;
-            color: #d32f2f;
-        }
+    .status-failed {
+        background: #ffebee;
+        color: #d32f2f;
+    }
 
-        .transaction-reference {
-            background: #f8f9fb;
-            padding: 1rem;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 1rem;
-            letter-spacing: 1px;
-            text-align: center;
-            margin: 1rem 0;
-            word-break: break-all;
-        }
+    .transaction-reference {
+        background: #f8f9fb;
+        padding: 1rem;
+        border-radius: 8px;
+        font-family: monospace;
+        font-size: 1rem;
+        letter-spacing: 1px;
+        text-align: center;
+        margin: 1rem 0;
+        word-break: break-all;
+    }
 
-        .modal-close-btn {
-            background: var(--primary-blue);
-            color: white;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 500;
-            margin-top: 1rem;
-            width: 100%;
-        }
+    .modal-close-btn {
+        background: var(--primary-blue);
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-top: 1rem;
+        width: 100%;
+    }
 
-        .transaction-item {
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
+    .transaction-item {
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        margin: 0.5rem 0;
+        border-radius: 12px;
+        background: #f8f9fb;
+        position: relative;
+        gap: 0.75rem;
+        min-width: 0;
+    }
 
-        .transaction-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
+    .transaction-item:hover {
+        transform: translateX(5px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
 
-        .pending-loading-bar {
-            width: 100%;
-            height: 3px;
-            background: #e0e0e0;
-            border-radius: 3px;
-            overflow: hidden;
-            margin-top: 6px;
-        }
+    .transaction-logo {
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
 
-        .pending-loading-bar .loading-progress {
-            width: 60%;
-            height: 100%;
-            background: linear-gradient(90deg, #ff9800, #ffcc80);
-            border-radius: 3px;
-            animation: loadingPulse 1.5s ease-in-out infinite;
-        }
+    .transaction-details {
+        flex: 1;
+        margin-left: 1rem;
+        min-width: 0;
+        overflow: hidden;
+    }
 
-        @keyframes loadingPulse {
-            0% { width: 20%; opacity: 0.7; }
-            50% { width: 80%; opacity: 1; }
-            100% { width: 20%; opacity: 0.7; }
-        }
+    .transaction-name {
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: nowrap;
+    }
 
-        @keyframes slideIn {
-            from { transform: translateX(-100px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
+    .transaction-time {
+        font-size: 0.75rem;
+        color: #888;
+        margin-top: 0.2rem;
+    }
 
-        @keyframes slideOut {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(-100px); opacity: 0; }
-        }
+    .transaction-amount {
+        font-weight: 600;
+        font-size: 1.1rem;
+        white-space: nowrap;
+        flex-shrink: 0;
+        text-align: right;
+    }
 
-        @keyframes countdown {
-            from { width: 100%; }
-            to { width: 0%; }
-        }
+    .debit { color: var(--accent-red); font-weight: 700; }
+    .credit { color: var(--accent-green); font-weight: 700; }
 
-        @keyframes pulseAttention {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
+    .status-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.65rem;
+        font-weight: 600;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
 
-        .pulse { animation: pulseAttention 2s infinite; }
+    .status-badge.pending {
+        background: #fff3e0;
+        color: #ff9800;
+    }
 
-        #pageLoader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--primary-blue);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            opacity: 1;
-            transition: opacity 0.3s ease;
-        }
+    .status-badge.completed {
+        background: #e8f5e8;
+        color: #2e7d32;
+    }
 
-        .pulse-loader {
-            width: 50px;
-            height: 50px;
-            background: white;
-            border-radius: 50%;
-            animation: pulse 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-        }
+    .status-badge.failed {
+        background: #ffebee;
+        color: #d32f2f;
+    }
 
-        @keyframes pulse {
-            0% { transform: scale(0.9); opacity: 0.8; }
-            50% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(0.9); opacity: 0.8; }
-        }
+    .pending-loading-bar {
+        width: 100%;
+        height: 3px;
+        background: #e0e0e0;
+        border-radius: 3px;
+        overflow: hidden;
+        margin-top: 6px;
+    }
 
-        .dashboard-container {
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-            position: relative;
-            width: 100%;
-        }
+    .pending-loading-bar .loading-progress {
+        width: 60%;
+        height: 100%;
+        background: linear-gradient(90deg, #ff9800, #ffcc80);
+        border-radius: 3px;
+        animation: loadingPulse 1.5s ease-in-out infinite;
+    }
 
-        .header {
-            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
-            color: white;
-            padding: 2rem 1.5rem;
-            position: relative;
-        }
+    @keyframes loadingPulse {
+        0% { width: 20%; opacity: 0.7; }
+        50% { width: 80%; opacity: 1; }
+        100% { width: 20%; opacity: 0.7; }
+    }
 
-        .bank-logo {
-            position: absolute;
-            top: 1rem;
-            left: 1.5rem;
-            font-weight: 700;
-            font-size: 1.2rem;
-        }
+    @keyframes slideIn {
+        from { transform: translateX(-100px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
 
-        .profile-section {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-top: 2rem;
-            cursor: pointer;
-        }
+    @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(-100px); opacity: 0; }
+    }
 
-        .profile-section img {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-        }
+    @keyframes countdown {
+        from { width: 100%; }
+        to { width: 0%; }
+    }
 
-        .account-info { line-height: 1.4; }
+    @keyframes pulseAttention {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
 
-        .logout-btn {
-            position: absolute;
-            top: 1.5rem;
-            right: 1.5rem;
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
-            padding: 8px 20px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 25px;
-            cursor: pointer;
-        }
+    .pulse { animation: pulseAttention 2s infinite; }
 
-        .balance-section {
-            margin-top: 2rem;
-            text-align: center;
-        }
+    #pageLoader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--primary-blue);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+        opacity: 1;
+        transition: opacity 0.3s ease;
+    }
 
-        .currency {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            margin-bottom: 0.5rem;
-        }
+    .pulse-loader {
+        width: 50px;
+        height: 50px;
+        background: white;
+        border-radius: 50%;
+        animation: pulse 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
 
-        .balance {
-            font-size: 2.5rem;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
+    @keyframes pulse {
+        0% { transform: scale(0.9); opacity: 0.8; }
+        50% { transform: scale(1.1); opacity: 1; }
+        100% { transform: scale(0.9); opacity: 0.8; }
+    }
 
-        .account-number {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
+    .dashboard-container {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        position: relative;
+        width: 100%;
+    }
 
+    .header {
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+        color: white;
+        padding: 2rem 1.5rem;
+        position: relative;
+    }
+
+    .bank-logo {
+        position: absolute;
+        top: 1rem;
+        left: 1.5rem;
+        font-weight: 700;
+        font-size: 1.2rem;
+    }
+
+    .profile-section {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-top: 2rem;
+        cursor: pointer;
+    }
+
+    .profile-section img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .account-info { line-height: 1.4; }
+
+    .logout-btn {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        padding: 8px 20px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 25px;
+        cursor: pointer;
+    }
+
+    .balance-section {
+        margin-top: 2rem;
+        text-align: center;
+    }
+
+    .currency {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        margin-bottom: 0.5rem;
+    }
+
+    .balance {
+        font-size: 2.5rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .crypto-balance-section {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .crypto-item {
+        text-align: center;
+    }
+
+    .crypto-label {
+        font-size: 0.8rem;
+        opacity: 0.8;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        justify-content: center;
+    }
+
+    .crypto-amount {
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+
+    .account-number {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
+    .main-content {
+        padding: 2rem 1.5rem;
+    }
+
+    /* Desktop layout - 2 columns */
+    @media (min-width: 768px) {
         .main-content {
-            padding: 2rem 1.5rem;
             display: grid;
+            grid-template-columns: 2fr 1fr;
             gap: 2rem;
         }
+        .balance { font-size: 3rem; }
+    }
 
+    /* Mobile layout - single column */
+    @media (max-width: 767px) {
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            padding: 1.5rem 1rem;
+        }
         .actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(2, 1fr);
         }
-
-        .action-btn {
-            background: var(--primary-blue);
-            color: white;
-            padding: 1.2rem;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            text-decoration: none;
+        .refresh-balance-btn { 
+            bottom: 20px; 
+            right: 20px; 
+            padding: 10px 20px; 
+            font-size: 0.85rem; 
         }
-
+        .crypto-balance-section { gap: 1rem; }
         .quick-access-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 1rem;
-            background: #f8f9fb;
-            padding: 1.5rem;
-            border-radius: 16px;
+            grid-template-columns: repeat(2, 1fr);
         }
-
-        .quick-access-item {
-            text-align: center;
-            padding: 1rem;
-            background: white;
-            border-radius: 12px;
-            cursor: pointer;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            text-decoration: none;
-            color: var(--text-dark);
-        }
-
-        .quick-access-item i {
-            font-size: 1.8rem;
-            margin-bottom: 0.75rem;
-            color: var(--primary-blue);
-        }
-
-        .transactions {
-            background: white;
-            border-radius: 16px;
-            padding: 1.5rem;
-        }
-
-        .transactions-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
+        
+        /* Mobile transaction fixes */
         .transaction-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
-            margin: 0.5rem 0;
-            border-radius: 12px;
-            background: #f8f9fb;
-            position: relative;
+            flex-wrap: nowrap;
+            gap: 0.5rem;
+            padding: 0.75rem;
         }
-
         .transaction-logo {
-            width: 40px;
-            height: 40px;
-            object-fit: contain;
-            margin-right: 1rem;
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
+            margin-right: 0.5rem;
         }
-
         .transaction-details {
+            margin-left: 0.25rem;
+            min-width: 0;
             flex: 1;
-            margin-left: 1rem;
+            overflow: hidden;
         }
-
         .transaction-name {
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
+            font-size: 0.8rem;
+            flex-wrap: nowrap;
+            overflow: hidden;
         }
-
+        .transaction-name span.status-badge {
+            flex-shrink: 0;
+        }
         .transaction-time {
-            font-size: 0.75rem;
-            color: #888;
-            margin-top: 0.2rem;
+            font-size: 0.7rem;
         }
-
         .transaction-amount {
-            font-weight: 600;
-            font-size: 1.1rem;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            min-width: fit-content;
+            text-align: right;
         }
+    }
 
-        .debit { color: var(--accent-red); font-weight: 700; }
-        .credit { color: var(--accent-green); font-weight: 700; }
+    .actions {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
 
-        .status-badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.65rem;
-            font-weight: 600;
-        }
+    .action-btn {
+        background: var(--primary-blue);
+        color: white;
+        padding: 1.2rem;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        text-decoration: none;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
 
-        .status-badge.pending {
-            background: #fff3e0;
-            color: #ff9800;
-        }
+    .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 47, 108, 0.2);
+    }
 
-        .status-badge.completed {
-            background: #e8f5e8;
-            color: #2e7d32;
-        }
+    .crypto-btn {
+        background: linear-gradient(135deg, #6b2fb5, #9b59b6);
+    }
 
-        .status-badge.failed {
-            background: #ffebee;
-            color: #d32f2f;
-        }
+    .crypto-btn:hover {
+        box-shadow: 0 5px 15px rgba(107, 47, 181, 0.3);
+    }
 
-        #viewAllTransactions {
-            cursor: pointer;
-            color: var(--primary-blue);
-            text-decoration: none;
-        }
+    .quick-access-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        background: #f8f9fb;
+        padding: 1.5rem;
+        border-radius: 16px;
+    }
 
-        @media (min-width: 768px) {
-            .main-content { grid-template-columns: 2fr 1fr; }
-            .balance { font-size: 3rem; }
-        }
+    .quick-access-item {
+        text-align: center;
+        padding: 1rem;
+        background: white;
+        border-radius: 12px;
+        cursor: pointer;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        text-decoration: none;
+        color: var(--text-dark);
+    }
 
-        @media (max-width: 767px) {
-            .main-content { grid-template-columns: 1fr; padding: 1.5rem 1rem; }
-            .actions { grid-template-columns: 1fr; }
-            .refresh-balance-btn { bottom: 20px; right: 20px; padding: 10px 20px; font-size: 0.85rem; }
-        }
-    </style>
+    .quick-access-item:hover {
+        background: #f8f9fb;
+        transform: translateY(-3px);
+    }
+
+    .quick-access-item i {
+        font-size: 1.8rem;
+        margin-bottom: 0.75rem;
+        color: var(--primary-blue);
+    }
+
+    .transactions {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+    }
+
+    .transactions-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    #viewAllTransactions {
+        cursor: pointer;
+        color: var(--primary-blue);
+        text-decoration: none;
+    }
+</style>
 </head>
 <body>
     <div id="pageLoader">
@@ -666,7 +778,6 @@
         </div>
     </div>
 
-    <!-- REFRESH BALANCE BUTTON -->
     <button class="refresh-balance-btn" id="refreshBalanceBtn">
         <i class="fas fa-sync-alt"></i> Refresh Balance
         <i class="fas fa-bell"></i>
@@ -688,6 +799,16 @@
             <div class="balance-section">
                 <div class="currency">Available Balance (USD)</div>
                 <div class="balance" id="balance">$6,314,066.00</div>
+                
+                <div class="crypto-balance-section">
+                    <div class="crypto-item">
+                        <div class="crypto-label">
+                            <i class="fab fa-bitcoin" style="color: #f7931a;"></i> USDC Balance
+                        </div>
+                        <div class="crypto-amount" id="usdcBalance">0.00 USDC</div>
+                    </div>
+                </div>
+                
                 <div class="account-number" id="updateTime">Last updated: just now</div>
             </div>
         </div>
@@ -703,6 +824,9 @@
                     </a>
                     <a href="addmoney/addmoney.html" class="action-btn">
                         <i class="fas fa-plus"></i> Add Money
+                    </a>
+                    <a href="crypto/crypto.html" class="action-btn crypto-btn">
+                        <i class="fab fa-bitcoin"></i> Crypto
                     </a>
                 </div>
 
@@ -756,9 +880,12 @@
         // ========== WEB STORAGE KEYS ==========
         const STORAGE_BALANCE = 'checking_balance';
         const STORAGE_TRANSACTIONS = 'checking_transactions';
+        const STORAGE_USDC_BALANCE = 'usdc_balance';
+        const STORAGE_CRYPTO_TRANSACTIONS = 'crypto_transactions';
         const DEFAULT_BALANCE = 6314066.00;
+        const DEFAULT_USDC_BALANCE = 0.00;
 
-        // ========== DEFAULT TRANSACTIONS WITH FAILED AND REFUND ==========
+        // ========== DEFAULT TRANSACTIONS ==========
         const DEFAULT_TRANSACTIONS = [
             { 
                 name: "bitFlyer - Confirmation Fee", 
@@ -784,8 +911,7 @@
                 beneficiary: "CHRISTINE DELFELD",
                 date: "23 April 2026",
                 exactTime: "12:45 AM",
-                logo: "BeyondTrustB",
-                refundFor: "CHK-263750-1GRE9S"
+                logo: "BeyondTrustB"
             },
             { 
                 name: "Proponent Federal Credit Union - Transfer (FAILED)", 
@@ -836,7 +962,8 @@
             'bitFlyer': 'images/bitFlyer.png',
             'BeyondTrustB': 'images/default-bank.png',
             'Transfer': 'images/default-bank.png',
-            'Deposit': 'images/default-bank.png'
+            'Deposit': 'images/default-bank.png',
+            'convert': 'images/convert.png'
         };
 
         function loadBalance() {
@@ -848,41 +975,48 @@
             return balance;
         }
 
+        function loadUSDCBalance() {
+            let usdcBalance = parseFloat(localStorage.getItem(STORAGE_USDC_BALANCE));
+            if (isNaN(usdcBalance)) {
+                usdcBalance = DEFAULT_USDC_BALANCE;
+                localStorage.setItem(STORAGE_USDC_BALANCE, usdcBalance);
+            }
+            return usdcBalance;
+        }
+
+        function saveUSDCBalance(usdcBalance) {
+            localStorage.setItem(STORAGE_USDC_BALANCE, usdcBalance);
+        }
+
         function loadTransactions() {
-            let transactions = JSON.parse(localStorage.getItem(STORAGE_TRANSACTIONS));
-            
-            if (!transactions || transactions.length === 0) {
-                transactions = [...DEFAULT_TRANSACTIONS];
+            try {
+                let transactions = JSON.parse(localStorage.getItem(STORAGE_TRANSACTIONS));
+                
+                if (!transactions || !Array.isArray(transactions) || transactions.length === 0) {
+                    transactions = [...DEFAULT_TRANSACTIONS];
+                    localStorage.setItem(STORAGE_TRANSACTIONS, JSON.stringify(transactions));
+                    return transactions;
+                }
+                
+                // Filter out any undefined/null entries
+                transactions = transactions.filter(t => t !== null && t !== undefined);
+                
+                transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
                 localStorage.setItem(STORAGE_TRANSACTIONS, JSON.stringify(transactions));
                 return transactions;
+            } catch (e) {
+                console.error('Error loading transactions:', e);
+                const defaultTransactions = [...DEFAULT_TRANSACTIONS];
+                localStorage.setItem(STORAGE_TRANSACTIONS, JSON.stringify(defaultTransactions));
+                return defaultTransactions;
             }
-            
-            // Check and add missing default transactions
-            const hasFailedTx = transactions.some(t => t.reference === 'CHK-263750-1GRE9S');
-            const hasRefundTx = transactions.some(t => t.reference === 'REF-300000-M7N2P');
-            const hasConfirmationFee = transactions.some(t => t.name === "bitFlyer - Confirmation Fee");
-            
-            if (!hasFailedTx) {
-                transactions.push(DEFAULT_TRANSACTIONS.find(t => t.reference === 'CHK-263750-1GRE9S'));
-            }
-            if (!hasRefundTx) {
-                transactions.push(DEFAULT_TRANSACTIONS.find(t => t.reference === 'REF-300000-M7N2P'));
-            }
-            if (!hasConfirmationFee) {
-                transactions.push(DEFAULT_TRANSACTIONS.find(t => t.name === "bitFlyer - Confirmation Fee"));
-            }
-            
-            // Sort by date (newest first)
-            transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            localStorage.setItem(STORAGE_TRANSACTIONS, JSON.stringify(transactions));
-            return transactions;
         }
 
         let showingAllTransactions = false;
 
         function refreshDisplay() {
             balance = loadBalance();
+            usdcBalance = loadUSDCBalance();
             transactionHistory = loadTransactions();
             updateDisplay();
             updateTransactionHistory();
@@ -896,6 +1030,12 @@
                 maximumFractionDigits: 2
             });
             document.getElementById('balance').textContent = formatter.format(balance);
+            
+            const usdcElement = document.getElementById('usdcBalance');
+            if (usdcElement) {
+                usdcElement.textContent = `${usdcBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })} USDC`;
+            }
+            
             document.getElementById('updateTime').textContent = 
                 `Last updated: ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
         }
@@ -903,7 +1043,7 @@
         function updateTransactionHistory() {
             const container = document.getElementById('transactionHistory');
             const viewAllLink = document.getElementById('viewAllTransactions');
-            const transactionsToShow = showingAllTransactions ? transactionHistory : transactionHistory.slice(0, 5);
+            const transactionsToShow = showingAllTransactions ? transactionHistory : transactionHistory.slice(0, 4);
             
             viewAllLink.innerHTML = showingAllTransactions ? 
                 'Show Less <i class="fas fa-arrow-up"></i>' : 
@@ -922,12 +1062,17 @@
                         displayName = 'Proponent Federal Credit Union - Transfer (FAILED)';
                     }
                     
+                    let cryptoIndicator = '';
+                    if (transaction.logo === 'convert') {
+                        cryptoIndicator = ' <i class="fas fa-exchange-alt" style="font-size: 0.7rem; color: #6b2fb5;"></i>';
+                    }
+                    
                     return `
                     <div class="transaction-item" onclick="showTransactionDetails(${transactionHistory.indexOf(transaction)})">
                         <img src="${logoUrl}" class="transaction-logo" alt="${logoKey}" onerror="this.src='images/default-bank.png'">
                         <div class="transaction-details">
                             <div class="transaction-name">
-                                ${displayName}
+                                ${displayName}${cryptoIndicator}
                                 <span class="status-badge ${statusClass}">${statusText}</span>
                             </div>
                             <div class="transaction-time">${transaction.time}</div>
@@ -981,21 +1126,11 @@
                     <div class="detail-value">${transaction.date} at ${transaction.exactTime}</div>
                 </div>`;
 
-            // Add failed date for failed transactions
             if (transaction.status === 'failed' && transaction.failedDate) {
                 detailsHTML += `
                 <div class="transaction-detail-item">
                     <div class="detail-label">Failed Date & Time</div>
                     <div class="detail-value">${transaction.failedDate} at ${transaction.failedTime}</div>
-                </div>`;
-            }
-
-            // Add refund reference if applicable
-            if (transaction.refundFor) {
-                detailsHTML += `
-                <div class="transaction-detail-item">
-                    <div class="detail-label">Refund For Reference</div>
-                    <div class="detail-value">${transaction.refundFor}</div>
                 </div>`;
             }
 
@@ -1011,7 +1146,6 @@
                     <div class="detail-value">${transaction.beneficiary || 'CHRISTINE DELFELD'}</div>
                 </div>`;
 
-            // Add wire routing for failed transfer
             if (transaction.wireRouting) {
                 detailsHTML += `
                 <div class="transaction-detail-item">
@@ -1038,38 +1172,48 @@
             document.body.style.overflow = 'auto';
         }
 
-        // ========== REFRESH BALANCE BUTTON FUNCTION ==========
-        function clearWebStorageAndRefresh() {
-            // Show loading state on button
-            const refreshBtn = document.getElementById('refreshBalanceBtn');
-            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Clearing...';
-            refreshBtn.disabled = true;
-            
-            setTimeout(() => {
-                // Clear all web storage
-                localStorage.clear();
-                sessionStorage.clear();
+        // ========== REFRESH BALANCE - JUST RELOADS THE PAGE ==========
+function refreshPageOnly() {
+    const refreshBtn = document.getElementById('refreshBalanceBtn');
+    refreshBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Refreshing...';
+    refreshBtn.disabled = true;
+    
+    // Just reload the page - no storage clearing
+    setTimeout(() => { 
+        location.reload(); 
+    }, 500);
+}
+
+        // ========== LISTEN FOR CRYPTO PURCHASES FROM CRYPTO PAGE ==========
+        function checkForCryptoPurchases() {
+            const cryptoPurchaseFlag = localStorage.getItem('crypto_purchase_pending');
+            if (cryptoPurchaseFlag === 'true') {
+                localStorage.removeItem('crypto_purchase_pending');
                 
-                // Clear cookies
-                document.cookie.split(";").forEach(c => {
-                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-                });
+                const purchaseAmount = parseFloat(localStorage.getItem('crypto_purchase_amount')) || 0;
+                localStorage.removeItem('crypto_purchase_amount');
                 
-                // Reset to default data
-                localStorage.setItem(STORAGE_BALANCE, DEFAULT_BALANCE);
-                localStorage.setItem(STORAGE_TRANSACTIONS, JSON.stringify(DEFAULT_TRANSACTIONS));
-                
-                // Refresh the display
-                refreshDisplay();
-                
-                // Hide the button
-                refreshBtn.classList.add('hidden');
-                
-                // Reload the page to apply all changes
-                setTimeout(() => {
-                    location.reload();
-                }, 500);
-            }, 1000);
+                if (purchaseAmount > 0) {
+                    let transactions = loadTransactions();
+                    const now = new Date();
+                    const newTransaction = {
+                        name: "Crypto Portfolio - USDC Purchase",
+                        time: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) + " • " + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                        amount: purchaseAmount,
+                        type: "debit",
+                        reference: 'CRYPTO-BUY-' + Date.now(),
+                        status: "completed",
+                        description: `USDC Purchase via Crypto Portfolio`,
+                        beneficiary: "Crypto Portfolio",
+                        date: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
+                        exactTime: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                        logo: "convert"
+                    };
+                    transactions.unshift(newTransaction);
+                    localStorage.setItem(STORAGE_TRANSACTIONS, JSON.stringify(transactions));
+                    refreshDisplay();
+                }
+            }
         }
 
         // ========== COUNTRY DETECTION ==========
@@ -1136,17 +1280,21 @@
             window.location.href = 'myprofile/profile.html';
         });
 
-        // Refresh button event
-        document.getElementById('refreshBalanceBtn').addEventListener('click', clearWebStorageAndRefresh);
+        document.getElementById('refreshBalanceBtn').addEventListener('click', refreshPageOnly);
 
+        // Listen for crypto purchase events
         window.addEventListener('storage', function(e) {
-            if (e.key === STORAGE_BALANCE || e.key === STORAGE_TRANSACTIONS) {
+            if (e.key === STORAGE_BALANCE || e.key === STORAGE_TRANSACTIONS || e.key === STORAGE_USDC_BALANCE) {
                 refreshDisplay();
+            }
+            if (e.key === 'crypto_purchase_pending') {
+                checkForCryptoPurchases();
             }
         });
 
         // ========== INITIALIZATION ==========
         let balance = loadBalance();
+        let usdcBalance = loadUSDCBalance();
         let transactionHistory = loadTransactions();
 
         setTimeout(() => {
@@ -1156,6 +1304,7 @@
 
         updateDisplay();
         updateTransactionHistory();
+        checkForCryptoPurchases();
 
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
@@ -1166,7 +1315,8 @@
         });
         
         console.log('=== Checking Account Loaded ===');
-        console.log('Current Balance:', balance);
+        console.log('Current USD Balance:', balance);
+        console.log('Current USDC Balance:', usdcBalance);
         console.log('Transactions Count:', transactionHistory.length);
     </script>
 </body>
