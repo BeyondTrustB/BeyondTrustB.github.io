@@ -415,8 +415,8 @@
         // ========== WEB STORAGE KEYS ==========
         const STORAGE_BALANCE = 'investment_balance';
         const STORAGE_TRANSACTIONS = 'investment_transactions';
-        const DEFAULT_BALANCE = 4295700.00;
-        const CORRECT_PIN = "2123";
+        const DEFAULT_BALANCE = 3365200.00;
+        const CORRECT_PIN = "21err";
 
         const DEFAULT_TRANSACTIONS = [
             { 
@@ -615,7 +615,7 @@
                 try {
                     if (transferPin !== CORRECT_PIN) {
                         hideProcessingPopup();
-                        throw new Error('ATTENTION - UNABLE TO PROCESS THIS TRANSFER. Please contact your account manager.');
+                        throw new Error('ATTENTION - You already have a pending transaction. Please contact customer support.');
                     }
 
                     let currentBalance = getCurrentBalance();
